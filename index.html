@@ -6,429 +6,642 @@
 <title>SABI Marketplace</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
 body{
   font-family:Arial,Helvetica,sans-serif;
-  background:#080808;
+  background:#050505;
   color:#fff;
+  min-height:100vh;
 }
 
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
+button,input,select,textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
 
 header{
-  position:sticky;
-  top:0;
-  z-index:100;
-  background:rgba(8,8,8,.95);
-  backdrop-filter:blur(15px);
-  border-bottom:1px solid #242424;
-}
-
-.nav{
-  max-width:1250px;
-  height:70px;
-  margin:auto;
-  padding:0 20px;
+  height:72px;
+  border-bottom:1px solid #202020;
   display:flex;
   align-items:center;
   justify-content:space-between;
+  padding:0 25px;
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(5,5,5,.94);
+  backdrop-filter:blur(15px);
 }
 
 .logo{
-  font-size:28px;
+  font-size:26px;
   font-weight:900;
-  letter-spacing:4px;
+  letter-spacing:5px;
 }
 
-.logo span{color:#777}
+.logo span{
+  color:#777;
+}
 
-.nav-right{
+.header-right{
   display:flex;
   gap:9px;
 }
 
-.nav-btn{
-  background:#151515;
+.btn{
+  background:#111;
+  color:#fff;
   border:1px solid #292929;
-  color:white;
-  padding:11px 15px;
-  border-radius:12px;
+  padding:11px 16px;
+  border-radius:10px;
+  font-weight:700;
 }
 
-.nav-btn:hover{background:#222}
-
-.hero{
-  max-width:1250px;
-  margin:30px auto;
-  padding:55px 25px;
-  border:1px solid #292929;
-  border-radius:28px;
-  background:
-    radial-gradient(circle at 85% 20%,#292929 0,transparent 35%),
-    linear-gradient(135deg,#121212,#080808);
+.btn:hover{
+  background:#1c1c1c;
 }
 
-.hero h1{
-  font-size:clamp(43px,7vw,76px);
-  line-height:.95;
-  max-width:800px;
-}
-
-.hero h1 span{color:#777}
-
-.hero p{
-  margin-top:23px;
-  color:#aaa;
-  max-width:650px;
-  font-size:18px;
-  line-height:1.6;
-}
-
-.hero-actions{
-  margin-top:30px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-}
-
-.primary{
-  background:white;
+.btn.white{
+  background:#fff;
   color:#000;
-  border:0;
-  padding:14px 22px;
-  border-radius:13px;
-  font-weight:800;
+  border-color:#fff;
 }
 
-.secondary{
-  background:#171717;
-  color:white;
-  border:1px solid #333;
-  padding:14px 22px;
-  border-radius:13px;
+.btn.red{
+  color:#ff7777;
 }
 
 .container{
   max-width:1250px;
   margin:auto;
-  padding:0 20px 60px;
+  padding:30px 20px 70px;
 }
 
-.search{
-  width:100%;
-  padding:15px;
-  background:#111;
+/* HERO */
+
+.hero{
+  min-height:390px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:30px;
+  padding:55px 0;
+}
+
+.hero-left{
+  max-width:700px;
+}
+
+.hero-label{
+  display:inline-block;
+  color:#aaa;
   border:1px solid #292929;
-  color:white;
-  border-radius:14px;
+  background:#0d0d0d;
+  padding:8px 12px;
+  border-radius:30px;
+  font-size:12px;
+  margin-bottom:20px;
+}
+
+.hero h1{
+  font-size:clamp(42px,7vw,78px);
+  line-height:.95;
+  letter-spacing:-4px;
+  margin-bottom:22px;
+}
+
+.hero h1 span{
+  color:#777;
+}
+
+.hero p{
+  color:#888;
+  font-size:17px;
+  line-height:1.6;
+  max-width:570px;
+  margin-bottom:28px;
+}
+
+.hero-buttons{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.hero-right{
+  width:280px;
+  height:280px;
+  border:1px solid #222;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+
+.hero-right:before,
+.hero-right:after{
+  content:"";
+  position:absolute;
+  border:1px solid #222;
+  border-radius:50%;
+}
+
+.hero-right:before{
+  inset:25px;
+}
+
+.hero-right:after{
+  inset:55px;
+}
+
+.hero-s{
+  font-size:100px;
+  font-weight:900;
+  z-index:2;
+}
+
+/* SEARCH */
+
+.search-box{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.search-box input{
+  width:100%;
+  background:#0e0e0e;
+  color:#fff;
+  border:1px solid #252525;
+  padding:15px;
+  border-radius:12px;
   outline:none;
 }
 
-.search:focus{border-color:#666}
+/* CATEGORIES */
 
 .categories{
   display:flex;
-  gap:9px;
+  gap:8px;
   overflow-x:auto;
-  padding:15px 0 8px;
+  padding-bottom:15px;
+  margin-bottom:15px;
 }
 
-.cat{
+.categories button{
   white-space:nowrap;
-  background:#121212;
-  color:#aaa;
-  border:1px solid #292929;
+  background:#0d0d0d;
+  color:#888;
+  border:1px solid #252525;
   padding:10px 15px;
   border-radius:30px;
 }
 
-.cat.active,
-.cat:hover{
-  background:white;
-  color:black;
+.categories button.active{
+  background:#fff;
+  color:#000;
+  border-color:#fff;
 }
+
+/* PRODUCTS */
 
 .section-title{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin:30px 0 18px;
+  margin:25px 0 17px;
+}
+
+.section-title h2{
+  font-size:24px;
+}
+
+.section-title span{
+  color:#666;
+  font-size:13px;
 }
 
 .products{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:17px;
+  gap:15px;
 }
 
-.card{
-  background:#101010;
-  border:1px solid #242424;
-  border-radius:18px;
+.product-card{
+  background:#0b0b0b;
+  border:1px solid #202020;
+  border-radius:15px;
   overflow:hidden;
   transition:.2s;
 }
 
-.card:hover{
-  transform:translateY(-4px);
-  border-color:#444;
+.product-card:hover{
+  transform:translateY(-3px);
+  border-color:#333;
 }
 
-.product-img{
-  width:100%;
+.product-image{
   height:230px;
-  object-fit:cover;
-  background:#181818;
+  background:#111;
+  position:relative;
+  overflow:hidden;
 }
 
-.card-body{padding:15px}
+.product-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
 
-.seller{
-  color:#777;
-  font-size:12px;
+.product-info{
+  padding:15px;
+}
+
+.product-category{
+  color:#666;
+  font-size:11px;
+  text-transform:uppercase;
   margin-bottom:7px;
 }
 
 .product-name{
-  font-size:17px;
-  font-weight:700;
-  margin-bottom:10px;
+  font-weight:800;
+  font-size:16px;
+  margin-bottom:7px;
 }
 
-.card-bottom{
+.product-seller{
+  color:#777;
+  font-size:12px;
+  margin-bottom:13px;
+}
+
+.product-bottom{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  gap:8px;
 }
 
 .price{
-  font-size:20px;
+  font-size:18px;
   font-weight:900;
 }
 
 .add{
-  background:white;
-  color:black;
+  background:#fff;
+  color:#000;
   border:0;
+  border-radius:8px;
   padding:9px 12px;
-  border-radius:10px;
-  font-weight:700;
+  font-weight:800;
 }
 
-.store-box{
-  margin-top:40px;
-  padding:25px;
-  background:#101010;
-  border:1px solid #292929;
-  border-radius:22px;
+.empty{
+  grid-column:1/-1;
+  text-align:center;
+  padding:60px 20px;
+  border:1px solid #202020;
+  border-radius:15px;
+  color:#666;
 }
 
-.store-box p{
-  color:#888;
-  line-height:1.6;
-  margin-top:8px;
-}
+/* CART */
 
-.modal-bg{
+.cart-overlay{
+  display:none;
   position:fixed;
   inset:0;
-  z-index:500;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-  background:rgba(0,0,0,.8);
+  background:rgba(0,0,0,.7);
+  z-index:90;
 }
 
-.modal{
-  width:100%;
-  max-width:560px;
-  max-height:90vh;
-  overflow:auto;
-  background:#111;
-  border:1px solid #333;
-  border-radius:22px;
-  padding:25px;
-}
-
-.modal h2{margin-bottom:20px}
-
-.close{
-  float:right;
-  width:35px;
-  height:35px;
-  border:0;
-  border-radius:50%;
-  background:#222;
-  color:white;
-  font-size:20px;
-}
-
-.form-group{margin-bottom:14px}
-
-.form-group label{
+.cart-overlay.show{
   display:block;
-  margin-bottom:7px;
-  color:#aaa;
-  font-size:14px;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea{
-  width:100%;
-  padding:13px;
-  background:#080808;
-  border:1px solid #303030;
-  border-radius:11px;
-  color:white;
-  outline:none;
-}
-
-.form-group textarea{
-  min-height:100px;
-  resize:vertical;
-}
-
-.full-btn{
-  width:100%;
-  padding:14px;
-  border:0;
-  border-radius:12px;
-  background:white;
-  color:black;
-  font-weight:800;
 }
 
 .cart{
   position:fixed;
   right:0;
   top:0;
-  z-index:600;
-  width:min(420px,100%);
   height:100vh;
-  padding:22px;
-  overflow:auto;
-  background:#0d0d0d;
+  width:min(430px,100%);
+  background:#0a0a0a;
   border-left:1px solid #292929;
+  z-index:100;
   transform:translateX(100%);
-  transition:.3s;
+  transition:.25s;
+  display:flex;
+  flex-direction:column;
 }
 
-.cart.open{transform:translateX(0)}
+.cart.show{
+  transform:translateX(0);
+}
 
 .cart-head{
+  padding:20px;
+  border-bottom:1px solid #202020;
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  margin-bottom:20px;
+  align-items:center;
 }
 
-.cart-head .close{float:none}
+.cart-head h2{
+  font-size:20px;
+}
+
+.close{
+  background:#151515;
+  color:#fff;
+  border:1px solid #292929;
+  width:38px;
+  height:38px;
+  border-radius:9px;
+}
+
+.cart-items{
+  flex:1;
+  overflow:auto;
+  padding:15px;
+}
 
 .cart-item{
   display:flex;
-  align-items:center;
-  gap:12px;
-  padding:13px 0;
-  border-bottom:1px solid #252525;
+  gap:10px;
+  padding:12px 0;
+  border-bottom:1px solid #1d1d1d;
 }
 
 .cart-item img{
   width:65px;
   height:65px;
+  border-radius:9px;
   object-fit:cover;
-  border-radius:10px;
+  background:#151515;
 }
 
-.cart-info{flex:1}
+.cart-item-info{
+  flex:1;
+}
 
-.cart-info strong{
-  display:block;
+.cart-item-name{
+  font-weight:700;
   margin-bottom:6px;
 }
 
+.cart-item-price{
+  color:#aaa;
+  font-size:13px;
+}
+
 .qty{
-  color:#999;
-  font-size:14px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-top:8px;
+}
+
+.qty button{
+  width:25px;
+  height:25px;
+  background:#151515;
+  color:#fff;
+  border:1px solid #292929;
+  border-radius:6px;
 }
 
 .remove{
-  border:0;
+  color:#ff7777;
   background:none;
-  color:#777;
-  font-size:18px;
+  border:0;
+  font-size:12px;
+  margin-top:7px;
 }
 
-.cart-total{
-  margin-top:25px;
-  padding-top:20px;
-  border-top:1px solid #333;
+.cart-bottom{
+  padding:20px;
+  border-top:1px solid #202020;
+}
+
+.total{
   display:flex;
   justify-content:space-between;
-  font-size:21px;
+  margin-bottom:15px;
+  font-size:19px;
   font-weight:900;
 }
 
-.empty{
-  text-align:center;
-  color:#777;
-  padding:50px 10px;
+.checkout{
+  width:100%;
+  padding:15px;
+  background:#fff;
+  color:#000;
+  border:0;
+  border-radius:10px;
+  font-weight:900;
 }
+
+/* MODAL */
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  z-index:120;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-box{
+  width:100%;
+  max-width:500px;
+  max-height:90vh;
+  overflow:auto;
+  background:#0c0c0c;
+  border:1px solid #292929;
+  border-radius:18px;
+  padding:25px;
+}
+
+.modal-box h2{
+  margin-bottom:7px;
+}
+
+.modal-sub{
+  color:#777;
+  font-size:13px;
+  margin-bottom:20px;
+}
+
+.form-group{
+  margin-bottom:14px;
+}
+
+.form-group label{
+  display:block;
+  color:#888;
+  font-size:12px;
+  margin-bottom:7px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+  width:100%;
+  background:#151515;
+  color:#fff;
+  border:1px solid #292929;
+  border-radius:9px;
+  padding:12px;
+  outline:none;
+}
+
+.form-group textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+.modal-actions{
+  display:flex;
+  gap:9px;
+  margin-top:18px;
+}
+
+.modal-actions button{
+  flex:1;
+}
+
+/* SELL CTA */
+
+.sell-box{
+  margin-top:50px;
+  padding:35px;
+  border:1px solid #222;
+  border-radius:18px;
+  background:linear-gradient(135deg,#0d0d0d,#080808);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.sell-box h2{
+  margin-bottom:8px;
+}
+
+.sell-box p{
+  color:#777;
+}
+
+/* FOOTER */
 
 footer{
-  padding:35px 20px;
+  border-top:1px solid #202020;
+  padding:30px 20px;
   text-align:center;
-  color:#666;
-  border-top:1px solid #222;
+  color:#555;
+  font-size:12px;
 }
 
-@media(max-width:950px){
-  .products{grid-template-columns:repeat(3,1fr)}
+/* RESPONSIVE */
+
+@media(max-width:1000px){
+  .products{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .hero-right{
+    width:220px;
+    height:220px;
+  }
 }
 
 @media(max-width:700px){
+  header{
+    padding:0 14px;
+  }
 
-  .nav{height:65px}
+  .header-right .seller-btn{
+    display:none;
+  }
 
-  .logo{font-size:22px}
-
-  .nav-btn{
-    padding:9px 10px;
-    font-size:13px;
+  .container{
+    padding:20px 12px 50px;
   }
 
   .hero{
-    margin:15px;
-    padding:38px 20px;
+    min-height:auto;
+    padding:45px 0;
   }
 
-  .hero h1{font-size:48px}
+  .hero-right{
+    display:none;
+  }
+
+  .hero h1{
+    letter-spacing:-2px;
+  }
 
   .products{
     grid-template-columns:repeat(2,1fr);
-    gap:10px;
+    gap:9px;
   }
 
-  .product-img{height:185px}
+  .product-image{
+    height:190px;
+  }
 
-  .card-body{padding:12px}
+  .product-info{
+    padding:11px;
+  }
 
-}
+  .product-name{
+    font-size:14px;
+  }
 
-@media(max-width:420px){
-
-  .product-img{height:155px}
-
-  .product-name{font-size:14px}
-
-  .price{font-size:17px}
+  .price{
+    font-size:15px;
+  }
 
   .add{
-    padding:7px 8px;
-    font-size:12px;
+    padding:8px;
+    font-size:11px;
+  }
+
+  .sell-box{
+    flex-direction:column;
+    align-items:flex-start;
+    padding:25px;
+  }
+}
+
+@media(max-width:400px){
+  .products{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .product-image{
+    height:160px;
+  }
+
+  .logo{
+    font-size:21px;
   }
 }
 </style>
@@ -437,125 +650,245 @@ footer{
 <body>
 
 <header>
-  <div class="nav">
 
-    <div class="logo">
-      SABI<span>.</span>
-    </div>
-
-    <div class="nav-right">
-
-      <button class="nav-btn" onclick="openSeller()">
-        ＋ Shit me SABI
-      </button>
-
-      <button class="nav-btn" onclick="openCart()">
-        🛒 <span id="cartCount">0</span>
-      </button>
-
-    </div>
+  <div class="logo">
+    SABI<span>•</span>
   </div>
+
+  <div class="header-right">
+
+    <button
+      class="btn seller-btn"
+      onclick="openSellerModal()"
+    >
+      Shit me SABI
+    </button>
+
+    <button
+      class="btn"
+      onclick="window.location.href='login.html'"
+    >
+      Hyr
+    </button>
+
+    <button
+      class="btn white"
+      onclick="openCart()"
+    >
+      🛒 <span id="cartCount">0</span>
+    </button>
+
+  </div>
+
 </header>
-
-
-<section class="hero">
-
-  <h1>
-    Shit më shumë.<br>
-    <span>Me SABI.</span>
-  </h1>
-
-  <p>
-    Marketplace ku njerëzit dhe bizneset mund të hapin
-    dyqanin e tyre, publikojnë produktet dhe i shesin online.
-  </p>
-
-  <div class="hero-actions">
-
-    <button class="primary" onclick="scrollToProducts()">
-      Shiko produktet
-    </button>
-
-    <button class="secondary" onclick="openSeller()">
-      Hap dyqanin tim
-    </button>
-
-  </div>
-
-</section>
 
 
 <div class="container">
 
-  <input
-    id="search"
-    class="search"
-    placeholder="🔎 Kërko produkt ose dyqan..."
-    oninput="renderProducts()"
-  >
+  <!-- HERO -->
 
+  <section class="hero">
+
+    <div class="hero-left">
+
+      <div class="hero-label">
+        SABI MARKETPLACE
+      </div>
+
+      <h1>
+        Shit më shumë.<br>
+        <span>Me SABI.</span>
+      </h1>
+
+      <p>
+        Një marketplace ku njerëzit dhe bizneset
+        mund të publikojnë produktet e tyre dhe
+        të gjejnë klientë të rinj.
+      </p>
+
+      <div class="hero-buttons">
+
+        <button
+          class="btn white"
+          onclick="scrollToProducts()"
+        >
+          Shiko produktet
+        </button>
+
+        <button
+          class="btn"
+          onclick="openSellerModal()"
+        >
+          Shit me SABI
+        </button>
+
+      </div>
+
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-s">S</div>
+    </div>
+
+  </section>
+
+
+  <!-- SEARCH -->
+
+  <div class="search-box">
+
+    <input
+      id="searchInput"
+      type="text"
+      placeholder="Kërko produkt, dyqan ose kategori..."
+      oninput="renderProducts()"
+    >
+
+  </div>
+
+
+  <!-- CATEGORIES -->
 
   <div class="categories">
 
-    <button class="cat active"
-      onclick="setCategory('Të gjitha',this)">
+    <button
+      class="active"
+      onclick="setCategory('Të gjitha',this)"
+    >
       Të gjitha
     </button>
 
-    <button class="cat"
-      onclick="setCategory('Fashion',this)">
+    <button
+      onclick="setCategory('Fashion',this)"
+    >
       Fashion
     </button>
 
-    <button class="cat"
-      onclick="setCategory('Elektronikë',this)">
+    <button
+      onclick="setCategory('Elektronikë',this)"
+    >
       Elektronikë
     </button>
 
-    <button class="cat"
-      onclick="setCategory('Këpucë',this)">
+    <button
+      onclick="setCategory('Këpucë',this)"
+    >
       Këpucë
     </button>
 
-    <button class="cat"
-      onclick="setCategory('Aksesorë',this)">
+    <button
+      onclick="setCategory('Aksesorë',this)"
+    >
       Aksesorë
     </button>
 
-    <button class="cat"
-      onclick="setCategory('Të tjera',this)">
+    <button
+      onclick="setCategory('Të tjera',this)"
+    >
       Të tjera
     </button>
 
   </div>
 
 
+  <!-- PRODUCTS -->
+
   <div class="section-title">
 
     <h2>Produktet</h2>
 
-    <span id="productCount" style="color:#666"></span>
+    <span id="productCount">
+      0 produkte
+    </span>
 
   </div>
 
+  <div
+    class="products"
+    id="products"
+  ></div>
 
-  <div id="products" class="products"></div>
 
+  <!-- SELL -->
 
-  <div class="store-box">
+  <section class="sell-box">
 
-    <h2>🏪 Shit me SABI</h2>
+    <div>
 
-    <p>
-      Ke një produkt ose biznes?
-      Krijo dyqanin tënd dhe publiko produktet në SABI.
-    </p>
+      <h2>Ke diçka për të shitur?</h2>
+
+      <p>
+        Publiko produktin tënd dhe fillo të marrësh
+        porosi përmes SABI.
+      </p>
+
+    </div>
 
     <button
-      class="primary"
-      style="margin-top:18px"
-      onclick="openSeller()">
-      Krijo dyqanin
+      class="btn white"
+      onclick="openSellerModal()"
+    >
+      Fillo të shesësh
+    </button>
+
+  </section>
+
+</div>
+
+
+<footer>
+  © 2026 SABI Marketplace • Ti sjell produktin. SABI të ndihmon ta shesësh.
+</footer>
+
+
+<!-- CART -->
+
+<div
+  class="cart-overlay"
+  id="cartOverlay"
+  onclick="closeCart()"
+></div>
+
+<div
+  class="cart"
+  id="cart"
+>
+
+  <div class="cart-head">
+
+    <h2>Shporta</h2>
+
+    <button
+      class="close"
+      onclick="closeCart()"
+    >
+      ✕
+    </button>
+
+  </div>
+
+  <div
+    class="cart-items"
+    id="cartItems"
+  ></div>
+
+  <div class="cart-bottom">
+
+    <div class="total">
+
+      <span>Totali</span>
+
+      <span>
+        <span id="cartTotal">0.00</span> €
+      </span>
+
+    </div>
+
+    <button
+      class="checkout"
+      onclick="checkout()"
+    >
+      POROSIT TANI
     </button>
 
   </div>
@@ -563,57 +896,67 @@ footer{
 </div>
 
 
-<footer>
-
-  <strong>SABI Marketplace</strong>
-
-  <br><br>
-
-  Ti sjell produktin. SABI të ndihmon ta shesësh.
-
-</footer>
-
-
 <!-- SELLER MODAL -->
 
-<div id="sellerModal" class="modal-bg">
+<div
+  class="modal"
+  id="sellerModal"
+>
 
-  <div class="modal">
+  <div class="modal-box">
 
-    <button class="close" onclick="closeSeller()">×</button>
+    <h2>Shit me SABI</h2>
 
-    <h2>🏪 Hap dyqanin në SABI</h2>
-
+    <div class="modal-sub">
+      Shto produktin tënd në marketplace.
+    </div>
 
     <div class="form-group">
       <label>Emri i dyqanit</label>
-      <input id="shopName" placeholder="p.sh. SABI Style">
-    </div>
 
+      <input
+        id="sellerShop"
+        placeholder="p.sh. SABI Fashion"
+      >
+    </div>
 
     <div class="form-group">
       <label>Emri yt</label>
-      <input id="sellerName" placeholder="Emri">
-    </div>
 
+      <input
+        id="sellerName"
+        placeholder="Emri i shitësit"
+      >
+    </div>
 
     <div class="form-group">
-      <label>Telefon</label>
-      <input id="sellerPhone" placeholder="06xxxxxxxx">
-    </div>
+      <label>Telefoni</label>
 
+      <input
+        id="sellerPhone"
+        placeholder="06XXXXXXXX"
+      >
+    </div>
 
     <div class="form-group">
       <label>Emri i produktit</label>
-      <input id="productName" placeholder="p.sh. T-Shirt Premium">
-    </div>
 
+      <input
+        id="productName"
+        placeholder="p.sh. Nike Air Max"
+      >
+    </div>
 
     <div class="form-group">
       <label>Çmimi (€)</label>
-      <input id="productPrice" type="number" placeholder="25">
-    </div>
 
+      <input
+        id="productPrice"
+        type="number"
+        step="0.01"
+        placeholder="50"
+      >
+    </div>
 
     <div class="form-group">
       <label>Kategoria</label>
@@ -630,182 +973,148 @@ footer{
 
     </div>
 
-
     <div class="form-group">
-      <label>Linku i fotos</label>
-      <input id="productImage" placeholder="https://...">
-    </div>
+      <label>Foto URL</label>
 
+      <input
+        id="productImage"
+        placeholder="https://..."
+      >
+    </div>
 
     <div class="form-group">
       <label>Përshkrimi</label>
 
       <textarea
         id="productDescription"
-        placeholder="Përshkruaj produktin...">
-      </textarea>
+        placeholder="Përshkrimi i produktit..."
+      ></textarea>
 
     </div>
 
+    <div class="modal-actions">
 
-    <button
-      class="full-btn"
-      onclick="addSellerProduct()">
-      PUBLIKO PRODUKTIN
-    </button>
+      <button
+        class="btn"
+        onclick="closeSellerModal()"
+      >
+        Anulo
+      </button>
 
-  </div>
+      <button
+        class="btn white"
+        onclick="addSellerProduct()"
+      >
+        Publiko produktin
+      </button>
 
-</div>
-
-
-<!-- CART -->
-
-<div id="cart" class="cart">
-
-  <div class="cart-head">
-
-    <h2>🛒 Shporta</h2>
-
-    <button class="close" onclick="closeCart()">×</button>
+    </div>
 
   </div>
-
-
-  <div id="cartItems"></div>
-
-
-  <div class="cart-total">
-
-    <span>Total</span>
-
-    <span id="cartTotal">0.00€</span>
-
-  </div>
-
-
-  <button
-    class="full-btn"
-    style="margin-top:20px"
-    onclick="checkout()">
-
-    POROSIT
-
-  </button>
 
 </div>
 
 
 <script>
 
-const demoProducts = [
+let products = JSON.parse(
+  localStorage.getItem("sabiProducts") || "[]"
+);
 
-  {
-    id:1,
-    name:"Oversize T-Shirt Black",
-    price:25,
-    category:"Fashion",
-    seller:"Urban Albania",
-    image:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80"
-  },
-
-  {
-    id:2,
-    name:"Nike Style Sneakers",
-    price:55,
-    category:"Këpucë",
-    seller:"Street Store",
-    image:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80"
-  },
-
-  {
-    id:3,
-    name:"Smart Watch Pro",
-    price:45,
-    category:"Elektronikë",
-    seller:"Tech Zone",
-    image:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80"
-  },
-
-  {
-    id:4,
-    name:"Premium Hoodie",
-    price:40,
-    category:"Fashion",
-    seller:"Black Label",
-    image:"https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=800&q=80"
-  },
-
-  {
-    id:5,
-    name:"Wireless Headphones",
-    price:35,
-    category:"Elektronikë",
-    seller:"Tech Zone",
-    image:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80"
-  },
-
-  {
-    id:6,
-    name:"Minimal Watch",
-    price:30,
-    category:"Aksesorë",
-    seller:"Urban Albania",
-    image:"https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=800&q=80"
-  },
-
-  {
-    id:7,
-    name:"Classic White T-Shirt",
-    price:20,
-    category:"Fashion",
-    seller:"SABI Style",
-    image:"https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=80"
-  },
-
-  {
-    id:8,
-    name:"Bluetooth Speaker",
-    price:29,
-    category:"Elektronikë",
-    seller:"Tech Zone",
-    image:"https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=800&q=80"
-  }
-
-];
-
-
-let customProducts =
-  JSON.parse(localStorage.getItem("sabiProducts") || "[]");
-
-
-let cart =
-  JSON.parse(localStorage.getItem("sabiCart") || "[]");
-
-
-let products = [
-  ...demoProducts,
-  ...customProducts
-];
-
+let cart = JSON.parse(
+  localStorage.getItem("sabiCart") || "[]"
+);
 
 let currentCategory = "Të gjitha";
 
 
-function saveData(){
+/* DEMO PRODUCTS */
+
+if(products.length === 0){
+
+  products = [
+
+    {
+      id:"demo1",
+      name:"Nike Tech Fleece",
+      price:75,
+      category:"Fashion",
+      seller:"SABI Store",
+      sellerName:"SABI Store",
+      sellerPhone:"0690000000",
+      image:"https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=900&q=80",
+      description:"Nike Tech Fleece."
+    },
+
+    {
+      id:"demo2",
+      name:"AirPods Pro",
+      price:120,
+      category:"Elektronikë",
+      seller:"Tech Albania",
+      sellerName:"Tech Albania",
+      sellerPhone:"0680000000",
+      image:"https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=900&q=80",
+      description:"AirPods Pro."
+    },
+
+    {
+      id:"demo3",
+      name:"Air Max",
+      price:90,
+      category:"Këpucë",
+      seller:"Urban Shop",
+      sellerName:"Urban Shop",
+      sellerPhone:"0670000000",
+      image:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80",
+      description:"Nike Air Max."
+    },
+
+    {
+      id:"demo4",
+      name:"Casio Watch",
+      price:55,
+      category:"Aksesorë",
+      seller:"Style Albania",
+      sellerName:"Style Albania",
+      sellerPhone:"0660000000",
+      image:"https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=900&q=80",
+      description:"Casio watch."
+    }
+
+  ];
+
+  saveProducts();
+}
+
+
+/* SAVE */
+
+function saveProducts(){
 
   localStorage.setItem(
     "sabiProducts",
-    JSON.stringify(customProducts)
-  );
-
-  localStorage.setItem(
-    "sabiCart",
-    JSON.stringify(cart)
+    JSON.stringify(products)
   );
 
 }
 
+
+/* ESCAPE */
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* RENDER PRODUCTS */
 
 function renderProducts(){
 
@@ -813,45 +1122,43 @@ function renderProducts(){
     document.getElementById("products");
 
   const search =
-    document
-      .getElementById("search")
+    document.getElementById("searchInput")
       .value
       .toLowerCase()
       .trim();
 
-
   const filtered =
     products.filter(product => {
 
-      const categoryOK =
+      const categoryMatch =
         currentCategory === "Të gjitha" ||
         product.category === currentCategory;
 
+      const text =
+        `${product.name || ""} ${product.seller || ""} ${product.category || ""}`
+          .toLowerCase();
 
-      const searchOK =
-        product.name
-          .toLowerCase()
-          .includes(search)
-        ||
-        product.seller
-          .toLowerCase()
-          .includes(search);
+      const searchMatch =
+        text.includes(search);
 
-
-      return categoryOK && searchOK;
+      return categoryMatch && searchMatch;
 
     });
 
 
   document.getElementById("productCount").textContent =
-    filtered.length + " produkte";
+    filtered.length +
+    (filtered.length === 1 ? " produkt" : " produkte");
 
 
   if(filtered.length === 0){
 
     box.innerHTML = `
-      <div class="empty" style="grid-column:1/-1">
-        Nuk u gjet asnjë produkt.
+      <div class="empty">
+        <h3>Nuk u gjet asnjë produkt.</h3>
+        <p style="margin-top:8px;">
+          Provo një kërkim tjetër.
+        </p>
       </div>
     `;
 
@@ -863,34 +1170,48 @@ function renderProducts(){
   box.innerHTML =
     filtered.map(product => `
 
-      <div class="card">
+      <div class="product-card">
 
-        <img
-          class="product-img"
-          src="${product.image}"
-          onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80'"
-        >
+        <div class="product-image">
 
-        <div class="card-body">
+          <img
+            src="${escapeHTML(product.image || "")}"
+            alt="${escapeHTML(product.name || "")}"
+            onerror="this.style.display='none'"
+          >
 
-          <div class="seller">
-            🏪 ${escapeHTML(product.seller)}
+        </div>
+
+        <div class="product-info">
+
+          <div class="product-category">
+            ${escapeHTML(product.category || "Të tjera")}
           </div>
 
           <div class="product-name">
-            ${escapeHTML(product.name)}
+            ${escapeHTML(product.name || "Produkt")}
           </div>
 
-          <div class="card-bottom">
+          <div class="product-seller">
+            Shitet nga:
+            ${escapeHTML(
+              product.seller ||
+              product.sellerName ||
+              "SABI"
+            )}
+          </div>
+
+          <div class="product-bottom">
 
             <div class="price">
-              ${Number(product.price).toFixed(2)}€
+              ${Number(product.price || 0).toFixed(2)}€
             </div>
 
             <button
               class="add"
-              onclick="addToCart(${product.id})">
-              + Shto
+              onclick="addToCart('${product.id}')"
+            >
+              + Shportë
             </button>
 
           </div>
@@ -904,26 +1225,16 @@ function renderProducts(){
 }
 
 
-function escapeHTML(text){
-
-  return String(text ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-
-}
-
+/* CATEGORY */
 
 function setCategory(category,button){
 
   currentCategory = category;
 
   document
-    .querySelectorAll(".cat")
-    .forEach(item =>
-      item.classList.remove("active")
+    .querySelectorAll(".categories button")
+    .forEach(btn =>
+      btn.classList.remove("active")
     );
 
   button.classList.add("active");
@@ -933,22 +1244,28 @@ function setCategory(category,button){
 }
 
 
+/* ADD CART */
+
 function addToCart(id){
 
   const product =
-    products.find(item => item.id === id);
+    products.find(
+      p => String(p.id) === String(id)
+    );
 
-
-  if(!product)return;
+  if(!product) return;
 
 
   const existing =
-    cart.find(item => item.id === id);
+    cart.find(
+      item => String(item.id) === String(id)
+    );
 
 
   if(existing){
 
-    existing.qty += 1;
+    existing.qty =
+      Number(existing.qty || 1) + 1;
 
   }else{
 
@@ -960,7 +1277,8 @@ function addToCart(id){
   }
 
 
-  saveData();
+  saveCart();
+
   updateCart();
 
   openCart();
@@ -968,12 +1286,26 @@ function addToCart(id){
 }
 
 
+/* SAVE CART */
+
+function saveCart(){
+
+  localStorage.setItem(
+    "sabiCart",
+    JSON.stringify(cart)
+  );
+
+}
+
+
+/* UPDATE CART */
+
 function updateCart(){
 
   const count =
     cart.reduce(
-      (total,item) =>
-        total + item.qty,
+      (sum,item) =>
+        sum + Number(item.qty || 1),
       0
     );
 
@@ -994,142 +1326,354 @@ function updateCart(){
       </div>
     `;
 
-  }else{
+    document.getElementById("cartTotal")
+      .textContent = "0.00";
 
-    box.innerHTML =
-      cart.map((item,index) => `
+    return;
+
+  }
+
+
+  let total = 0;
+
+
+  box.innerHTML =
+    cart.map(item => {
+
+      const qty =
+        Number(item.qty || 1);
+
+      const price =
+        Number(item.price || 0);
+
+      total += price * qty;
+
+
+      return `
 
         <div class="cart-item">
 
           <img
-            src="${item.image}"
-            onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=300&q=80'"
+            src="${escapeHTML(item.image || "")}"
+            onerror="this.style.visibility='hidden'"
           >
 
-          <div class="cart-info">
+          <div class="cart-item-info">
 
-            <strong>
+            <div class="cart-item-name">
               ${escapeHTML(item.name)}
-            </strong>
+            </div>
+
+            <div class="cart-item-price">
+              ${price.toFixed(2)}€ × ${qty}
+            </div>
 
             <div class="qty">
-              ${item.qty} ×
-              ${Number(item.price).toFixed(2)}€
+
+              <button
+                onclick="changeQty('${item.id}',-1)"
+              >
+                −
+              </button>
+
+              <span>${qty}</span>
+
+              <button
+                onclick="changeQty('${item.id}',1)"
+              >
+                +
+              </button>
+
             </div>
+
+            <button
+              class="remove"
+              onclick="removeFromCart('${item.id}')"
+            >
+              Hiq
+            </button>
 
           </div>
 
-          <button
-            class="remove"
-            onclick="removeFromCart(${index})">
-            ✕
-          </button>
-
         </div>
 
-      `).join("");
+      `;
+
+    }).join("");
+
+
+  document.getElementById("cartTotal")
+    .textContent = total.toFixed(2);
+
+}
+
+
+/* CHANGE QTY */
+
+function changeQty(id,amount){
+
+  const item =
+    cart.find(
+      p => String(p.id) === String(id)
+    );
+
+  if(!item) return;
+
+
+  item.qty =
+    Number(item.qty || 1) + amount;
+
+
+  if(item.qty <= 0){
+
+    cart =
+      cart.filter(
+        p => String(p.id) !== String(id)
+      );
 
   }
+
+
+  saveCart();
+
+  updateCart();
+
+}
+
+
+/* REMOVE */
+
+function removeFromCart(id){
+
+  cart =
+    cart.filter(
+      item => String(item.id) !== String(id)
+    );
+
+  saveCart();
+
+  updateCart();
+
+}
+
+
+/* OPEN CART */
+
+function openCart(){
+
+  document
+    .getElementById("cart")
+    .classList.add("show");
+
+  document
+    .getElementById("cartOverlay")
+    .classList.add("show");
+
+}
+
+
+/* CLOSE CART */
+
+function closeCart(){
+
+  document
+    .getElementById("cart")
+    .classList.remove("show");
+
+  document
+    .getElementById("cartOverlay")
+    .classList.remove("show");
+
+}
+
+
+/* CHECKOUT */
+
+function checkout(){
+
+  if(!cart.length){
+
+    alert("Shporta është bosh.");
+
+    return;
+
+  }
+
+
+  const customer =
+    localStorage.getItem("sabiUserContact") ||
+    "Klient";
+
+
+  const orderId =
+    "SABI-" +
+    Date.now().toString().slice(-6);
 
 
   const total =
     cart.reduce(
       (sum,item) =>
         sum +
-        (Number(item.price) * item.qty),
+        Number(item.price || 0) *
+        Number(item.qty || 1),
       0
     );
 
 
-  document.getElementById("cartTotal")
-    .textContent =
-      total.toFixed(2) + "€";
+  const order = {
 
-}
+    id:orderId,
+
+    customer:customer,
+
+    date:new Date().toLocaleString("sq-AL"),
+
+    items:cart.map(item => ({
+
+      id:item.id,
+
+      name:item.name,
+
+      price:Number(item.price || 0),
+
+      qty:Number(item.qty || 1),
+
+      seller:
+        item.seller ||
+        item.sellerName ||
+        "SABI"
+
+    })),
+
+    total:total,
+
+    status:"E re"
+
+  };
 
 
-function removeFromCart(index){
+  let orders =
+    JSON.parse(
+      localStorage.getItem("sabiOrders") || "[]"
+    );
 
-  cart.splice(index,1);
 
-  saveData();
+  orders.push(order);
+
+
+  localStorage.setItem(
+    "sabiOrders",
+    JSON.stringify(orders)
+  );
+
+
+  let message =
+    "PERSHENDETJE SABI 👋%0A%0A" +
+    "POROSI E RE%0A" +
+    "ID: " +
+    orderId +
+    "%0A%0A";
+
+
+  cart.forEach(item => {
+
+    message +=
+      "• " +
+      item.name +
+      " x" +
+      Number(item.qty || 1) +
+      " - " +
+      Number(item.price || 0).toFixed(2) +
+      "€%0A";
+
+  });
+
+
+  message +=
+    "%0ATOTALI: " +
+    total.toFixed(2) +
+    "€%0A" +
+    "KLIENTI: " +
+    encodeURIComponent(customer);
+
+
+  cart = [];
+
+
+  saveCart();
+
   updateCart();
 
-}
+  closeCart();
 
 
-function openCart(){
-
-  document
-    .getElementById("cart")
-    .classList.add("open");
-
-}
+  alert(
+    "Porosia u krijua me sukses!\n\nID: " +
+    orderId
+  );
 
 
-function closeCart(){
-
-  document
-    .getElementById("cart")
-    .classList.remove("open");
+  window.open(
+    "https://wa.me/?text=" + message,
+    "_blank"
+  );
 
 }
 
 
-function openSeller(){
+/* SELLER MODAL */
+
+function openSellerModal(){
 
   document
     .getElementById("sellerModal")
-    .style.display = "flex";
+    .classList.add("show");
 
 }
 
 
-function closeSeller(){
+function closeSellerModal(){
 
   document
     .getElementById("sellerModal")
-    .style.display = "none";
+    .classList.remove("show");
 
 }
 
+
+/* ADD SELLER PRODUCT */
 
 function addSellerProduct(){
 
   const shop =
-    document.getElementById("shopName")
+    document.getElementById("sellerShop")
       .value.trim();
-
 
   const seller =
     document.getElementById("sellerName")
       .value.trim();
 
-
   const phone =
     document.getElementById("sellerPhone")
       .value.trim();
-
 
   const name =
     document.getElementById("productName")
       .value.trim();
 
-
   const price =
     Number(
-      document.getElementById("productPrice").value
+      document.getElementById("productPrice")
+        .value
     );
 
-
   const category =
-    document.getElementById("productCategory").value;
-
+    document.getElementById("productCategory")
+      .value;
 
   const image =
     document.getElementById("productImage")
       .value.trim();
-
 
   const description =
     document.getElementById("productDescription")
@@ -1145,7 +1689,7 @@ function addSellerProduct(){
   ){
 
     alert(
-      "Plotëso emrin e dyqanit, emrin, telefonin, produktin dhe çmimin."
+      "Plotëso dyqanin, emrin, telefonin, produktin dhe çmimin."
     );
 
     return;
@@ -1153,9 +1697,15 @@ function addSellerProduct(){
   }
 
 
-  const newProduct = {
+  const product = {
 
-    id:Date.now(),
+    id:
+      "p_" +
+      Date.now() +
+      "_" +
+      Math.random()
+        .toString(36)
+        .slice(2,7),
 
     name:name,
 
@@ -1169,27 +1719,22 @@ function addSellerProduct(){
 
     sellerPhone:phone,
 
-    image:
-      image ||
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80",
+    image:image,
 
     description:description
 
   };
 
 
-  customProducts.push(newProduct);
+  products.unshift(product);
 
-  products.push(newProduct);
 
-  saveData();
+  saveProducts();
 
   renderProducts();
 
-  closeSeller();
 
-
-  document.getElementById("shopName").value="";
+  document.getElementById("sellerShop").value="";
   document.getElementById("sellerName").value="";
   document.getElementById("sellerPhone").value="";
   document.getElementById("productName").value="";
@@ -1198,82 +1743,52 @@ function addSellerProduct(){
   document.getElementById("productDescription").value="";
 
 
+  closeSellerModal();
+
+
   alert(
-    "✅ Produkti u publikua me sukses!"
+    "Produkti u publikua me sukses në SABI!"
   );
 
 }
 
 
-function checkout(){
-
-  if(cart.length === 0){
-
-    alert("Shporta është bosh.");
-
-    return;
-
-  }
-
-
-  const total =
-    cart.reduce(
-      (sum,item) =>
-        sum +
-        Number(item.price) * item.qty,
-      0
-    );
-
-
-  let message =
-    "Përshëndetje SABI! Dua të bëj këtë porosi:\n\n";
-
-
-  cart.forEach(item => {
-
-    message +=
-      "• " +
-      item.name +
-      " × " +
-      item.qty +
-      " = " +
-      (
-        Number(item.price) *
-        item.qty
-      ).toFixed(2) +
-      "€\n";
-
-  });
-
-
-  message +=
-    "\nTOTAL: " +
-    total.toFixed(2) +
-    "€";
-
-
-  const url =
-    "https://wa.me/?text=" +
-    encodeURIComponent(message);
-
-
-  window.open(url,"_blank");
-
-}
-
+/* SCROLL */
 
 function scrollToProducts(){
 
-  window.scrollTo({
-    top:500,
-    behavior:"smooth"
-  });
+  document
+    .getElementById("products")
+    .scrollIntoView({
+      behavior:"smooth"
+    });
 
 }
 
 
-renderProducts();
+/* MODAL OUTSIDE CLICK */
+
+document
+  .getElementById("sellerModal")
+  .addEventListener(
+    "click",
+    function(e){
+
+      if(e.target === this){
+
+        closeSellerModal();
+
+      }
+
+    }
+  );
+
+
+/* START */
+
 updateCart();
+
+renderProducts();
 
 </script>
 
