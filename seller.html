@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SABI • Seller Panel</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#080808;
+  color:#fff;
+}
+
+button,input,textarea,select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+header{
+  height:70px;
+  border-bottom:1px solid #252525;
+  background:#0a0a0a;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.nav{
+  max-width:1200px;
+  height:100%;
+  margin:auto;
+  padding:0 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.logo{
+  font-size:27px;
+  font-weight:900;
+  letter-spacing:4px;
+}
+
+.logo span{
+  color:#777;
+}
+
+.nav-right{
+  display:flex;
+  gap:9px;
+}
+
+.nav-btn{
+  background:#151515;
+  color:#fff;
+  border:1px solid #292929;
+  padding:10px 14px;
+  border-radius:11px;
+}
+
+.nav-btn:hover{
+  background:#222;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:25px 20px 60px;
+}
+
+.welcome{
+  border:1px solid #292929;
+  border-radius:23px;
+  padding:28px;
+  background:
+    radial-gradient(circle at 90% 20%,#292929 0,transparent 35%),
+    #111;
+}
+
+.welcome small{
+  color:#777;
+}
+
+.welcome h1{
+  font-size:36px;
+  margin-top:8px;
+}
+
+.welcome p{
+  color:#999;
+  margin-top:8px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:13px;
+  margin-top:20px;
+}
+
+.stat{
+  background:#111;
+  border:1px solid #292929;
+  border-radius:17px;
+  padding:20px;
+}
+
+.stat span{
+  color:#777;
+  font-size:13px;
+}
+
+.stat strong{
+  display:block;
+  margin-top:10px;
+  font-size:27px;
+}
+
+.section{
+  margin-top:30px;
+}
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.primary{
+  background:#fff;
+  color:#000;
+  border:0;
+  padding:12px 17px;
+  border-radius:11px;
+  font-weight:800;
+}
+
+.products{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+}
+
+.product{
+  background:#111;
+  border:1px solid #282828;
+  border-radius:18px;
+  overflow:hidden;
+}
+
+.product img{
+  width:100%;
+  height:190px;
+  object-fit:cover;
+  background:#181818;
+}
+
+.product-body{
+  padding:15px;
+}
+
+.product-body h3{
+  margin-bottom:7px;
+}
+
+.price{
+  font-size:20px;
+  font-weight:900;
+}
+
+.product-actions{
+  display:flex;
+  gap:8px;
+  margin-top:15px;
+}
+
+.small-btn{
+  flex:1;
+  border:1px solid #333;
+  background:#181818;
+  color:#fff;
+  padding:9px;
+  border-radius:9px;
+}
+
+.small-btn.delete{
+  color:#ff7777;
+}
+
+.orders{
+  background:#111;
+  border:1px solid #292929;
+  border-radius:18px;
+  overflow:hidden;
+}
+
+.order{
+  padding:18px;
+  border-bottom:1px solid #252525;
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+}
+
+.order:last-child{
+  border-bottom:0;
+}
+
+.order-left strong{
+  display:block;
+  margin-bottom:6px;
+}
+
+.order-left span{
+  color:#777;
+  font-size:13px;
+}
+
+.status{
+  background:#191919;
+  border:1px solid #333;
+  padding:7px 10px;
+  border-radius:9px;
+  color:#aaa;
+  height:max-content;
+}
+
+.empty{
+  padding:45px;
+  text-align:center;
+  color:#666;
+  background:#111;
+  border:1px solid #292929;
+  border-radius:18px;
+}
+
+.modal-bg{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:500;
+  background:rgba(0,0,0,.8);
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+
+.modal{
+  width:100%;
+  max-width:550px;
+  max-height:90vh;
+  overflow:auto;
+  background:#111;
+  border:1px solid #333;
+  border-radius:22px;
+  padding:24px;
+}
+
+.close{
+  float:right;
+  border:0;
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  background:#222;
+  color:#fff;
+  font-size:20px;
+}
+
+.modal h2{
+  margin-bottom:20px;
+}
+
+.form-group{
+  margin-bottom:14px;
+}
+
+.form-group label{
+  display:block;
+  color:#aaa;
+  font-size:13px;
+  margin-bottom:7px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select{
+  width:100%;
+  background:#080808;
+  color:#fff;
+  border:1px solid #303030;
+  padding:13px;
+  border-radius:11px;
+  outline:none;
+}
+
+.form-group textarea{
+  min-height:100px;
+  resize:vertical;
+}
+
+.full-btn{
+  width:100%;
+  background:#fff;
+  color:#000;
+  border:0;
+  padding:14px;
+  border-radius:11px;
+  font-weight:800;
+}
+
+footer{
+  border-top:1px solid #222;
+  padding:30px;
+  text-align:center;
+  color:#666;
+}
+
+@media(max-width:850px){
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .products{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+}
+
+@media(max-width:550px){
+
+  .welcome h1{
+    font-size:28px;
+  }
+
+  .products{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .product img{
+    height:150px;
+  }
+
+  .product-body{
+    padding:11px;
+  }
+
+  .product-body h3{
+    font-size:14px;
+  }
+
+  .price{
+    font-size:17px;
+  }
+
+  .small-btn{
+    font-size:11px;
+    padding:8px 5px;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="nav">
+
+    <div class="logo">
+      SABI<span>.</span>
+    </div>
+
+    <div class="nav-right">
+
+      <button
+        class="nav-btn"
+        onclick="goHome()">
+        🏠 Marketplace
+      </button>
+
+      <button
+        class="nav-btn"
+        onclick="logout()">
+        Dil
+      </button>
+
+    </div>
+
+  </div>
+
+</header>
+
+
+<div class="container">
+
+  <div class="welcome">
+
+    <small>PANELI I SHITËSIT</small>
+
+    <h1 id="shopTitle">
+      Dyqani im
+    </h1>
+
+    <p id="sellerText">
+      Menaxho produktet dhe shitjet e tua në SABI.
+    </p>
+
+  </div>
+
+
+  <div class="stats">
+
+    <div class="stat">
+      <span>Produkte</span>
+      <strong id="statProducts">0</strong>
+    </div>
+
+    <div class="stat">
+      <span>Porosi</span>
+      <strong id="statOrders">0</strong>
+    </div>
+
+    <div class="stat">
+      <span>Shitje</span>
+      <strong id="statSales">0€</strong>
+    </div>
+
+    <div class="stat">
+      <span>Statusi</span>
+      <strong style="font-size:18px">
+        AKTIV
+      </strong>
+    </div>
+
+  </div>
+
+
+  <section class="section">
+
+    <div class="section-head">
+
+      <h2>Produktet e mia</h2>
+
+      <button
+        class="primary"
+        onclick="openProductModal()">
+        ＋ Shto produkt
+      </button>
+
+    </div>
+
+
+    <div
+      id="products"
+      class="products">
+    </div>
+
+  </section>
+
+
+  <section class="section">
+
+    <div class="section-head">
+      <h2>Porositë</h2>
+    </div>
+
+
+    <div
+      id="orders"
+      class="orders">
+    </div>
+
+  </section>
+
+</div>
+
+
+<footer>
+  SABI Marketplace • Seller Panel
+</footer>
+
+
+<!-- PRODUCT MODAL -->
+
+<div
+  id="productModal"
+  class="modal-bg">
+
+  <div class="modal">
+
+    <button
+      class="close"
+      onclick="closeProductModal()">
+      ×
+    </button>
+
+    <h2 id="modalTitle">
+      Shto produkt
+    </h2>
+
+
+    <div class="form-group">
+
+      <label>Emri i produktit</label>
+
+      <input
+        id="pName"
+        placeholder="p.sh. T-Shirt Premium">
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label>Çmimi (€)</label>
+
+      <input
+        id="pPrice"
+        type="number"
+        placeholder="25">
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label>Kategoria</label>
+
+      <select id="pCategory">
+
+        <option>Fashion</option>
+        <option>Elektronikë</option>
+        <option>Këpucë</option>
+        <option>Aksesorë</option>
+        <option>Të tjera</option>
+
+      </select>
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label>Foto e produktit</label>
+
+      <input
+        id="pImage"
+        placeholder="https://...">
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label>Përshkrimi</label>
+
+      <textarea
+        id="pDescription"
+        placeholder="Përshkrimi i produktit...">
+      </textarea>
+
+    </div>
+
+
+    <button
+      class="full-btn"
+      onclick="saveProduct()">
+
+      RUaj PRODUKTIN
+
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+let products =
+  JSON.parse(
+    localStorage.getItem("sabiProducts") || "[]"
+  );
+
+
+let editingId = null;
+
+
+let orders =
+  JSON.parse(
+    localStorage.getItem("sabiOrders") || "[]"
+  );
+
+
+function getShop(){
+
+  if(products.length > 0){
+
+    return products[0].seller || "Dyqani im";
+
+  }
+
+  return localStorage.getItem("sabiShopName")
+    || "Dyqani im";
+
+}
+
+
+function renderProducts(){
+
+  const box =
+    document.getElementById("products");
+
+
+  if(products.length === 0){
+
+    box.innerHTML = `
+      <div class="empty" style="grid-column:1/-1">
+
+        Nuk ke ende produkte.
+
+        <br><br>
+
+        Shtyp
+        <strong>＋ Shto produkt</strong>
+        për të filluar.
+
+      </div>
+    `;
+
+  }else{
+
+    box.innerHTML =
+      products.map(product => `
+
+        <div class="product">
+
+          <img
+            src="${product.image}"
+            onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80'"
+          >
+
+          <div class="product-body">
+
+            <h3>
+              ${escapeHTML(product.name)}
+            </h3>
+
+            <div class="price">
+              ${Number(product.price).toFixed(2)}€
+            </div>
+
+            <div
+              style="
+                color:#777;
+                font-size:12px;
+                margin-top:5px;
+              ">
+
+              ${escapeHTML(product.category)}
+
+            </div>
+
+
+            <div class="product-actions">
+
+              <button
+                class="small-btn"
+                onclick="editProduct(${product.id})">
+
+                ✏️ Ndrysho
+
+              </button>
+
+
+              <button
+                class="small-btn delete"
+                onclick="deleteProduct(${product.id})">
+
+                🗑️ Fshi
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      `).join("");
+
+  }
+
+
+  document.getElementById("statProducts")
+    .textContent = products.length;
+
+}
+
+
+function openProductModal(id=null){
+
+  editingId = id;
+
+  document.getElementById("productModal")
+    .style.display = "flex";
+
+
+  if(id === null){
+
+    document.getElementById("modalTitle")
+      .textContent = "Shto produkt";
+
+    clearForm();
+
+  }else{
+
+    const product =
+      products.find(p => p.id === id);
+
+    if(!product)return;
+
+
+    document.getElementById("modalTitle")
+      .textContent = "Ndrysho produktin";
+
+
+    document.getElementById("pName")
+      .value = product.name;
+
+    document.getElementById("pPrice")
+      .value = product.price;
+
+    document.getElementById("pCategory")
+      .value = product.category;
+
+    document.getElementById("pImage")
+      .value = product.image;
+
+    document.getElementById("pDescription")
+      .value = product.description || "";
+
+  }
+
+}
+
+
+function closeProductModal(){
+
+  document.getElementById("productModal")
+    .style.display = "none";
+
+}
+
+
+function clearForm(){
+
+  document.getElementById("pName").value="";
+  document.getElementById("pPrice").value="";
+  document.getElementById("pCategory").value="Fashion";
+  document.getElementById("pImage").value="";
+  document.getElementById("pDescription").value="";
+
+}
+
+
+function saveProduct(){
+
+  const name =
+    document.getElementById("pName")
+      .value.trim();
+
+
+  const price =
+    Number(
+      document.getElementById("pPrice").value
+    );
+
+
+  const category =
+    document.getElementById("pCategory").value;
+
+
+  const image =
+    document.getElementById("pImage")
+      .value.trim();
+
+
+  const description =
+    document.getElementById("pDescription")
+      .value.trim();
+
+
+  if(!name || !price){
+
+    alert(
+      "Vendos emrin dhe çmimin e produktit."
+    );
+
+    return;
+
+  }
+
+
+  if(editingId !== null){
+
+    const product =
+      products.find(p => p.id === editingId);
+
+
+    if(product){
+
+      product.name = name;
+      product.price = price;
+      product.category = category;
+      product.image =
+        image ||
+        "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80";
+      product.description = description;
+
+    }
+
+  }else{
+
+    const newProduct = {
+
+      id:Date.now(),
+
+      name:name,
+
+      price:price,
+
+      category:category,
+
+      seller:getShop(),
+
+      image:
+        image ||
+        "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80",
+
+      description:description
+
+    };
+
+
+    products.push(newProduct);
+
+  }
+
+
+  localStorage.setItem(
+    "sabiProducts",
+    JSON.stringify(products)
+  );
+
+
+  renderProducts();
+
+  closeProductModal();
+
+}
+
+
+function editProduct(id){
+
+  openProductModal(id);
+
+}
+
+
+function deleteProduct(id){
+
+  const product =
+    products.find(p => p.id === id);
+
+
+  if(!product)return;
+
+
+  const ok =
+    confirm(
+      'A dëshiron të fshish "' +
+      product.name +
+      '"?'
+    );
+
+
+  if(!ok)return;
+
+
+  products =
+    products.filter(
+      p => p.id !== id
+    );
+
+
+  localStorage.setItem(
+    "sabiProducts",
+    JSON.stringify(products)
+  );
+
+
+  renderProducts();
+
+}
+
+
+function renderOrders(){
+
+  const box =
+    document.getElementById("orders");
+
+
+  if(orders.length === 0){
+
+    box.innerHTML = `
+      <div class="empty">
+        Ende nuk ka porosi.
+      </div>
+    `;
+
+  }else{
+
+    box.innerHTML =
+      orders.map(order => `
+
+        <div class="order">
+
+          <div class="order-left">
+
+            <strong>
+              Porosia #${order.id}
+            </strong>
+
+            <span>
+              ${order.product || "Produkt"}
+              • ${order.total || "0"}€
+            </span>
+
+          </div>
+
+          <div class="status">
+            ${order.status || "Në pritje"}
+          </div>
+
+        </div>
+
+      `).join("");
+
+  }
+
+
+  document.getElementById("statOrders")
+    .textContent = orders.length;
+
+
+  const sales =
+    orders.reduce(
+      (sum,o) =>
+        sum + Number(o.total || 0),
+      0
+    );
+
+
+  document.getElementById("statSales")
+    .textContent =
+      sales.toFixed(2) + "€";
+
+}
+
+
+function escapeHTML(text){
+
+  return String(text ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+function goHome(){
+
+  window.location.href = "index.html";
+
+}
+
+
+function logout(){
+
+  alert("Demo: u çkyçe nga paneli.");
+
+  window.location.href =
+    "index.html";
+
+}
+
+
+document.getElementById("shopTitle")
+  .textContent = getShop();
+
+
+renderProducts();
+renderOrders();
+
+</script>
+
+</body>
+</html>
