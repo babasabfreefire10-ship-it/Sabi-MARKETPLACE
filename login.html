@@ -4,14 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SABI • Login</title>
-
 <style>
 *{
   box-sizing:border-box;
   margin:0;
   padding:0;
 }
-
 body{
   min-height:100vh;
   display:flex;
@@ -22,14 +20,12 @@ body{
   background:#070707;
   color:#fff;
 }
-
 .bg{
   position:fixed;
   inset:0;
   overflow:hidden;
   pointer-events:none;
 }
-
 .line{
   position:absolute;
   width:45%;
@@ -37,23 +33,19 @@ body{
   background:linear-gradient(90deg,transparent,#555,transparent);
   animation:move 5s linear infinite;
 }
-
 .line:nth-child(1){
   top:25%;
   left:-20%;
 }
-
 .line:nth-child(2){
   top:70%;
   right:-20%;
   animation-delay:2s;
 }
-
 @keyframes move{
   from{transform:translateX(0)}
   to{transform:translateX(150%)}
 }
-
 .box{
   position:relative;
   width:100%;
@@ -64,25 +56,21 @@ body{
   background:rgba(15,15,15,.94);
   box-shadow:0 25px 80px rgba(0,0,0,.6);
 }
-
 .logo{
   text-align:center;
   font-size:42px;
   font-weight:900;
   letter-spacing:6px;
 }
-
 .logo span{
   color:#777;
 }
-
 .subtitle{
   text-align:center;
   color:#777;
   margin-top:7px;
   margin-bottom:28px;
 }
-
 .tabs{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -93,7 +81,6 @@ body{
   border-radius:13px;
   margin-bottom:22px;
 }
-
 .tab{
   border:0;
   padding:11px;
@@ -101,28 +88,23 @@ body{
   background:transparent;
   color:#777;
 }
-
 .tab.active{
   background:#fff;
   color:#000;
   font-weight:800;
 }
-
 .form{
   display:none;
 }
-
 .form.active{
   display:block;
 }
-
 label{
   display:block;
   color:#aaa;
   font-size:13px;
   margin-bottom:7px;
 }
-
 .input{
   width:100%;
   background:#080808;
@@ -133,11 +115,9 @@ label{
   outline:none;
   margin-bottom:15px;
 }
-
 .input:focus{
   border-color:#666;
 }
-
 .main-btn{
   width:100%;
   border:0;
@@ -147,8 +127,11 @@ label{
   color:#000;
   font-weight:900;
   margin-top:4px;
+  cursor:pointer;
 }
-
+.main-btn:disabled{
+  opacity:.5;
+}
 .secondary{
   width:100%;
   border:1px solid #333;
@@ -157,8 +140,8 @@ label{
   background:#151515;
   color:#fff;
   margin-top:10px;
+  cursor:pointer;
 }
-
 .note{
   text-align:center;
   color:#666;
@@ -166,7 +149,6 @@ label{
   line-height:1.5;
   margin-top:18px;
 }
-
 .back{
   display:block;
   text-align:center;
@@ -175,11 +157,9 @@ label{
   margin-top:20px;
   font-size:14px;
 }
-
 .back:hover{
   color:#fff;
 }
-
 .message{
   display:none;
   margin-bottom:15px;
@@ -190,7 +170,6 @@ label{
   color:#aaa;
   font-size:13px;
 }
-
 @media(max-width:450px){
   .box{
     padding:24px 20px;
@@ -198,336 +177,425 @@ label{
 }
 </style>
 </head>
-
 <body>
-
 <div class="bg">
   <div class="line"></div>
   <div class="line"></div>
 </div>
-
-
 <div class="box">
-
   <div class="logo">
     SABI<span>.</span>
   </div>
-
   <div class="subtitle">
     Marketplace
   </div>
-
-
   <div class="tabs">
-
     <button
       id="customerTab"
       class="tab active"
       onclick="showForm('customer')">
       Klient
     </button>
-
     <button
       id="sellerTab"
       class="tab"
       onclick="showForm('seller')">
       Shitës
     </button>
-
   </div>
-
-
   <div
     id="message"
     class="message">
   </div>
-
-
   <!-- CUSTOMER -->
-
   <div
     id="customerForm"
     class="form active">
-
     <label>Email ose telefon</label>
-
     <input
       id="customerContact"
       class="input"
+      autocomplete="username"
       placeholder="Email ose 06xxxxxxxx">
-
-
     <label>Fjalëkalimi</label>
-
     <input
       id="customerPassword"
       class="input"
       type="password"
+      autocomplete="current-password"
       placeholder="••••••••">
-
-
     <button
+      id="customerLoginBtn"
       class="main-btn"
       onclick="loginCustomer()">
       HYR SI KLIENT
     </button>
-
-
     <button
       class="secondary"
       onclick="registerCustomer()">
       KRIJO LLOGARI
     </button>
-
   </div>
-
-
   <!-- SELLER -->
-
   <div
     id="sellerForm"
     class="form">
-
     <label>Email ose telefon</label>
-
     <input
       id="sellerContact"
       class="input"
+      autocomplete="username"
       placeholder="Email ose 06xxxxxxxx">
-
-
     <label>Fjalëkalimi</label>
-
     <input
       id="sellerPassword"
       class="input"
       type="password"
+      autocomplete="current-password"
       placeholder="••••••••">
-
-
     <button
+      id="sellerLoginBtn"
       class="main-btn"
       onclick="loginSeller()">
       HYR SI SHITËS
     </button>
-
-
     <button
       class="secondary"
       onclick="registerSeller()">
       HAP DYQANIN TIM
     </button>
-
   </div>
-
-
   <div class="note">
-    Ky është versioni demo i SABI Marketplace.
-    Llogaritë reale do të lidhen me database në versionin tjetër.
+    Llogaritë ruhen në database-in e SABI.
+    Fjalëkalimet nuk ruhen si tekst.
   </div>
-
-
   <a
     class="back"
     href="index.html">
     ← Kthehu te Marketplace
   </a>
-
 </div>
-
-
 <script>
-
+const API =
+  location.hostname.includes("github.io")
+    ? "https://sabi-marketplace.babasabfreefire2.workers.dev/api"
+    : "/api";
 function showForm(type){
-
   const customer =
     document.getElementById("customerForm");
-
   const seller =
     document.getElementById("sellerForm");
-
   const customerTab =
     document.getElementById("customerTab");
-
   const sellerTab =
     document.getElementById("sellerTab");
-
-
   if(type === "customer"){
-
     customer.classList.add("active");
     seller.classList.remove("active");
-
     customerTab.classList.add("active");
     sellerTab.classList.remove("active");
-
   }else{
-
     seller.classList.add("active");
     customer.classList.remove("active");
-
     sellerTab.classList.add("active");
     customerTab.classList.remove("active");
-
   }
-
   clearMessage();
-
 }
-
-
 function showMessage(text){
-
   const box =
     document.getElementById("message");
-
   box.textContent = text;
   box.style.display = "block";
-
 }
-
-
 function clearMessage(){
-
   document.getElementById("message")
     .style.display = "none";
-
 }
-
-
+function setLoading(id, loading){
+  const btn =
+    document.getElementById(id);
+  if(!btn) return;
+  btn.disabled = loading;
+  if(loading){
+    btn.dataset.oldText =
+      btn.textContent;
+    btn.textContent =
+      "DUKE PËRPUNUAR...";
+  }else{
+    btn.textContent =
+      btn.dataset.oldText ||
+      btn.textContent;
+  }
+}
+// =========================================================
+// SAVE LOGIN
+// =========================================================
+function saveSession(data){
+  localStorage.setItem(
+    "sabiAuthToken",
+    data.token
+  );
+  localStorage.setItem(
+    "sabiUserId",
+    String(data.user.id)
+  );
+  localStorage.setItem(
+    "sabiUserRole",
+    data.user.role
+  );
+  localStorage.setItem(
+    "sabiUserContact",
+    data.user.identifier || data.user.email
+  );
+  localStorage.setItem(
+    "sabiUserName",
+    data.user.name || ""
+  );
+  localStorage.setItem(
+    "sabiUserEmail",
+    data.user.email || ""
+  );
+}
+// =========================================================
+// LOGIN
+// =========================================================
+async function login(role, contact, password){
+  setLoading(
+    role === "seller"
+      ? "sellerLoginBtn"
+      : "customerLoginBtn",
+    true
+  );
+  clearMessage();
+  try{
+    const response =
+      await fetch(
+        `${API}/auth/login`,
+        {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({
+            identifier:contact,
+            password:password,
+            role:role
+          })
+        }
+      );
+    const data =
+      await response.json();
+    if(!response.ok || !data.success){
+      showMessage(
+        data.error ||
+        "Login-i dështoi."
+      );
+      return;
+    }
+    saveSession(data);
+    showMessage(
+      role === "seller"
+        ? "U identifikove. Po hapim panelin..."
+        : "U identifikove. Po hapim Marketplace..."
+    );
+    setTimeout(() => {
+      window.location.href =
+        role === "seller"
+          ? "seller.html"
+          : "index.html";
+    },700);
+  }catch(error){
+    showMessage(
+      "Nuk u lidhëm me serverin. Kontrollo internetin."
+    );
+  }finally{
+    setLoading(
+      role === "seller"
+        ? "sellerLoginBtn"
+        : "customerLoginBtn",
+      false
+    );
+  }
+}
 function loginCustomer(){
-
   const contact =
-    document.getElementById("customerContact")
-      .value.trim();
-
+    document.getElementById(
+      "customerContact"
+    ).value.trim();
   const password =
-    document.getElementById("customerPassword")
-      .value;
-
-
+    document.getElementById(
+      "customerPassword"
+    ).value;
   if(!contact || !password){
-
     showMessage(
       "Plotëso kontaktin dhe fjalëkalimin."
     );
-
     return;
-
   }
-
-
-  /*
-    DEMO LOGIN
-    Për momentin nuk verifikon database.
-  */
-
-  localStorage.setItem(
-    "sabiUserRole",
-    "customer"
+  login(
+    "customer",
+    contact,
+    password
   );
-
-  localStorage.setItem(
-    "sabiUserContact",
-    contact
-  );
-
-
-  showMessage(
-    "U identifikove si klient. Po hapim Marketplace..."
-  );
-
-
-  setTimeout(() => {
-
-    window.location.href =
-      "index.html";
-
-  },800);
-
 }
-
-
 function loginSeller(){
-
   const contact =
-    document.getElementById("sellerContact")
-      .value.trim();
-
+    document.getElementById(
+      "sellerContact"
+    ).value.trim();
   const password =
-    document.getElementById("sellerPassword")
-      .value;
-
-
+    document.getElementById(
+      "sellerPassword"
+    ).value;
   if(!contact || !password){
-
     showMessage(
       "Plotëso kontaktin dhe fjalëkalimin."
     );
-
     return;
-
   }
-
-
-  localStorage.setItem(
-    "sabiUserRole",
-    "seller"
+  login(
+    "seller",
+    contact,
+    password
   );
-
-  localStorage.setItem(
-    "sabiUserContact",
-    contact
-  );
-
-
-  showMessage(
-    "U identifikove si shitës. Po hapim panelin..."
-  );
-
-
-  setTimeout(() => {
-
-    window.location.href =
-      "seller.html";
-
-  },800);
-
 }
-
-
+// =========================================================
+// REGISTER
+// =========================================================
+async function register(role){
+  const name =
+    prompt(
+      role === "seller"
+        ? "Shkruaj emrin tënd ose emrin e dyqanit:"
+        : "Shkruaj emrin tënd:"
+    );
+  if(name === null) return;
+  const cleanName =
+    name.trim();
+  if(!cleanName){
+    showMessage(
+      "Emri është i detyrueshëm."
+    );
+    return;
+  }
+  const identifier =
+    prompt(
+      "Shkruaj emailin ose numrin e telefonit:"
+    );
+  if(identifier === null) return;
+  const cleanIdentifier =
+    identifier.trim();
+  if(!cleanIdentifier){
+    showMessage(
+      "Emaili ose telefoni është i detyrueshëm."
+    );
+    return;
+  }
+  const password =
+    prompt(
+      "Krijo një fjalëkalim (minimum 6 karaktere):"
+    );
+  if(password === null) return;
+  if(password.length < 6){
+    showMessage(
+      "Fjalëkalimi duhet të ketë të paktën 6 karaktere."
+    );
+    return;
+  }
+  showMessage(
+    "Po krijojmë llogarinë..."
+  );
+  try{
+    const response =
+      await fetch(
+        `${API}/auth/register`,
+        {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({
+            name:cleanName,
+            identifier:cleanIdentifier,
+            password:password,
+            role:role
+          })
+        }
+      );
+    const data =
+      await response.json();
+    if(!response.ok || !data.success){
+      showMessage(
+        data.error ||
+        "Regjistrimi dështoi."
+      );
+      return;
+    }
+    showMessage(
+      "Llogaria u krijua. Tani mund të hysh."
+    );
+    if(role === "seller"){
+      document.getElementById(
+        "sellerContact"
+      ).value = cleanIdentifier;
+      document.getElementById(
+        "sellerPassword"
+      ).value = password;
+    }else{
+      document.getElementById(
+        "customerContact"
+      ).value = cleanIdentifier;
+      document.getElementById(
+        "customerPassword"
+      ).value = password;
+    }
+  }catch(error){
+    showMessage(
+      "Nuk u lidhëm me serverin."
+    );
+  }
+}
 function registerCustomer(){
-
-  showMessage(
-    "Regjistrimi real do të aktivizohet kur të lidhim database."
-  );
-
+  register("customer");
 }
-
-
 function registerSeller(){
-
-  localStorage.setItem(
-    "sabiUserRole",
-    "seller"
-  );
-
-
-  showMessage(
-    "Po përgatisim dyqanin tënd..."
-  );
-
-
-  setTimeout(() => {
-
-    window.location.href =
-      "seller.html";
-
-  },800);
-
+  register("seller");
 }
-
+// =========================================================
+// IF ALREADY LOGGED IN
+// =========================================================
+async function checkExistingSession(){
+  const token =
+    localStorage.getItem(
+      "sabiAuthToken"
+    );
+  if(!token) return;
+  try{
+    const response =
+      await fetch(
+        `${API}/auth/me`,
+        {
+          headers:{
+            "Authorization":
+              `Bearer ${token}`
+          }
+        }
+      );
+    const data =
+      await response.json();
+    if(!response.ok || !data.authenticated){
+      localStorage.removeItem(
+        "sabiAuthToken"
+      );
+      return;
+    }
+  }catch{
+    // Mos blloko login-in nëse serveri
+    // është përkohësisht offline.
+  }
+}
+checkExistingSession();
 </script>
-
 </body>
 </html>
