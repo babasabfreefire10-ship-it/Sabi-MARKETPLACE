@@ -1,0 +1,7 @@
+name = "sabi-marketplace"
+compatibility_date = "2026-09-29"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "SABI_MARKETPLACE"
+database_id = "VENDOS_DATABASE_ID_KETU"
