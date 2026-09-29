@@ -315,6 +315,15 @@ header{
   color:#666;
 }
 
+/* LOADING */
+
+.loading{
+  grid-column:1/-1;
+  text-align:center;
+  padding:60px 20px;
+  color:#777;
+}
+
 /* CART */
 
 .cart-overlay{
@@ -659,22 +668,19 @@ footer{
 
     <button
       class="btn seller-btn"
-      onclick="openSellerModal()"
-    >
+      onclick="openSellerModal()">
       Shit me SABI
     </button>
 
     <button
       class="btn"
-      onclick="window.location.href='login.html'"
-    >
+      onclick="window.location.href='login.html'">
       Hyr
     </button>
 
     <button
       class="btn white"
-      onclick="openCart()"
-    >
+      onclick="openCart()">
       🛒 <span id="cartCount">0</span>
     </button>
 
@@ -684,8 +690,6 @@ footer{
 
 
 <div class="container">
-
-  <!-- HERO -->
 
   <section class="hero">
 
@@ -710,15 +714,13 @@ footer{
 
         <button
           class="btn white"
-          onclick="scrollToProducts()"
-        >
+          onclick="scrollToProducts()">
           Shiko produktet
         </button>
 
         <button
           class="btn"
-          onclick="openSellerModal()"
-        >
+          onclick="openSellerModal()">
           Shit me SABI
         </button>
 
@@ -733,83 +735,68 @@ footer{
   </section>
 
 
-  <!-- SEARCH -->
-
   <div class="search-box">
 
     <input
       id="searchInput"
       type="text"
       placeholder="Kërko produkt, dyqan ose kategori..."
-      oninput="renderProducts()"
-    >
+      oninput="renderProducts()">
 
   </div>
 
-
-  <!-- CATEGORIES -->
 
   <div class="categories">
 
     <button
       class="active"
-      onclick="setCategory('Të gjitha',this)"
-    >
+      onclick="setCategory('Të gjitha',this)">
       Të gjitha
     </button>
 
     <button
-      onclick="setCategory('Fashion',this)"
-    >
+      onclick="setCategory('Fashion',this)">
       Fashion
     </button>
 
     <button
-      onclick="setCategory('Elektronikë',this)"
-    >
+      onclick="setCategory('Elektronikë',this)">
       Elektronikë
     </button>
 
     <button
-      onclick="setCategory('Këpucë',this)"
-    >
+      onclick="setCategory('Këpucë',this)">
       Këpucë
     </button>
 
     <button
-      onclick="setCategory('Aksesorë',this)"
-    >
+      onclick="setCategory('Aksesorë',this)">
       Aksesorë
     </button>
 
     <button
-      onclick="setCategory('Të tjera',this)"
-    >
+      onclick="setCategory('Të tjera',this)">
       Të tjera
     </button>
 
   </div>
 
 
-  <!-- PRODUCTS -->
-
   <div class="section-title">
 
     <h2>Produktet</h2>
 
     <span id="productCount">
-      0 produkte
+      Po ngarkohen...
     </span>
 
   </div>
 
   <div
     class="products"
-    id="products"
-  ></div>
+    id="products">
+  </div>
 
-
-  <!-- SELL -->
 
   <section class="sell-box">
 
@@ -826,8 +813,7 @@ footer{
 
     <button
       class="btn white"
-      onclick="openSellerModal()"
-    >
+      onclick="openSellerModal()">
       Fillo të shesësh
     </button>
 
@@ -841,18 +827,15 @@ footer{
 </footer>
 
 
-<!-- CART -->
-
 <div
   class="cart-overlay"
   id="cartOverlay"
-  onclick="closeCart()"
-></div>
+  onclick="closeCart()">
+</div>
 
 <div
   class="cart"
-  id="cart"
->
+  id="cart">
 
   <div class="cart-head">
 
@@ -860,8 +843,7 @@ footer{
 
     <button
       class="close"
-      onclick="closeCart()"
-    >
+      onclick="closeCart()">
       ✕
     </button>
 
@@ -869,8 +851,8 @@ footer{
 
   <div
     class="cart-items"
-    id="cartItems"
-  ></div>
+    id="cartItems">
+  </div>
 
   <div class="cart-bottom">
 
@@ -886,8 +868,7 @@ footer{
 
     <button
       class="checkout"
-      onclick="checkout()"
-    >
+      onclick="checkout()">
       POROSIT TANI
     </button>
 
@@ -896,12 +877,9 @@ footer{
 </div>
 
 
-<!-- SELLER MODAL -->
-
 <div
   class="modal"
-  id="sellerModal"
->
+  id="sellerModal">
 
   <div class="modal-box">
 
@@ -912,83 +890,90 @@ footer{
     </div>
 
     <div class="form-group">
+
       <label>Emri i dyqanit</label>
 
       <input
         id="sellerShop"
-        placeholder="p.sh. SABI Fashion"
-      >
+        placeholder="p.sh. SABI Fashion">
+
     </div>
 
     <div class="form-group">
+
       <label>Emri yt</label>
 
       <input
         id="sellerName"
-        placeholder="Emri i shitësit"
-      >
+        placeholder="Emri i shitësit">
+
     </div>
 
     <div class="form-group">
+
       <label>Telefoni</label>
 
       <input
         id="sellerPhone"
-        placeholder="06XXXXXXXX"
-      >
+        placeholder="06XXXXXXXX">
+
     </div>
 
     <div class="form-group">
+
       <label>Emri i produktit</label>
 
       <input
         id="productName"
-        placeholder="p.sh. Nike Air Max"
-      >
+        placeholder="p.sh. Nike Air Max">
+
     </div>
 
     <div class="form-group">
+
       <label>Çmimi (€)</label>
 
       <input
         id="productPrice"
         type="number"
         step="0.01"
-        placeholder="50"
-      >
+        placeholder="50">
+
     </div>
 
     <div class="form-group">
+
       <label>Kategoria</label>
 
       <select id="productCategory">
 
-        <option>Fashion</option>
-        <option>Elektronikë</option>
-        <option>Këpucë</option>
-        <option>Aksesorë</option>
-        <option>Të tjera</option>
+        <option value="Fashion">Fashion</option>
+        <option value="Elektronikë">Elektronikë</option>
+        <option value="Këpucë">Këpucë</option>
+        <option value="Aksesorë">Aksesorë</option>
+        <option value="Të tjera">Të tjera</option>
 
       </select>
 
     </div>
 
     <div class="form-group">
+
       <label>Foto URL</label>
 
       <input
         id="productImage"
-        placeholder="https://..."
-      >
+        placeholder="https://...">
+
     </div>
 
     <div class="form-group">
+
       <label>Përshkrimi</label>
 
       <textarea
         id="productDescription"
-        placeholder="Përshkrimi i produktit..."
-      ></textarea>
+        placeholder="Përshkrimi i produktit..."></textarea>
 
     </div>
 
@@ -996,15 +981,13 @@ footer{
 
       <button
         class="btn"
-        onclick="closeSellerModal()"
-      >
+        onclick="closeSellerModal()">
         Anulo
       </button>
 
       <button
         class="btn white"
-        onclick="addSellerProduct()"
-      >
+        onclick="addSellerProduct()">
         Publiko produktin
       </button>
 
@@ -1017,9 +1000,18 @@ footer{
 
 <script>
 
-let products = JSON.parse(
-  localStorage.getItem("sabiProducts") || "[]"
-);
+/* =========================
+   SABI API
+========================= */
+
+const API = "/api";
+
+
+/* =========================
+   STATE
+========================= */
+
+let products = [];
 
 let cart = JSON.parse(
   localStorage.getItem("sabiCart") || "[]"
@@ -1028,79 +1020,166 @@ let cart = JSON.parse(
 let currentCategory = "Të gjitha";
 
 
-/* DEMO PRODUCTS */
+/* =========================
+   API HELPER
+========================= */
 
-if(products.length === 0){
+async function api(url, options = {}){
 
-  products = [
+  const response =
+    await fetch(API + url, {
+      ...options,
+      headers:{
+        "Content-Type":"application/json",
+        ...(options.headers || {})
+      }
+    });
 
-    {
-      id:"demo1",
-      name:"Nike Tech Fleece",
-      price:75,
-      category:"Fashion",
-      seller:"SABI Store",
-      sellerName:"SABI Store",
-      sellerPhone:"0690000000",
-      image:"https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=900&q=80",
-      description:"Nike Tech Fleece."
-    },
+  let data;
 
-    {
-      id:"demo2",
-      name:"AirPods Pro",
-      price:120,
-      category:"Elektronikë",
-      seller:"Tech Albania",
-      sellerName:"Tech Albania",
-      sellerPhone:"0680000000",
-      image:"https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=900&q=80",
-      description:"AirPods Pro."
-    },
+  try{
+    data = await response.json();
+  }catch{
+    data = {};
+  }
 
-    {
-      id:"demo3",
-      name:"Air Max",
-      price:90,
-      category:"Këpucë",
-      seller:"Urban Shop",
-      sellerName:"Urban Shop",
-      sellerPhone:"0670000000",
-      image:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80",
-      description:"Nike Air Max."
-    },
+  if(!response.ok){
 
-    {
-      id:"demo4",
-      name:"Casio Watch",
-      price:55,
-      category:"Aksesorë",
-      seller:"Style Albania",
-      sellerName:"Style Albania",
-      sellerPhone:"0660000000",
-      image:"https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=900&q=80",
-      description:"Casio watch."
-    }
+    throw new Error(
+      data.error ||
+      "Gabim gjatë komunikimit me serverin."
+    );
 
-  ];
+  }
 
-  saveProducts();
-}
-
-
-/* SAVE */
-
-function saveProducts(){
-
-  localStorage.setItem(
-    "sabiProducts",
-    JSON.stringify(products)
-  );
+  return data;
 
 }
 
 
-/* ESCAPE */
+/* =========================
+   LOAD PRODUCTS FROM D1
+========================= */
+
+async function loadProducts(){
+
+  const box =
+    document.getElementById("products");
+
+  box.innerHTML = `
+    <div class="loading">
+      Po ngarkohen produktet...
+    </div>
+  `;
+
+  try{
+
+    const data =
+      await api("/products");
+
+    products =
+      Array.isArray(data)
+        ? data.map(normalizeProduct)
+        : [];
+
+    renderProducts();
+
+  }catch(error){
+
+    console.error(error);
+
+    box.innerHTML = `
+      <div class="empty">
+        <h3>Nuk u ngarkuan produktet.</h3>
+        <p style="margin-top:8px;">
+          Kontrollo lidhjen me SABI.
+        </p>
+        <button
+          class="btn white"
+          style="margin-top:15px;"
+          onclick="loadProducts()">
+          Provo përsëri
+        </button>
+      </div>
+    `;
+
+    document.getElementById("productCount")
+      .textContent = "Gabim";
+
+  }
+
+}
+
+
+/* =========================
+   NORMALIZE PRODUCT
+========================= */
+
+function normalizeProduct(product){
+
+  return {
+
+    id:product.id,
+
+    name:
+      product.title ||
+      product.name ||
+      "Produkt",
+
+    title:
+      product.title ||
+      product.name ||
+      "Produkt",
+
+    price:
+      Number(product.price || 0),
+
+    category:
+      product.category ||
+      "Të tjera",
+
+    seller:
+      product.seller_name ||
+      "SABI",
+
+    sellerName:
+      product.seller_name ||
+      "SABI",
+
+    sellerPhone:
+      "",
+
+    seller_id:
+      product.seller_id || null,
+
+    image:
+      product.image_url ||
+      product.image ||
+      "",
+
+    image_url:
+      product.image_url ||
+      product.image ||
+      "",
+
+    description:
+      product.description ||
+      "",
+
+    stock:
+      Number(product.stock ?? 0),
+
+    created_at:
+      product.created_at || ""
+
+  };
+
+}
+
+
+/* =========================
+   ESCAPE
+========================= */
 
 function escapeHTML(value){
 
@@ -1114,7 +1193,9 @@ function escapeHTML(value){
 }
 
 
-/* RENDER PRODUCTS */
+/* =========================
+   RENDER PRODUCTS
+========================= */
 
 function renderProducts(){
 
@@ -1127,6 +1208,7 @@ function renderProducts(){
       .toLowerCase()
       .trim();
 
+
   const filtered =
     products.filter(product => {
 
@@ -1134,21 +1216,30 @@ function renderProducts(){
         currentCategory === "Të gjitha" ||
         product.category === currentCategory;
 
+
       const text =
-        `${product.name || ""} ${product.seller || ""} ${product.category || ""}`
+        `${product.name || ""}
+         ${product.seller || ""}
+         ${product.category || ""}
+         ${product.description || ""}`
           .toLowerCase();
+
 
       const searchMatch =
         text.includes(search);
+
 
       return categoryMatch && searchMatch;
 
     });
 
 
-  document.getElementById("productCount").textContent =
-    filtered.length +
-    (filtered.length === 1 ? " produkt" : " produkte");
+  document.getElementById("productCount")
+    .textContent =
+      filtered.length +
+      (filtered.length === 1
+        ? " produkt"
+        : " produkte");
 
 
   if(filtered.length === 0){
@@ -1168,64 +1259,83 @@ function renderProducts(){
 
 
   box.innerHTML =
-    filtered.map(product => `
+    filtered.map(product => {
 
-      <div class="product-card">
+      const soldOut =
+        Number(product.stock) <= 0;
 
-        <div class="product-image">
 
-          <img
-            src="${escapeHTML(product.image || "")}"
-            alt="${escapeHTML(product.name || "")}"
-            onerror="this.style.display='none'"
-          >
+      return `
 
-        </div>
+        <div class="product-card">
 
-        <div class="product-info">
+          <div class="product-image">
 
-          <div class="product-category">
-            ${escapeHTML(product.category || "Të tjera")}
+            <img
+              src="${escapeHTML(product.image)}"
+              alt="${escapeHTML(product.name)}"
+              onerror="this.style.display='none'">
+
           </div>
 
-          <div class="product-name">
-            ${escapeHTML(product.name || "Produkt")}
-          </div>
+          <div class="product-info">
 
-          <div class="product-seller">
-            Shitet nga:
-            ${escapeHTML(
-              product.seller ||
-              product.sellerName ||
-              "SABI"
-            )}
-          </div>
-
-          <div class="product-bottom">
-
-            <div class="price">
-              ${Number(product.price || 0).toFixed(2)}€
+            <div class="product-category">
+              ${escapeHTML(
+                product.category || "Të tjera"
+              )}
             </div>
 
-            <button
-              class="add"
-              onclick="addToCart('${product.id}')"
-            >
-              + Shportë
-            </button>
+            <div class="product-name">
+              ${escapeHTML(
+                product.name || "Produkt"
+              )}
+            </div>
+
+            <div class="product-seller">
+              Shitet nga:
+              ${escapeHTML(
+                product.seller ||
+                product.sellerName ||
+                "SABI"
+              )}
+            </div>
+
+            <div class="product-bottom">
+
+              <div class="price">
+                ${Number(
+                  product.price || 0
+                ).toFixed(2)}€
+              </div>
+
+              <button
+                class="add"
+                ${soldOut ? "disabled" : ""}
+                onclick="addToCart('${String(product.id)}')">
+
+                ${soldOut
+                  ? "Pa stok"
+                  : "+ Shportë"}
+
+              </button>
+
+            </div>
 
           </div>
 
         </div>
 
-      </div>
+      `;
 
-    `).join("");
+    }).join("");
 
 }
 
 
-/* CATEGORY */
+/* =========================
+   CATEGORY
+========================= */
 
 function setCategory(category,button){
 
@@ -1244,28 +1354,57 @@ function setCategory(category,button){
 }
 
 
-/* ADD CART */
+/* =========================
+   CART
+========================= */
 
 function addToCart(id){
 
   const product =
     products.find(
-      p => String(p.id) === String(id)
+      p =>
+        String(p.id) ===
+        String(id)
     );
 
   if(!product) return;
 
 
+  if(Number(product.stock) <= 0){
+
+    alert("Ky produkt nuk ka stok.");
+
+    return;
+
+  }
+
+
   const existing =
     cart.find(
-      item => String(item.id) === String(id)
+      item =>
+        String(item.id) ===
+        String(id)
     );
 
 
   if(existing){
 
-    existing.qty =
+    const newQty =
       Number(existing.qty || 1) + 1;
+
+
+    if(newQty > Number(product.stock)){
+
+      alert(
+        "Nuk ka më shumë stok për këtë produkt."
+      );
+
+      return;
+
+    }
+
+
+    existing.qty = newQty;
 
   }else{
 
@@ -1286,7 +1425,9 @@ function addToCart(id){
 }
 
 
-/* SAVE CART */
+/* =========================
+   SAVE CART
+========================= */
 
 function saveCart(){
 
@@ -1298,7 +1439,9 @@ function saveCart(){
 }
 
 
-/* UPDATE CART */
+/* =========================
+   UPDATE CART
+========================= */
 
 function updateCart(){
 
@@ -1346,7 +1489,8 @@ function updateCart(){
       const price =
         Number(item.price || 0);
 
-      total += price * qty;
+      total +=
+        price * qty;
 
 
       return `
@@ -1355,13 +1499,14 @@ function updateCart(){
 
           <img
             src="${escapeHTML(item.image || "")}"
-            onerror="this.style.visibility='hidden'"
-          >
+            onerror="this.style.visibility='hidden'">
 
           <div class="cart-item-info">
 
             <div class="cart-item-name">
-              ${escapeHTML(item.name)}
+              ${escapeHTML(
+                item.name
+              )}
             </div>
 
             <div class="cart-item-price">
@@ -1371,16 +1516,14 @@ function updateCart(){
             <div class="qty">
 
               <button
-                onclick="changeQty('${item.id}',-1)"
-              >
+                onclick="changeQty('${String(item.id)}',-1)">
                 −
               </button>
 
               <span>${qty}</span>
 
               <button
-                onclick="changeQty('${item.id}',1)"
-              >
+                onclick="changeQty('${String(item.id)}',1)">
                 +
               </button>
 
@@ -1388,8 +1531,7 @@ function updateCart(){
 
             <button
               class="remove"
-              onclick="removeFromCart('${item.id}')"
-            >
+              onclick="removeFromCart('${String(item.id)}')">
               Hiq
             </button>
 
@@ -1403,32 +1545,59 @@ function updateCart(){
 
 
   document.getElementById("cartTotal")
-    .textContent = total.toFixed(2);
+    .textContent =
+      total.toFixed(2);
 
 }
 
 
-/* CHANGE QTY */
+/* =========================
+   CHANGE QTY
+========================= */
 
 function changeQty(id,amount){
 
   const item =
     cart.find(
-      p => String(p.id) === String(id)
+      p =>
+        String(p.id) ===
+        String(id)
     );
 
   if(!item) return;
 
 
+  const product =
+    products.find(
+      p =>
+        String(p.id) ===
+        String(id)
+    );
+
+
   item.qty =
-    Number(item.qty || 1) + amount;
+    Number(item.qty || 1) +
+    amount;
+
+
+  if(
+    product &&
+    item.qty > Number(product.stock)
+  ){
+
+    item.qty =
+      Number(product.stock);
+
+  }
 
 
   if(item.qty <= 0){
 
     cart =
       cart.filter(
-        p => String(p.id) !== String(id)
+        p =>
+          String(p.id) !==
+          String(id)
       );
 
   }
@@ -1441,13 +1610,17 @@ function changeQty(id,amount){
 }
 
 
-/* REMOVE */
+/* =========================
+   REMOVE
+========================= */
 
 function removeFromCart(id){
 
   cart =
     cart.filter(
-      item => String(item.id) !== String(id)
+      item =>
+        String(item.id) !==
+        String(id)
     );
 
   saveCart();
@@ -1457,7 +1630,9 @@ function removeFromCart(id){
 }
 
 
-/* OPEN CART */
+/* =========================
+   OPEN CART
+========================= */
 
 function openCart(){
 
@@ -1472,7 +1647,9 @@ function openCart(){
 }
 
 
-/* CLOSE CART */
+/* =========================
+   CLOSE CART
+========================= */
 
 function closeCart(){
 
@@ -1487,9 +1664,11 @@ function closeCart(){
 }
 
 
-/* CHECKOUT */
+/* =========================
+   CHECKOUT
+========================= */
 
-function checkout(){
+async function checkout(){
 
   if(!cart.length){
 
@@ -1501,13 +1680,10 @@ function checkout(){
 
 
   const customer =
-    localStorage.getItem("sabiUserContact") ||
+    localStorage.getItem(
+      "sabiUserContact"
+    ) ||
     "Klient";
-
-
-  const orderId =
-    "SABI-" +
-    Date.now().toString().slice(-6);
 
 
   const total =
@@ -1520,108 +1696,141 @@ function checkout(){
     );
 
 
-  const order = {
+  try{
 
-    id:orderId,
+    /*
+      D1 orders table stores
+      one product per order row.
+      Therefore each cart item
+      becomes one D1 order.
+    */
 
-    customer:customer,
-
-    date:new Date().toLocaleString("sq-AL"),
-
-    items:cart.map(item => ({
-
-      id:item.id,
-
-      name:item.name,
-
-      price:Number(item.price || 0),
-
-      qty:Number(item.qty || 1),
-
-      seller:
-        item.seller ||
-        item.sellerName ||
-        "SABI"
-
-    })),
-
-    total:total,
-
-    status:"E re"
-
-  };
+    const createdOrders = [];
 
 
-  let orders =
-    JSON.parse(
-      localStorage.getItem("sabiOrders") || "[]"
+    for(const item of cart){
+
+      const qty =
+        Number(item.qty || 1);
+
+      const itemTotal =
+        Number(item.price || 0) *
+        qty;
+
+
+      const result =
+        await api("/orders",{
+
+          method:"POST",
+
+          body:JSON.stringify({
+
+            product_id:
+              Number(item.id),
+
+            buyer_id:
+              null,
+
+            quantity:
+              qty,
+
+            total_price:
+              itemTotal
+
+          })
+
+        });
+
+
+      createdOrders.push(result);
+
+    }
+
+
+    const orderId =
+      "SABI-" +
+      Date.now()
+        .toString()
+        .slice(-6);
+
+
+    let message =
+      "PERSHENDETJE SABI 👋%0A%0A" +
+      "POROSI E RE%0A" +
+      "ID: " +
+      orderId +
+      "%0A%0A";
+
+
+    cart.forEach(item => {
+
+      message +=
+        "• " +
+        encodeURIComponent(
+          item.name
+        ) +
+        " x" +
+        Number(
+          item.qty || 1
+        ) +
+        " - " +
+        Number(
+          item.price || 0
+        ).toFixed(2) +
+        "€%0A";
+
+    });
+
+
+    message +=
+      "%0ATOTALI: " +
+      total.toFixed(2) +
+      "€%0A" +
+      "KLIENTI: " +
+      encodeURIComponent(
+        customer
+      );
+
+
+    cart = [];
+
+    saveCart();
+
+    updateCart();
+
+    closeCart();
+
+
+    alert(
+      "Porosia u krijua me sukses!\n\nID: " +
+      orderId
     );
 
 
-  orders.push(order);
+    window.open(
+      "https://wa.me/?text=" +
+      message,
+      "_blank"
+    );
 
 
-  localStorage.setItem(
-    "sabiOrders",
-    JSON.stringify(orders)
-  );
+  }catch(error){
 
+    console.error(error);
 
-  let message =
-    "PERSHENDETJE SABI 👋%0A%0A" +
-    "POROSI E RE%0A" +
-    "ID: " +
-    orderId +
-    "%0A%0A";
+    alert(
+      "Porosia nuk u krijua.\n\n" +
+      error.message
+    );
 
-
-  cart.forEach(item => {
-
-    message +=
-      "• " +
-      item.name +
-      " x" +
-      Number(item.qty || 1) +
-      " - " +
-      Number(item.price || 0).toFixed(2) +
-      "€%0A";
-
-  });
-
-
-  message +=
-    "%0ATOTALI: " +
-    total.toFixed(2) +
-    "€%0A" +
-    "KLIENTI: " +
-    encodeURIComponent(customer);
-
-
-  cart = [];
-
-
-  saveCart();
-
-  updateCart();
-
-  closeCart();
-
-
-  alert(
-    "Porosia u krijua me sukses!\n\nID: " +
-    orderId
-  );
-
-
-  window.open(
-    "https://wa.me/?text=" + message,
-    "_blank"
-  );
+  }
 
 }
 
 
-/* SELLER MODAL */
+/* =========================
+   SELLER MODAL
+========================= */
 
 function openSellerModal(){
 
@@ -1641,43 +1850,60 @@ function closeSellerModal(){
 }
 
 
-/* ADD SELLER PRODUCT */
+/* =========================
+   ADD SELLER PRODUCT
+========================= */
 
-function addSellerProduct(){
+async function addSellerProduct(){
 
   const shop =
-    document.getElementById("sellerShop")
-      .value.trim();
+    document.getElementById(
+      "sellerShop"
+    ).value.trim();
+
 
   const seller =
-    document.getElementById("sellerName")
-      .value.trim();
+    document.getElementById(
+      "sellerName"
+    ).value.trim();
+
 
   const phone =
-    document.getElementById("sellerPhone")
-      .value.trim();
+    document.getElementById(
+      "sellerPhone"
+    ).value.trim();
+
 
   const name =
-    document.getElementById("productName")
-      .value.trim();
+    document.getElementById(
+      "productName"
+    ).value.trim();
+
 
   const price =
     Number(
-      document.getElementById("productPrice")
-        .value
+      document.getElementById(
+        "productPrice"
+      ).value
     );
 
+
   const category =
-    document.getElementById("productCategory")
-      .value;
+    document.getElementById(
+      "productCategory"
+    ).value;
+
 
   const image =
-    document.getElementById("productImage")
-      .value.trim();
+    document.getElementById(
+      "productImage"
+    ).value.trim();
+
 
   const description =
-    document.getElementById("productDescription")
-      .value.trim();
+    document.getElementById(
+      "productDescription"
+    ).value.trim();
 
 
   if(
@@ -1697,63 +1923,102 @@ function addSellerProduct(){
   }
 
 
-  const product = {
+  /*
+    Current D1 users table does not yet
+    contain phone/shop fields and the
+    current login does not provide a
+    real user ID.
 
-    id:
-      "p_" +
-      Date.now() +
-      "_" +
-      Math.random()
-        .toString(36)
-        .slice(2,7),
+    We therefore use seller_id = 1
+    temporarily for the current Admin
+    account. Real seller accounts will
+    be connected in the authentication step.
+  */
 
-    name:name,
+  try{
 
-    price:price,
+    await api("/products",{
 
-    category:category,
+      method:"POST",
 
-    seller:shop,
+      body:JSON.stringify({
 
-    sellerName:seller,
+        title:name,
 
-    sellerPhone:phone,
+        description:description,
 
-    image:image,
+        price:price,
 
-    description:description
+        image_url:image,
 
-  };
+        seller_id:1,
 
+        category:category,
 
-  products.unshift(product);
+        stock:1
 
+      })
 
-  saveProducts();
-
-  renderProducts();
-
-
-  document.getElementById("sellerShop").value="";
-  document.getElementById("sellerName").value="";
-  document.getElementById("sellerPhone").value="";
-  document.getElementById("productName").value="";
-  document.getElementById("productPrice").value="";
-  document.getElementById("productImage").value="";
-  document.getElementById("productDescription").value="";
+    });
 
 
-  closeSellerModal();
+    await loadProducts();
 
 
-  alert(
-    "Produkti u publikua me sukses në SABI!"
-  );
+    document.getElementById(
+      "sellerShop"
+    ).value="";
+
+    document.getElementById(
+      "sellerName"
+    ).value="";
+
+    document.getElementById(
+      "sellerPhone"
+    ).value="";
+
+    document.getElementById(
+      "productName"
+    ).value="";
+
+    document.getElementById(
+      "productPrice"
+    ).value="";
+
+    document.getElementById(
+      "productImage"
+    ).value="";
+
+    document.getElementById(
+      "productDescription"
+    ).value="";
+
+
+    closeSellerModal();
+
+
+    alert(
+      "Produkti u publikua me sukses në SABI!"
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Produkti nuk u publikua.\n\n" +
+      error.message
+    );
+
+  }
 
 }
 
 
-/* SCROLL */
+/* =========================
+   SCROLL
+========================= */
 
 function scrollToProducts(){
 
@@ -1766,7 +2031,9 @@ function scrollToProducts(){
 }
 
 
-/* MODAL OUTSIDE CLICK */
+/* =========================
+   MODAL OUTSIDE CLICK
+========================= */
 
 document
   .getElementById("sellerModal")
@@ -1784,11 +2051,13 @@ document
   );
 
 
-/* START */
+/* =========================
+   START
+========================= */
 
 updateCart();
 
-renderProducts();
+loadProducts();
 
 </script>
 
