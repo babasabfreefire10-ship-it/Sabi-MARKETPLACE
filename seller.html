@@ -98,8 +98,6 @@ header{
   color:#777;
 }
 
-/* STATS */
-
 .stats{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -123,8 +121,6 @@ header{
   font-size:29px;
   margin-top:10px;
 }
-
-/* SHOP */
 
 .shop-box{
   background:#0d0d0d;
@@ -152,8 +148,6 @@ header{
   margin-top:5px;
 }
 
-/* NAV */
-
 .nav{
   display:flex;
   gap:8px;
@@ -174,8 +168,6 @@ header{
   border-color:#fff;
 }
 
-/* SECTIONS */
-
 .section{
   display:none;
 }
@@ -183,8 +175,6 @@ header{
 .section.active{
   display:block;
 }
-
-/* CARD */
 
 .card{
   background:#0b0b0b;
@@ -215,8 +205,6 @@ header{
   border-radius:9px;
   outline:none;
 }
-
-/* PRODUCTS */
 
 .products{
   display:grid;
@@ -262,6 +250,12 @@ header{
 .price{
   font-size:18px;
   font-weight:900;
+  margin-bottom:7px;
+}
+
+.stock-text{
+  color:#777;
+  font-size:12px;
   margin-bottom:13px;
 }
 
@@ -282,8 +276,6 @@ header{
 .action.delete{
   color:#ff7777;
 }
-
-/* ORDERS */
 
 .table-wrap{
   overflow-x:auto;
@@ -337,18 +329,22 @@ td{
 .order-products{
   color:#aaa;
   white-space:normal;
-  min-width:200px;
+  min-width:180px;
 }
-
-/* EMPTY */
 
 .empty{
   text-align:center;
   padding:50px 20px;
   color:#666;
+  grid-column:1/-1;
 }
 
-/* MODAL */
+.loading{
+  text-align:center;
+  padding:50px;
+  color:#00ff88;
+  grid-column:1/-1;
+}
 
 .modal{
   display:none;
@@ -417,8 +413,6 @@ td{
 .modal-actions button{
   flex:1;
 }
-
-/* RESPONSIVE */
 
 @media(max-width:1000px){
 
@@ -554,48 +548,27 @@ td{
   <div class="stats">
 
     <div class="stat">
-
       <small>PRODUKTET E MIA</small>
-
-      <h2 id="productCount">
-        0
-      </h2>
-
+      <h2 id="productCount">0</h2>
     </div>
 
-
     <div class="stat">
-
       <small>POROSI</small>
-
-      <h2 id="orderCount">
-        0
-      </h2>
-
+      <h2 id="orderCount">0</h2>
     </div>
 
-
     <div class="stat">
-
       <small>SHITJE</small>
-
-      <h2 id="salesTotal">
-        0€
-      </h2>
-
+      <h2 id="salesTotal">0€</h2>
     </div>
 
-
     <div class="stat">
-
       <small>STATUSI</small>
 
-      <h2
-        style="
-          font-size:18px;
-          color:#6dff9f;
-        "
-      >
+      <h2 style="
+        font-size:18px;
+        color:#6dff9f;
+      ">
         AKTIV
       </h2>
 
@@ -624,7 +597,6 @@ td{
       </div>
 
     </div>
-
 
     <button
       class="btn white"
@@ -678,11 +650,14 @@ td{
 
       </div>
 
-
       <div
         class="products"
         id="productsList"
-      ></div>
+      >
+        <div class="loading">
+          Po ngarkohen...
+        </div>
+      </div>
 
     </div>
 
@@ -704,11 +679,14 @@ td{
 
       </div>
 
-
       <div
         class="table-wrap"
         id="ordersList"
-      ></div>
+      >
+        <div class="empty">
+          Po ngarkohen porositë...
+        </div>
+      </div>
 
     </div>
 
@@ -735,7 +713,6 @@ td{
       id="editId"
     >
 
-
     <div class="form-group">
 
       <label>
@@ -759,6 +736,7 @@ td{
       <input
         id="productPrice"
         type="number"
+        min="0"
         step="0.01"
         placeholder="50"
       >
@@ -774,11 +752,25 @@ td{
 
       <select id="productCategory">
 
-        <option>Fashion</option>
-        <option>Elektronikë</option>
-        <option>Këpucë</option>
-        <option>Aksesorë</option>
-        <option>Të tjera</option>
+        <option value="Fashion">
+          Fashion
+        </option>
+
+        <option value="Elektronikë">
+          Elektronikë
+        </option>
+
+        <option value="Këpucë">
+          Këpucë
+        </option>
+
+        <option value="Aksesorë">
+          Aksesorë
+        </option>
+
+        <option value="Të tjera">
+          Të tjera
+        </option>
 
       </select>
 
@@ -813,6 +805,22 @@ td{
     </div>
 
 
+    <div class="form-group">
+
+      <label>
+        Sasia / Stoku
+      </label>
+
+      <input
+        id="productStock"
+        type="number"
+        min="0"
+        value="1"
+      >
+
+    </div>
+
+
     <div class="modal-actions">
 
       <button
@@ -838,63 +846,42 @@ td{
 
 <script>
 
-/* DATA */
+/* ==================================================
+   SABI API
+================================================== */
 
-let products =
-  JSON.parse(
-    localStorage.getItem("sabiProducts") || "[]"
-  );
-
-
-let orders =
-  JSON.parse(
-    localStorage.getItem("sabiOrders") || "[]"
-  );
+const API =
+  location.hostname.includes("github.io")
+    ? "https://sabi-marketplace.babasabfreefire2.workers.dev/api"
+    : "/api";
 
 
-/* CURRENT SELLER */
+/* ==================================================
+   DATA
+================================================== */
+
+let products = [];
+let orders = [];
+
+let sellerId =
+  localStorage.getItem("sabiUserId") || "";
+
+let sellerContact =
+  localStorage.getItem("sabiUserContact") || "";
+
+let sellerName =
+  "";
+
+let sellerPhone =
+  "";
 
 let currentShop =
   localStorage.getItem("sabiShop") || "";
 
 
-/*
-  Nëse nuk ka të dhëna të shitësit,
-  marrim shitësin e parë të produkteve.
-*/
-
-if(!currentShop){
-
-  const firstProduct =
-    products.find(
-      p => p.seller || p.sellerName
-    );
-
-  if(firstProduct){
-
-    currentShop =
-      firstProduct.seller ||
-      firstProduct.sellerName ||
-      "";
-
-  }
-
-}
-
-
-/* SAVE */
-
-function saveProducts(){
-
-  localStorage.setItem(
-    "sabiProducts",
-    JSON.stringify(products)
-  );
-
-}
-
-
-/* ESCAPE */
+/* ==================================================
+   HTML ESCAPE
+================================================== */
 
 function escapeHTML(value){
 
@@ -908,127 +895,504 @@ function escapeHTML(value){
 }
 
 
-/* MY PRODUCTS */
+/* ==================================================
+   CATEGORY -> D1
+================================================== */
 
-function getMyProducts(){
+function toDbCategory(category){
 
-  if(!currentShop){
+  if(category === "Elektronikë")
+    return "Electronics";
 
-    return [];
+  if(category === "Aksesorë")
+    return "Accessories";
+
+  if(category === "Këpucë")
+    return "Shoes";
+
+  if(category === "Të tjera")
+    return "Home";
+
+  return "Fashion";
+
+}
+
+
+/* ==================================================
+   D1 -> FRONTEND CATEGORY
+================================================== */
+
+function fromDbCategory(category){
+
+  if(category === "Electronics")
+    return "Elektronikë";
+
+  if(category === "Accessories")
+    return "Aksesorë";
+
+  if(category === "Shoes")
+    return "Këpucë";
+
+  if(category === "Home")
+    return "Të tjera";
+
+  return "Fashion";
+
+}
+
+
+/* ==================================================
+   FIND / CREATE SELLER
+================================================== */
+
+async function prepareSeller(){
+
+  /*
+    Nëse kemi sellerId,
+    nuk bëjmë asgjë.
+  */
+
+  if(sellerId){
+
+    return true;
 
   }
 
-  return products.filter(p => {
 
-    const seller =
-      p.seller ||
-      p.sellerName ||
-      "";
+  /*
+    Nëse login ka email,
+    kërkojmë user-in në D1.
+  */
 
-    return seller === currentShop;
+  if(
+    sellerContact &&
+    sellerContact.includes("@")
+  ){
 
-  });
+    try{
 
-}
-
-
-/* MY ORDERS */
-
-function getMyOrders(){
-
-  const myProducts =
-    getMyProducts();
-
-  const myProductIds =
-    new Set(
-      myProducts.map(p => String(p.id))
-    );
-
-
-  const result = [];
-
-
-  orders.forEach(order => {
-
-    const items =
-      Array.isArray(order.items)
-        ? order.items
-        : [];
-
-
-    const matchingItems =
-      items.filter(item =>
-        myProductIds.has(
-          String(item.id)
-        )
-      );
-
-
-    if(matchingItems.length){
-
-      const total =
-        matchingItems.reduce(
-          (sum,item) =>
-            sum +
-            Number(item.price || 0) *
-            Number(item.qty || 1),
-          0
+      const response =
+        await fetch(
+          `${API}/users/find?email=${encodeURIComponent(sellerContact)}`
         );
 
 
-      result.push({
+      if(response.ok){
 
-        ...order,
+        const user =
+          await response.json();
 
-        items:matchingItems,
+        if(user && user.id){
 
-        sellerTotal:total
+          sellerId =
+            String(user.id);
 
-      });
+          sellerName =
+            user.name || "";
+
+          localStorage.setItem(
+            "sabiUserId",
+            sellerId
+          );
+
+          return true;
+
+        }
+
+      }
+
+    }catch(error){
+
+      console.error(error);
 
     }
 
-  });
+  }
 
 
-  return result;
+  /*
+    Nëse nuk ekziston user,
+    krijojmë një user të ri.
+  */
+
+  try{
+
+    const name =
+      localStorage.getItem("sabiSellerName") ||
+      "Shitës SABI";
+
+
+    const email =
+      sellerContact &&
+      sellerContact.includes("@")
+        ? sellerContact
+        : `seller_${Date.now()}@sabi.local`;
+
+
+    const response =
+      await fetch(`${API}/users`,{
+
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+          name:name,
+
+          email:email
+
+        })
+
+      });
+
+
+    const data =
+      await response.json();
+
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error ||
+        "Nuk u krijua përdoruesi."
+      );
+
+    }
+
+
+    sellerId =
+      String(data.id);
+
+
+    sellerName =
+      data.name || name;
+
+
+    localStorage.setItem(
+      "sabiUserId",
+      sellerId
+    );
+
+
+    return true;
+
+  }catch(error){
+
+    console.error(error);
+
+    return false;
+
+  }
 
 }
 
 
-/* SHOP INFO */
+/* ==================================================
+   LOAD PRODUCTS
+================================================== */
+
+async function loadProducts(){
+
+  const box =
+    document.getElementById("productsList");
+
+
+  box.innerHTML = `
+    <div class="loading">
+      Po ngarkohen produktet...
+    </div>
+  `;
+
+
+  try{
+
+    const response =
+      await fetch(`${API}/products`);
+
+
+    if(!response.ok){
+
+      throw new Error(
+        "API products error: " +
+        response.status
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    products =
+      Array.isArray(data)
+        ? data
+        : [];
+
+
+    /*
+      Shfaqim vetëm produktet
+      që i përkasin këtij seller_id.
+    */
+
+    const myProducts =
+      products.filter(product =>
+        Number(product.seller_id) ===
+        Number(sellerId)
+      );
+
+
+    /*
+      Gjejmë informacionin e dyqanit.
+    */
+
+    if(myProducts.length){
+
+      const first =
+        myProducts[0];
+
+
+      sellerName =
+        first.sellerName ||
+        first.seller ||
+        sellerName ||
+        "Shitës SABI";
+
+
+      sellerPhone =
+        first.sellerPhone ||
+        "";
+
+
+      if(!currentShop){
+
+        currentShop =
+          first.seller ||
+          first.sellerName ||
+          sellerName;
+
+        localStorage.setItem(
+          "sabiShop",
+          currentShop
+        );
+
+      }
+
+    }
+
+
+    renderAll();
+
+
+  }catch(error){
+
+    console.error(error);
+
+
+    box.innerHTML = `
+      <div class="empty">
+        <h3>Gabim gjatë ngarkimit</h3>
+
+        <p style="margin-top:8px;">
+          ${escapeHTML(error.message)}
+        </p>
+      </div>
+    `;
+
+  }
+
+}
+
+
+/* ==================================================
+   LOAD ORDERS
+================================================== */
+
+async function loadOrders(){
+
+  try{
+
+    const response =
+      await fetch(`${API}/orders`);
+
+
+    if(!response.ok){
+
+      throw new Error(
+        "API orders error: " +
+        response.status
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    orders =
+      Array.isArray(data)
+        ? data
+        : [];
+
+
+    renderOrders();
+
+    updateStats();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    document.getElementById("ordersList")
+      .innerHTML = `
+        <div class="empty">
+          <h3>Nuk u ngarkuan porositë</h3>
+          <p style="margin-top:8px;">
+            ${escapeHTML(error.message)}
+          </p>
+        </div>
+      `;
+
+  }
+
+}
+
+
+/* ==================================================
+   MY PRODUCTS
+================================================== */
+
+function getMyProducts(){
+
+  return products.filter(product =>
+    Number(product.seller_id) ===
+    Number(sellerId)
+  );
+
+}
+
+
+/* ==================================================
+   MY ORDERS
+================================================== */
+
+function getMyOrders(){
+
+  const myProductIds =
+    new Set(
+      getMyProducts().map(
+        product => String(product.id)
+      )
+    );
+
+
+  return orders.filter(order => {
+
+    /*
+      Worker mund të kthejë
+      product_id.
+    */
+
+    if(order.product_id != null){
+
+      return myProductIds.has(
+        String(order.product_id)
+      );
+
+    }
+
+
+    /*
+      Fallback nëse worker-i
+      kthen seller_id direkt.
+    */
+
+    if(order.seller_id != null){
+
+      return Number(order.seller_id) ===
+        Number(sellerId);
+
+    }
+
+
+    return false;
+
+  });
+
+}
+
+
+/* ==================================================
+   SHOP INFO
+================================================== */
 
 function renderShop(){
 
   const myProducts =
     getMyProducts();
 
+
   const first =
     myProducts[0];
 
 
-  const shop =
-    currentShop ||
-    "SABI Store";
+  if(first){
+
+    sellerName =
+      first.sellerName ||
+      first.seller ||
+      sellerName ||
+      "Shitës SABI";
+
+
+    sellerPhone =
+      first.sellerPhone ||
+      sellerPhone ||
+      "";
+
+
+    if(!currentShop){
+
+      currentShop =
+        first.seller ||
+        first.sellerName ||
+        sellerName;
+
+    }
+
+  }
 
 
   document.getElementById("shopName")
-    .textContent = shop;
+    .textContent =
+      currentShop ||
+      sellerName ||
+      "SABI Store";
 
 
   document.getElementById("shopPhone")
     .textContent =
-      first?.sellerPhone || "-";
+      sellerPhone ||
+      sellerContact ||
+      "-";
 
 }
 
 
-/* STATS */
+/* ==================================================
+   STATS
+================================================== */
 
 function updateStats(){
 
   const myProducts =
     getMyProducts();
+
 
   const myOrders =
     getMyOrders();
@@ -1047,7 +1411,13 @@ function updateStats(){
   const sales =
     myOrders.reduce(
       (sum,order) =>
-        sum + Number(order.sellerTotal || 0),
+        sum +
+        Number(
+          order.total_price ||
+          order.total ||
+          order.sellerTotal ||
+          0
+        ),
       0
     );
 
@@ -1059,7 +1429,9 @@ function updateStats(){
 }
 
 
-/* PRODUCTS */
+/* ==================================================
+   RENDER PRODUCTS
+================================================== */
 
 function renderProducts(){
 
@@ -1075,11 +1447,16 @@ function renderProducts(){
 
 
   const filtered =
-    getMyProducts().filter(p => {
+    getMyProducts().filter(product => {
 
       const text =
-        `${p.name || ""} ${p.category || ""}`
-          .toLowerCase();
+        `
+        ${product.name || ""}
+        ${product.title || ""}
+        ${product.category || ""}
+        ${product.description || ""}
+        `.toLowerCase();
+
 
       return text.includes(search);
 
@@ -1089,19 +1466,13 @@ function renderProducts(){
   if(!filtered.length){
 
     box.innerHTML = `
-
       <div class="empty">
-
-        <h3>
-          Nuk ke produkte.
-        </h3>
+        <h3>Nuk ke produkte.</h3>
 
         <p style="margin-top:8px;">
           Shto produktin e parë të dyqanit.
         </p>
-
       </div>
-
     `;
 
     return;
@@ -1110,69 +1481,102 @@ function renderProducts(){
 
 
   box.innerHTML =
-    filtered.map(p => `
+    filtered.map(product => {
 
-      <div class="product">
+      const image =
+        product.image ||
+        product.image_url ||
+        "https://via.placeholder.com/600x500?text=SABI";
 
-        <div class="product-image">
 
-          <img
-            src="${escapeHTML(p.image || "")}"
-            onerror="this.style.display='none'"
-          >
+      const name =
+        product.name ||
+        product.title ||
+        "Produkt";
+
+
+      const price =
+        Number(product.price || 0);
+
+
+      const stock =
+        Number(product.stock ?? 0);
+
+
+      return `
+
+        <div class="product">
+
+          <div class="product-image">
+
+            <img
+              src="${escapeHTML(image)}"
+              alt="${escapeHTML(name)}"
+              onerror="
+                this.src='https://via.placeholder.com/600x500?text=SABI'
+              "
+            >
+
+          </div>
+
+
+          <div class="product-info">
+
+            <div class="category">
+              ${escapeHTML(
+                fromDbCategory(product.category)
+              )}
+            </div>
+
+
+            <div class="product-name">
+              ${escapeHTML(name)}
+            </div>
+
+
+            <div class="price">
+              ${price.toFixed(2)}€
+            </div>
+
+
+            <div class="stock-text">
+              Stok: ${stock}
+            </div>
+
+
+            <div class="product-actions">
+
+              <button
+                class="action"
+                onclick="editProduct(${Number(product.id)})"
+              >
+                Ndrysho
+              </button>
+
+
+              <button
+                class="action delete"
+                onclick="deleteProduct(${Number(product.id)})"
+              >
+                Fshi
+              </button>
+
+            </div>
+
+          </div>
 
         </div>
 
+      `;
 
-        <div class="product-info">
-
-          <div class="category">
-            ${escapeHTML(
-              p.category || "Të tjera"
-            )}
-          </div>
-
-
-          <div class="product-name">
-            ${escapeHTML(
-              p.name || "Produkt"
-            )}
-          </div>
-
-
-          <div class="price">
-            ${Number(p.price || 0).toFixed(2)}€
-          </div>
-
-
-          <div class="product-actions">
-
-            <button
-              class="action"
-              onclick="editProduct('${p.id}')"
-            >
-              Ndrysho
-            </button>
-
-            <button
-              class="action delete"
-              onclick="deleteProduct('${p.id}')"
-            >
-              Fshi
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    `).join("");
+    }).join("");
 
 }
 
 
-/* ORDERS */
+/* ==================================================
+   RENDER ORDERS
+================================================== */
 
 function renderOrders(){
 
@@ -1187,20 +1591,14 @@ function renderOrders(){
   if(!myOrders.length){
 
     box.innerHTML = `
-
       <div class="empty">
-
-        <h3>
-          Nuk ka porosi ende.
-        </h3>
+        <h3>Nuk ka porosi ende.</h3>
 
         <p style="margin-top:8px;">
           Kur dikush të blejë një produkt,
           porosia do të shfaqet këtu.
         </p>
-
       </div>
-
     `;
 
     return;
@@ -1217,15 +1615,11 @@ function renderOrders(){
         <tr>
 
           <th>ID</th>
-
           <th>Data</th>
-
-          <th>Produktet</th>
-
+          <th>Produkti</th>
           <th>Klienti</th>
-
+          <th>Sasia</th>
           <th>Totali</th>
-
           <th>Statusi</th>
 
         </tr>
@@ -1235,71 +1629,135 @@ function renderOrders(){
 
       <tbody>
 
-        ${myOrders.map(order => `
+        ${myOrders.map(order => {
 
-          <tr>
-
-            <td>
-              <strong>
-                #${escapeHTML(order.id)}
-              </strong>
-            </td>
-
-
-            <td>
-              ${escapeHTML(
-                order.date || "-"
-              )}
-            </td>
+          const product =
+            products.find(
+              p =>
+                String(p.id) ===
+                String(order.product_id)
+            );
 
 
-            <td>
-
-              <div class="order-products">
-
-                ${order.items.map(item => `
-
-                  • ${escapeHTML(item.name)}
-                  ×${Number(item.qty || 1)}
-
-                  <br>
-
-                `).join("")}
-
-              </div>
-
-            </td>
+          const productName =
+            order.product_name ||
+            order.name ||
+            product?.name ||
+            product?.title ||
+            "Produkt";
 
 
-            <td>
-              ${escapeHTML(
-                order.customer || "Klient"
-              )}
-            </td>
+          const customer =
+            order.buyer_name ||
+            order.buyer_email ||
+            order.customer ||
+            "Klient";
 
 
-            <td>
-              <strong>
-                ${Number(
-                  order.sellerTotal || 0
-                ).toFixed(2)}€
-              </strong>
-            </td>
+          const quantity =
+            Number(
+              order.quantity ||
+              order.qty ||
+              1
+            );
 
 
-            <td>
+          const total =
+            Number(
+              order.total_price ||
+              order.total ||
+              0
+            );
 
-              <span class="badge orange">
-                ${escapeHTML(
-                  order.status || "E re"
-                )}
-              </span>
 
-            </td>
+          const status =
+            order.status ||
+            "pending";
 
-          </tr>
 
-        `).join("")}
+          const date =
+            order.created_at ||
+            order.date ||
+            "-";
+
+
+          let badgeClass =
+            "orange";
+
+
+          if(status === "completed" ||
+             status === "delivered"){
+
+            badgeClass = "green";
+
+          }
+
+
+          if(status === "cancelled" ||
+             status === "rejected"){
+
+            badgeClass = "red";
+
+          }
+
+
+          return `
+
+            <tr>
+
+              <td>
+                <strong>
+                  #${escapeHTML(order.id)}
+                </strong>
+              </td>
+
+
+              <td>
+                ${escapeHTML(date)}
+              </td>
+
+
+              <td>
+
+                <div class="order-products">
+
+                  ${escapeHTML(productName)}
+
+                </div>
+
+              </td>
+
+
+              <td>
+                ${escapeHTML(customer)}
+              </td>
+
+
+              <td>
+                ${quantity}
+              </td>
+
+
+              <td>
+                <strong>
+                  ${total.toFixed(2)}€
+                </strong>
+              </td>
+
+
+              <td>
+
+                <span class="badge ${badgeClass}">
+                  ${escapeHTML(status)}
+                </span>
+
+              </td>
+
+            </tr>
+
+          `;
+
+        }).join("")}
 
       </tbody>
 
@@ -1310,7 +1768,9 @@ function renderOrders(){
 }
 
 
-/* OPEN MODAL */
+/* ==================================================
+   OPEN MODAL
+================================================== */
 
 function openProductModal(){
 
@@ -1343,13 +1803,19 @@ function openProductModal(){
     .value = "";
 
 
+  document.getElementById("productStock")
+    .value = "1";
+
+
   document.getElementById("productModal")
     .classList.add("show");
 
 }
 
 
-/* CLOSE MODAL */
+/* ==================================================
+   CLOSE MODAL
+================================================== */
 
 function closeProductModal(){
 
@@ -1359,9 +1825,11 @@ function closeProductModal(){
 }
 
 
-/* SAVE PRODUCT */
+/* ==================================================
+   SAVE PRODUCT
+================================================== */
 
-function saveProduct(){
+async function saveProduct(){
 
   const editId =
     document.getElementById("editId")
@@ -1395,10 +1863,52 @@ function saveProduct(){
       .value.trim();
 
 
-  if(!currentShop){
+  const stock =
+    Number(
+      document.getElementById("productStock")
+        .value
+    );
+
+
+  if(!name){
+
+    alert("Vendos emrin e produktit.");
+
+    return;
+
+  }
+
+
+  if(!price || price <= 0){
+
+    alert("Vendos një çmim të vlefshëm.");
+
+    return;
+
+  }
+
+
+  if(stock < 0){
+
+    alert("Stoku nuk mund të jetë negativ.");
+
+    return;
+
+  }
+
+
+  /*
+    Sigurojmë që kemi seller ID.
+  */
+
+  const ready =
+    await prepareSeller();
+
+
+  if(!ready || !sellerId){
 
     alert(
-      "Nuk u gjet dyqani i shitësit."
+      "Nuk u gjet llogaria e shitësit. Hyr përsëri."
     );
 
     return;
@@ -1406,123 +1916,189 @@ function saveProduct(){
   }
 
 
-  if(!name || !price){
+  try{
 
-    alert(
-      "Vendos emrin dhe çmimin e produktit."
-    );
-
-    return;
-
-  }
+    const dbCategory =
+      toDbCategory(category);
 
 
-  /* EDIT */
+    /* ============================================
+       EDIT
+    ============================================ */
 
-  if(editId){
+    if(editId){
 
-    const product =
-      products.find(
-        p => String(p.id) === String(editId)
+      const response =
+        await fetch(
+          `${API}/products/${encodeURIComponent(editId)}`,
+          {
+
+            method:"PUT",
+
+            headers:{
+              "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+
+              title:name,
+
+              description:description,
+
+              price:price,
+
+              image_url:image,
+
+              category:dbCategory,
+
+              stock:stock
+
+            })
+
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if(!response.ok){
+
+        throw new Error(
+          data.error ||
+          "Produkti nuk u ndryshua."
+        );
+
+      }
+
+
+      alert(
+        "Produkti u ndryshua me sukses. ✅"
       );
-
-
-    if(product){
-
-      product.name = name;
-
-      product.price = price;
-
-      product.category = category;
-
-      product.image = image;
-
-      product.description = description;
 
     }
 
-  }
+
+    /* ============================================
+       NEW PRODUCT
+    ============================================ */
+
+    else{
+
+      const response =
+        await fetch(
+          `${API}/products`,
+          {
+
+            method:"POST",
+
+            headers:{
+              "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+
+              title:name,
+
+              description:description,
+
+              price:price,
+
+              image_url:image,
+
+              seller_id:Number(sellerId),
+
+              category:dbCategory,
+
+              stock:stock
+
+            })
+
+          }
+        );
 
 
-  /* NEW */
+      const data =
+        await response.json();
 
-  else{
 
-    const first =
-      products.find(
-        p =>
-          (p.seller || p.sellerName || "") ===
-          currentShop
+      if(!response.ok){
+
+        throw new Error(
+          data.error ||
+          "Produkti nuk u shtua."
+        );
+
+      }
+
+
+      alert(
+        "Produkti u shtua me sukses. ✅"
       );
 
-
-    const sellerName =
-      first?.sellerName ||
-      currentShop;
+    }
 
 
-    const sellerPhone =
-      first?.sellerPhone ||
-      "";
+    closeProductModal();
 
+    await loadProducts();
 
-    products.unshift({
+  }catch(error){
 
-      id:
-        "seller_" +
-        Date.now() +
-        "_" +
-        Math.random()
-          .toString(36)
-          .slice(2,7),
+    console.error(error);
 
-      name:name,
-
-      price:price,
-
-      category:category,
-
-      seller:currentShop,
-
-      sellerName:sellerName,
-
-      sellerPhone:sellerPhone,
-
-      image:image,
-
-      description:description
-
-    });
+    alert(
+      "Gabim: " +
+      error.message
+    );
 
   }
-
-
-  saveProducts();
-
-  closeProductModal();
-
-  renderAll();
-
-  alert(
-    editId
-      ? "Produkti u ndryshua."
-      : "Produkti u shtua me sukses."
-  );
 
 }
 
 
-/* EDIT */
+/* ==================================================
+   EDIT PRODUCT
+================================================== */
 
 function editProduct(id){
 
   const product =
     products.find(
-      p => String(p.id) === String(id)
+      p =>
+        Number(p.id) ===
+        Number(id)
     );
 
 
-  if(!product) return;
+  if(!product){
+
+    alert("Produkti nuk u gjet.");
+
+    return;
+
+  }
+
+
+  /*
+    Siguri:
+    mund të ndryshojë vetëm produkt
+    që i përket seller-it aktual.
+  */
+
+  if(
+    Number(product.seller_id) !==
+    Number(sellerId)
+  ){
+
+    alert(
+      "Ky produkt nuk i përket llogarisë tënde."
+    );
+
+    return;
+
+  }
 
 
   document.getElementById("modalTitle")
@@ -1537,27 +2113,40 @@ function editProduct(id){
 
   document.getElementById("productName")
     .value =
-      product.name || "";
+      product.name ||
+      product.title ||
+      "";
 
 
   document.getElementById("productPrice")
     .value =
-      product.price || "";
+      product.price ||
+      "";
 
 
   document.getElementById("productCategory")
     .value =
-      product.category || "Të tjera";
+      fromDbCategory(
+        product.category
+      );
 
 
   document.getElementById("productImage")
     .value =
-      product.image || "";
+      product.image ||
+      product.image_url ||
+      "";
 
 
   document.getElementById("productDescription")
     .value =
-      product.description || "";
+      product.description ||
+      "";
+
+
+  document.getElementById("productStock")
+    .value =
+      Number(product.stock ?? 0);
 
 
   document.getElementById("productModal")
@@ -1566,42 +2155,107 @@ function editProduct(id){
 }
 
 
-/* DELETE */
+/* ==================================================
+   DELETE PRODUCT
+================================================== */
 
-function deleteProduct(id){
+async function deleteProduct(id){
 
   const product =
     products.find(
-      p => String(p.id) === String(id)
+      p =>
+        Number(p.id) ===
+        Number(id)
     );
 
 
-  if(!product) return;
+  if(!product){
+
+    alert("Produkti nuk u gjet.");
+
+    return;
+
+  }
+
+
+  if(
+    Number(product.seller_id) !==
+    Number(sellerId)
+  ){
+
+    alert(
+      "Ky produkt nuk i përket llogarisë tënde."
+    );
+
+    return;
+
+  }
+
+
+  const name =
+    product.name ||
+    product.title ||
+    "Produkt";
 
 
   const ok =
     confirm(
-      `Do të fshish "${product.name}"?`
+      `Do të fshish "${name}"?`
     );
 
 
   if(!ok) return;
 
 
-  products =
-    products.filter(
-      p => String(p.id) !== String(id)
+  try{
+
+    const response =
+      await fetch(
+        `${API}/products/${encodeURIComponent(id)}`,
+        {
+          method:"DELETE"
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error ||
+        "Produkti nuk u fshi."
+      );
+
+    }
+
+
+    alert(
+      "Produkti u fshi me sukses. ✅"
     );
 
 
-  saveProducts();
+    await loadProducts();
 
-  renderAll();
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Gabim gjatë fshirjes: " +
+      error.message
+    );
+
+  }
 
 }
 
 
-/* SECTION */
+/* ==================================================
+   SECTION
+================================================== */
 
 function showSection(id,button){
 
@@ -1645,7 +2299,9 @@ function showSection(id,button){
 }
 
 
-/* RENDER ALL */
+/* ==================================================
+   RENDER ALL
+================================================== */
 
 function renderAll(){
 
@@ -1660,7 +2316,9 @@ function renderAll(){
 }
 
 
-/* MARKETPLACE */
+/* ==================================================
+   MARKETPLACE
+================================================== */
 
 function goMarketplace(){
 
@@ -1670,7 +2328,9 @@ function goMarketplace(){
 }
 
 
-/* LOGOUT */
+/* ==================================================
+   LOGOUT
+================================================== */
 
 function logout(){
 
@@ -1682,13 +2342,19 @@ function logout(){
     "sabiUserContact"
   );
 
+  localStorage.removeItem(
+    "sabiUserId"
+  );
+
   window.location.href =
     "login.html";
 
 }
 
 
-/* MODAL OUTSIDE CLICK */
+/* ==================================================
+   MODAL OUTSIDE CLICK
+================================================== */
 
 document
   .getElementById("productModal")
@@ -1706,9 +2372,27 @@ document
   );
 
 
-/* START */
+/* ==================================================
+   START
+================================================== */
 
-renderAll();
+async function start(){
+
+  /*
+    Përgatisim shitësin
+    përpara se të marrim produktet.
+  */
+
+  await prepareSeller();
+
+  await loadProducts();
+
+  await loadOrders();
+
+}
+
+
+start();
 
 </script>
 
