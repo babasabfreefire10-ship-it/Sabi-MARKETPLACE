@@ -2,472 +2,187 @@
 <html lang="sq">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>SABI • Admin</title>
 
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-body{
-  font-family:Arial,Helvetica,sans-serif;
-  background:#050505;
-  color:#fff;
-  min-height:100vh;
-}
-
-button,input{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:#050505;color:#fff;min-height:100vh}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
 
 .header{
-  height:70px;
-  padding:0 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  border-bottom:1px solid #202020;
-  background:#080808;
-  position:sticky;
-  top:0;
-  z-index:20;
+height:70px;padding:0 28px;display:flex;align-items:center;
+justify-content:space-between;border-bottom:1px solid #202020;
+background:#080808;position:sticky;top:0;z-index:20
 }
 
-.logo{
-  font-size:25px;
-  font-weight:900;
-  letter-spacing:4px;
-}
-
-.adminBadge{
-  font-size:11px;
-  color:#aaa;
-  margin-left:8px;
-  letter-spacing:1px;
-}
-
-.headerRight{
-  display:flex;
-  gap:10px;
-}
+.logo{font-size:25px;font-weight:900;letter-spacing:4px}
+.adminBadge{font-size:11px;color:#aaa;margin-left:8px;letter-spacing:1px}
+.headerRight{display:flex;gap:10px}
 
 .btn{
-  border:1px solid #292929;
-  background:#111;
-  color:white;
-  padding:10px 15px;
-  border-radius:10px;
-  transition:.2s;
+border:1px solid #292929;background:#111;color:#fff;
+padding:10px 15px;border-radius:10px;transition:.2s
 }
+.btn:hover{background:#1b1b1b}
+.btn.primary{background:#fff;color:#000;border-color:#fff;font-weight:700}
+.btn.danger{color:#ff6b6b}
 
-.btn:hover{
-  background:#1b1b1b;
-}
-
-.btn.primary{
-  background:#fff;
-  color:#000;
-  border-color:#fff;
-  font-weight:700;
-}
-
-.btn.danger{
-  color:#ff6b6b;
-}
-
-.container{
-  width:min(1400px,94%);
-  margin:30px auto;
-}
-
-.welcome{
-  margin-bottom:25px;
-}
-
-.welcome h1{
-  font-size:32px;
-  margin-bottom:7px;
-}
-
-.welcome p{
-  color:#888;
-}
+.container{width:min(1400px,94%);margin:30px auto}
+.welcome{margin-bottom:25px}
+.welcome h1{font-size:32px;margin-bottom:7px}
+.welcome p{color:#888}
 
 .stats{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:15px;
-  margin-bottom:25px;
+display:grid;grid-template-columns:repeat(4,1fr);
+gap:15px;margin-bottom:25px
 }
-
 .stat{
-  background:#0d0d0d;
-  border:1px solid #202020;
-  border-radius:16px;
-  padding:22px;
+background:#0d0d0d;border:1px solid #202020;
+border-radius:16px;padding:22px
 }
+.statTitle{color:#888;font-size:13px;margin-bottom:12px}
+.statValue{font-size:30px;font-weight:800}
+.online{color:#72ff9b}
 
-.statTitle{
-  color:#888;
-  font-size:13px;
-  margin-bottom:12px;
-}
-
-.statValue{
-  font-size:30px;
-  font-weight:800;
-}
-
-.online{
-  color:#72ff9b;
-}
-
-.tabs{
-  display:flex;
-  gap:8px;
-  margin-bottom:18px;
-  overflow:auto;
-}
-
+.tabs{display:flex;gap:8px;margin-bottom:18px;overflow:auto}
 .tab{
-  background:#0d0d0d;
-  border:1px solid #252525;
-  color:#aaa;
-  padding:12px 18px;
-  border-radius:10px;
-  white-space:nowrap;
+background:#0d0d0d;border:1px solid #252525;color:#aaa;
+padding:12px 18px;border-radius:10px;white-space:nowrap
 }
-
-.tab.active{
-  background:#fff;
-  color:#000;
-  border-color:#fff;
-  font-weight:700;
-}
+.tab.active{background:#fff;color:#000;border-color:#fff;font-weight:700}
 
 .panel{
-  background:#0b0b0b;
-  border:1px solid #202020;
-  border-radius:18px;
-  overflow:hidden;
+background:#0b0b0b;border:1px solid #202020;
+border-radius:18px;overflow:hidden
 }
-
 .panelHead{
-  padding:18px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  border-bottom:1px solid #202020;
+padding:18px;display:flex;justify-content:space-between;
+align-items:center;gap:15px;border-bottom:1px solid #202020
 }
-
-.panelHead h2{
-  font-size:19px;
-}
+.panelHead h2{font-size:19px}
 
 .search{
-  background:#111;
-  border:1px solid #292929;
-  color:#fff;
-  outline:none;
-  padding:11px 14px;
-  border-radius:10px;
-  width:260px;
+background:#111;border:1px solid #292929;color:#fff;
+outline:none;padding:11px 14px;border-radius:10px;width:260px
 }
+.search:focus{border-color:#555}
 
-.search:focus{
-  border-color:#555;
-}
+.tableWrap{width:100%;overflow-x:auto}
 
-.tableWrap{
-  width:100%;
-  overflow-x:auto;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:850px;
-}
-
+table{width:100%;border-collapse:collapse;min-width:850px}
 th{
-  text-align:left;
-  color:#777;
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  padding:15px;
-  border-bottom:1px solid #202020;
+text-align:left;color:#777;font-size:11px;text-transform:uppercase;
+letter-spacing:1px;padding:15px;border-bottom:1px solid #202020
 }
+td{padding:15px;border-bottom:1px solid #181818;font-size:14px}
+tr:hover td{background:#101010}
 
-td{
-  padding:15px;
-  border-bottom:1px solid #181818;
-  font-size:14px;
-}
-
-tr:hover td{
-  background:#101010;
-}
-
-.productCell{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
+.productCell{display:flex;align-items:center;gap:12px}
 .productImg{
-  width:48px;
-  height:48px;
-  object-fit:cover;
-  border-radius:10px;
-  background:#151515;
+width:48px;height:48px;object-fit:cover;border-radius:10px;
+background:#151515
 }
 
-.muted{
-  color:#777;
-}
-
-.price{
-  font-weight:700;
-}
+.muted{color:#777}
+.price{font-weight:700}
 
 .status{
-  display:inline-block;
-  padding:6px 9px;
-  border-radius:20px;
-  font-size:11px;
-  background:#161616;
-  color:#aaa;
+display:inline-block;padding:6px 9px;border-radius:20px;
+font-size:11px;background:#161616;color:#aaa
 }
+.status.active,.status.done{color:#72ff9b;background:#102017}
+.status.new{color:#79b8ff;background:#101a27}
+.status.cancel{color:#ff7777;background:#241010}
 
-.status.active{
-  color:#72ff9b;
-  background:#102017;
-}
-
-.status.new{
-  color:#79b8ff;
-  background:#101a27;
-}
-
-.status.done{
-  color:#72ff9b;
-  background:#102017;
-}
-
-.status.cancel{
-  color:#ff7777;
-  background:#241010;
-}
-
-.actions{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
 
 .smallBtn{
-  border:1px solid #292929;
-  background:#121212;
-  color:#fff;
-  padding:7px 10px;
-  border-radius:8px;
-  font-size:12px;
+border:1px solid #292929;background:#121212;color:#fff;
+padding:7px 10px;border-radius:8px;font-size:12px
 }
+.smallBtn:hover{background:#1e1e1e}
+.smallBtn.delete{color:#ff7777}
 
-.smallBtn:hover{
-  background:#1e1e1e;
-}
-
-.smallBtn.delete{
-  color:#ff7777;
-}
-
-.empty{
-  padding:45px 20px;
-  text-align:center;
-  color:#777;
-}
-
-.loading{
-  padding:35px;
-  text-align:center;
-  color:#777;
-}
+.empty,.loading{padding:45px 20px;text-align:center;color:#777}
 
 .errorBox{
-  margin-bottom:20px;
-  padding:14px 16px;
-  border:1px solid #542525;
-  background:#1b0d0d;
-  color:#ff9999;
-  border-radius:12px;
-  display:none;
+margin-bottom:20px;padding:14px 16px;border:1px solid #542525;
+background:#1b0d0d;color:#ff9999;border-radius:12px;display:none
+}
+
+.successBox{
+margin-bottom:20px;padding:14px 16px;border:1px solid #24542f;
+background:#0d1b11;color:#8cffaa;border-radius:12px;display:none
 }
 
 .modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.78);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  z-index:100;
+position:fixed;inset:0;background:rgba(0,0,0,.78);
+display:none;align-items:center;justify-content:center;
+padding:20px;z-index:100
 }
-
-.modal.show{
-  display:flex;
-}
+.modal.show{display:flex}
 
 .modalBox{
-  width:min(600px,100%);
-  max-height:90vh;
-  overflow:auto;
-  background:#0d0d0d;
-  border:1px solid #292929;
-  border-radius:20px;
-  padding:24px;
+width:min(600px,100%);max-height:90vh;overflow:auto;
+background:#0d0d0d;border:1px solid #292929;
+border-radius:20px;padding:24px
 }
 
 .modalTop{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px;
+display:flex;justify-content:space-between;
+align-items:center;margin-bottom:20px
 }
 
 .close{
-  border:0;
-  background:#171717;
-  color:#fff;
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  cursor:pointer;
+border:0;background:#171717;color:#fff;
+width:36px;height:36px;border-radius:50%
 }
 
 .formGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:13px;
+display:grid;grid-template-columns:1fr 1fr;gap:13px
 }
 
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:7px;
+.field{display:flex;flex-direction:column;gap:7px}
+.field.full{grid-column:1/-1}
+.field label{color:#888;font-size:12px}
+
+.field input,.field select,.field textarea{
+width:100%;background:#111;border:1px solid #292929;
+color:#fff;padding:12px;border-radius:10px;outline:none
 }
 
-.field.full{
-  grid-column:1/-1;
-}
-
-.field label{
-  color:#888;
-  font-size:12px;
-}
-
-.field input,
-.field select,
-.field textarea{
-  width:100%;
-  background:#111;
-  border:1px solid #292929;
-  color:#fff;
-  padding:12px;
-  border-radius:10px;
-  outline:none;
-}
-
-.field textarea{
-  min-height:100px;
-  resize:vertical;
-}
+.field textarea{min-height:100px;resize:vertical}
 
 .modalActions{
-  display:flex;
-  justify-content:flex-end;
-  gap:8px;
-  margin-top:20px;
+display:flex;justify-content:flex-end;gap:8px;margin-top:20px
 }
 
 .orderItems{
-  margin-top:10px;
-  padding:10px;
-  background:#111;
-  border-radius:10px;
+margin-top:10px;padding:10px;background:#111;border-radius:10px
 }
-
 .orderItem{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  padding:8px 0;
-  border-bottom:1px solid #222;
+display:flex;justify-content:space-between;gap:10px;
+padding:8px 0;border-bottom:1px solid #222
 }
-
-.orderItem:last-child{
-  border-bottom:0;
-}
+.orderItem:last-child{border-bottom:0}
 
 @media(max-width:800px){
-
-  .stats{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .header{
-    padding:0 15px;
-  }
-
-  .adminBadge{
-    display:none;
-  }
-
-  .headerRight .btn:first-child{
-    display:none;
-  }
-
-  .search{
-    width:100%;
-  }
-
-  .panelHead{
-    align-items:stretch;
-    flex-direction:column;
-  }
-
-  .formGrid{
-    grid-template-columns:1fr;
-  }
-
-  .field.full{
-    grid-column:auto;
-  }
+.stats{grid-template-columns:1fr 1fr}
+.header{padding:0 15px}
+.adminBadge{display:none}
+.headerRight .btn:first-child{display:none}
+.search{width:100%}
+.panelHead{align-items:stretch;flex-direction:column}
+.formGrid{grid-template-columns:1fr}
+.field.full{grid-column:auto}
 }
 
 @media(max-width:480px){
-
-  .stats{
-    grid-template-columns:1fr;
-  }
-
-  .welcome h1{
-    font-size:27px;
-  }
-
-  .container{
-    width:92%;
-  }
+.stats{grid-template-columns:1fr}
+.welcome h1{font-size:27px}
+.container{width:92%}
 }
 </style>
 </head>
@@ -475,2092 +190,1376 @@ tr:hover td{
 <body>
 
 <header class="header">
+<div>
+<span class="logo">SABI</span>
+<span class="adminBadge">ADMIN PANEL</span>
+</div>
 
-  <div>
-    <span class="logo">SABI</span>
-    <span class="adminBadge">ADMIN PANEL</span>
-  </div>
-
-  <div class="headerRight">
-
-    <button class="btn" onclick="goMarketplace()">
-      Marketplace
-    </button>
-
-    <button class="btn danger" onclick="logout()">
-      Dil
-    </button>
-
-  </div>
-
+<div class="headerRight">
+<button class="btn" onclick="goMarketplace()">Marketplace</button>
+<button class="btn primary" onclick="openAddProduct()">＋ Shto produkt</button>
+<button class="btn danger" onclick="logout()">Dil</button>
+</div>
 </header>
-
 
 <main class="container">
 
-  <section class="welcome">
+<section class="welcome">
+<h1>Mirë se erdhe, Admin 👋</h1>
+<p>Menaxho marketplace-in SABI nga një vend.</p>
+</section>
 
-    <h1>
-      Mirë se erdhe, Admin 👋
-    </h1>
+<div id="errorBox" class="errorBox"></div>
+<div id="successBox" class="successBox"></div>
 
-    <p>
-      Menaxho marketplace-in SABI nga një vend.
-    </p>
+<section class="stats">
 
-  </section>
+<div class="stat">
+<div class="statTitle">PRODUKTE</div>
+<div class="statValue" id="statProducts">0</div>
+</div>
 
+<div class="stat">
+<div class="statTitle">SHITËS</div>
+<div class="statValue" id="statSellers">0</div>
+</div>
 
-  <div id="errorBox" class="errorBox"></div>
+<div class="stat">
+<div class="statTitle">POROSI</div>
+<div class="statValue" id="statOrders">0</div>
+</div>
 
+<div class="stat">
+<div class="statTitle">STATUSI</div>
+<div class="statValue online">ONLINE</div>
+</div>
 
-  <section class="stats">
+</section>
 
-    <div class="stat">
+<div class="tabs">
 
-      <div class="statTitle">
-        PRODUKTE
-      </div>
+<button class="tab active" onclick="showTab('products',this)">
+📦 Produktet
+</button>
 
-      <div
-        class="statValue"
-        id="statProducts">
-        0
-      </div>
+<button class="tab" onclick="showTab('sellers',this)">
+👥 Shitësit
+</button>
 
-    </div>
+<button class="tab" onclick="showTab('orders',this)">
+🛒 Porositë
+</button>
 
+</div>
 
-    <div class="stat">
+<!-- PRODUCTS -->
 
-      <div class="statTitle">
-        SHITËS
-      </div>
+<section class="panel" id="productsPanel">
 
-      <div
-        class="statValue"
-        id="statSellers">
-        0
-      </div>
+<div class="panelHead">
+<h2>Të gjitha produktet</h2>
 
-    </div>
+<input
+id="productSearch"
+class="search"
+placeholder="Kërko produkt..."
+oninput="renderProducts()">
+</div>
 
+<div class="tableWrap">
 
-    <div class="stat">
+<table>
 
-      <div class="statTitle">
-        POROSI
-      </div>
+<thead>
+<tr>
+<th>Produkti</th>
+<th>Kategoria</th>
+<th>Shitësi</th>
+<th>Çmimi</th>
+<th>Veprime</th>
+</tr>
+</thead>
 
-      <div
-        class="statValue"
-        id="statOrders">
-        0
-      </div>
+<tbody id="productsTable">
+<tr>
+<td colspan="5">
+<div class="loading">Duke ngarkuar produktet...</div>
+</td>
+</tr>
+</tbody>
 
-    </div>
+</table>
 
+</div>
+</section>
 
-    <div class="stat">
+<!-- SELLERS -->
 
-      <div class="statTitle">
-        STATUSI
-      </div>
+<section class="panel" id="sellersPanel" style="display:none">
 
-      <div class="statValue online">
-        ONLINE
-      </div>
+<div class="panelHead">
+<h2>Shitësit</h2>
 
-    </div>
+<input
+id="sellerSearch"
+class="search"
+placeholder="Kërko shitës..."
+oninput="renderSellers()">
+</div>
 
-  </section>
+<div class="tableWrap">
 
+<table>
 
-  <div class="tabs">
+<thead>
+<tr>
+<th>Dyqani</th>
+<th>Kontakti</th>
+<th>Produkte</th>
+<th>Shitje</th>
+<th>Statusi</th>
+<th>Veprime</th>
+</tr>
+</thead>
 
-    <button
-      class="tab active"
-      onclick="showTab('products',this)">
+<tbody id="sellersTable"></tbody>
 
-      📦 Produktet
+</table>
 
-    </button>
+</div>
+</section>
 
+<!-- ORDERS -->
 
-    <button
-      class="tab"
-      onclick="showTab('sellers',this)">
+<section class="panel" id="ordersPanel" style="display:none">
 
-      👥 Shitësit
+<div class="panelHead">
+<h2>Të gjitha porositë</h2>
 
-    </button>
+<input
+id="orderSearch"
+class="search"
+placeholder="Kërko porosi..."
+oninput="renderOrders()">
+</div>
 
+<div class="tableWrap">
 
-    <button
-      class="tab"
-      onclick="showTab('orders',this)">
+<table>
 
-      🛒 Porositë
+<thead>
+<tr>
+<th>ID</th>
+<th>Klienti</th>
+<th>Produkti</th>
+<th>Total</th>
+<th>Data</th>
+<th>Statusi</th>
+<th>Veprime</th>
+</tr>
+</thead>
 
-    </button>
+<tbody id="ordersTable"></tbody>
 
-  </div>
+</table>
 
-
-  <!-- PRODUCTS -->
-
-  <section
-    class="panel"
-    id="productsPanel">
-
-    <div class="panelHead">
-
-      <h2>
-        Të gjitha produktet
-      </h2>
-
-      <input
-        id="productSearch"
-        class="search"
-        placeholder="Kërko produkt..."
-        oninput="renderProducts()">
-
-    </div>
-
-
-    <div class="tableWrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-
-            <th>
-              Produkti
-            </th>
-
-            <th>
-              Kategoria
-            </th>
-
-            <th>
-              Shitësi
-            </th>
-
-            <th>
-              Çmimi
-            </th>
-
-            <th>
-              Veprime
-            </th>
-
-          </tr>
-
-        </thead>
-
-        <tbody id="productsTable">
-
-          <tr>
-            <td colspan="5">
-              <div class="loading">
-                Duke ngarkuar produktet...
-              </div>
-            </td>
-          </tr>
-
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </section>
-
-
-  <!-- SELLERS -->
-
-  <section
-    class="panel"
-    id="sellersPanel"
-    style="display:none">
-
-    <div class="panelHead">
-
-      <h2>
-        Shitësit
-      </h2>
-
-      <input
-        id="sellerSearch"
-        class="search"
-        placeholder="Kërko shitës..."
-        oninput="renderSellers()">
-
-    </div>
-
-
-    <div class="tableWrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-
-            <th>
-              Dyqani
-            </th>
-
-            <th>
-              Kontakti
-            </th>
-
-            <th>
-              Produkte
-            </th>
-
-            <th>
-              Shitje
-            </th>
-
-            <th>
-              Statusi
-            </th>
-
-            <th>
-              Veprime
-            </th>
-
-          </tr>
-
-        </thead>
-
-        <tbody id="sellersTable"></tbody>
-
-      </table>
-
-    </div>
-
-  </section>
-
-
-  <!-- ORDERS -->
-
-  <section
-    class="panel"
-    id="ordersPanel"
-    style="display:none">
-
-    <div class="panelHead">
-
-      <h2>
-        Të gjitha porositë
-      </h2>
-
-      <input
-        id="orderSearch"
-        class="search"
-        placeholder="Kërko porosi..."
-        oninput="renderOrders()">
-
-    </div>
-
-
-    <div class="tableWrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-
-            <th>ID</th>
-
-            <th>
-              Klienti
-            </th>
-
-            <th>
-              Produkti
-            </th>
-
-            <th>
-              Total
-            </th>
-
-            <th>
-              Data
-            </th>
-
-            <th>
-              Statusi
-            </th>
-
-            <th>
-              Veprime
-            </th>
-
-          </tr>
-
-        </thead>
-
-        <tbody id="ordersTable"></tbody>
-
-      </table>
-
-    </div>
-
-  </section>
+</div>
+</section>
 
 </main>
 
-
 <!-- PRODUCT MODAL -->
 
-<div
-  class="modal"
-  id="productModal">
+<div class="modal" id="productModal">
 
-  <div class="modalBox">
+<div class="modalBox">
 
-    <div class="modalTop">
+<div class="modalTop">
 
-      <h2>
-        Ndrysho produktin
-      </h2>
+<h2 id="productModalTitle">Ndrysho produktin</h2>
 
-      <button
-        class="close"
-        onclick="closeProductModal()">
-
-        ×
-
-      </button>
-
-    </div>
-
-
-    <div class="formGrid">
-
-      <div class="field">
-
-        <label>
-          Emri
-        </label>
-
-        <input id="editName">
-
-      </div>
-
-
-      <div class="field">
-
-        <label>
-          Çmimi (€)
-        </label>
-
-        <input
-          id="editPrice"
-          type="number"
-          step="0.01">
-
-      </div>
-
-
-      <div class="field">
-
-        <label>
-          Kategoria
-        </label>
-
-        <select id="editCategory">
-
-          <option value="Fashion">
-            Fashion
-          </option>
-
-          <option value="Elektronikë">
-            Elektronikë
-          </option>
-
-          <option value="Këpucë">
-            Këpucë
-          </option>
-
-          <option value="Aksesorë">
-            Aksesorë
-          </option>
-
-          <option value="Të tjera">
-            Të tjera
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <div class="field">
-
-        <label>
-          Shitësi
-        </label>
-
-        <input
-          id="editSeller"
-          readonly>
-
-      </div>
-
-
-      <div class="field full">
-
-        <label>
-          Foto URL
-        </label>
-
-        <input id="editImage">
-
-      </div>
-
-
-      <div class="field full">
-
-        <label>
-          Përshkrimi
-        </label>
-
-        <textarea id="editDescription"></textarea>
-
-      </div>
-
-    </div>
-
-
-    <div class="modalActions">
-
-      <button
-        class="btn"
-        onclick="closeProductModal()">
-
-        Anulo
-
-      </button>
-
-      <button
-        class="btn primary"
-        onclick="saveProductEdit()">
-
-        Ruaj ndryshimet
-
-      </button>
-
-    </div>
-
-  </div>
+<button class="close" onclick="closeProductModal()">×</button>
 
 </div>
 
+<div class="formGrid">
+
+<div class="field">
+<label>Emri</label>
+<input id="editName">
+</div>
+
+<div class="field">
+<label>Çmimi (€)</label>
+<input id="editPrice" type="number" step="0.01">
+</div>
+
+<div class="field">
+<label>Kategoria</label>
+
+<select id="editCategory">
+<option value="Fashion">Fashion</option>
+<option value="Elektronikë">Elektronikë</option>
+<option value="Këpucë">Këpucë</option>
+<option value="Aksesorë">Aksesorë</option>
+<option value="Të tjera">Të tjera</option>
+</select>
+</div>
+
+<div class="field">
+<label>Stoku</label>
+<input id="editStock" type="number" min="0">
+</div>
+
+<div class="field full">
+<label>Foto URL</label>
+<input id="editImage">
+</div>
+
+<div class="field full">
+<label>Përshkrimi</label>
+<textarea id="editDescription"></textarea>
+</div>
+
+</div>
+
+<div class="modalActions">
+
+<button class="btn" onclick="closeProductModal()">Anulo</button>
+
+<button class="btn primary" onclick="saveProduct()">
+Ruaj
+</button>
+
+</div>
+
+</div>
+</div>
 
 <!-- ORDER MODAL -->
 
-<div
-  class="modal"
-  id="orderModal">
+<div class="modal" id="orderModal">
 
-  <div class="modalBox">
+<div class="modalBox">
 
-    <div class="modalTop">
+<div class="modalTop">
 
-      <h2>
-        Detajet e porosisë
-      </h2>
+<h2>Detajet e porosisë</h2>
 
-      <button
-        class="close"
-        onclick="closeOrderModal()">
-
-        ×
-
-      </button>
-
-    </div>
-
-
-    <div id="orderDetails"></div>
-
-
-    <div class="modalActions">
-
-      <button
-        class="btn"
-        onclick="closeOrderModal()">
-
-        Mbyll
-
-      </button>
-
-    </div>
-
-  </div>
+<button class="close" onclick="closeOrderModal()">×</button>
 
 </div>
 
+<div id="orderDetails"></div>
+
+<div class="modalActions">
+<button class="btn" onclick="closeOrderModal()">Mbyll</button>
+</div>
+
+</div>
+</div>
 
 <script>
 
-/* =========================================
-   CLOUDFLARE WORKER API
-========================================= */
-
 const API =
-  location.hostname.includes("github.io")
-    ? "https://sabi-marketplace.babasabfreefire2.workers.dev/api"
-    : "/api";
+location.hostname.includes("github.io")
+? "https://sabi-marketplace.babasabfreefire2.workers.dev/api"
+: "/api";
+
+let products=[];
+let orders=[];
+let editingProductId=null;
+let addingProduct=false;
 
 
-let products = [];
-let orders = [];
-let editingProductId = null;
+/* API */
 
+async function apiFetch(url,options={}){
 
-/* =========================================
-   API HELPER
-========================================= */
+const response=await fetch(API+url,{
+...options,
+headers:{
+"Content-Type":"application/json",
+...(options.headers||{})
+}
+});
 
-async function apiFetch(url, options = {}){
+let data=null;
 
-  const response =
-    await fetch(API + url, {
+try{
+data=await response.json();
+}catch(e){}
 
-      ...options,
+if(!response.ok){
+throw new Error(
+data?.error ||
+data?.message ||
+`Gabim HTTP ${response.status}`
+);
+}
 
-      headers:{
-        "Content-Type":"application/json",
-        ...(options.headers || {})
-      }
-
-    });
-
-
-  let data = null;
-
-  try{
-    data = await response.json();
-  }catch(e){
-    data = null;
-  }
-
-
-  if(!response.ok){
-
-    throw new Error(
-      data?.error ||
-      `Gabim HTTP ${response.status}`
-    );
-
-  }
-
-
-  return data;
+return data;
 }
 
 
-/* =========================================
-   ERROR
-========================================= */
+/* MESSAGES */
 
 function showError(message){
 
-  const box =
-    document.getElementById("errorBox");
+const box=document.getElementById("errorBox");
 
-  box.textContent =
-    message;
-
-  box.style.display =
-    "block";
+box.textContent=message;
+box.style.display="block";
 
 }
-
 
 function hideError(){
+document.getElementById("errorBox").style.display="none";
+}
 
-  const box =
-    document.getElementById("errorBox");
+function showSuccess(message){
 
-  box.style.display =
-    "none";
+const box=document.getElementById("successBox");
+
+box.textContent=message;
+box.style.display="block";
+
+setTimeout(()=>{
+box.style.display="none";
+},3000);
 
 }
 
 
-/* =========================================
-   CATEGORY
-========================================= */
+/* CATEGORIES */
 
 function displayCategory(category){
 
-  const map = {
+const map={
+"Electronics":"Elektronikë",
+"Accessories":"Aksesorë",
+"Shoes":"Këpucë",
+"Fashion":"Fashion",
+"Home":"Të tjera"
+};
 
-    "Electronics":"Elektronikë",
-
-    "Accessories":"Aksesorë",
-
-    "Shoes":"Këpucë",
-
-    "Fashion":"Fashion",
-
-    "Home":"Të tjera"
-
-  };
-
-  return map[category] || category || "Të tjera";
-
+return map[category]||category||"Të tjera";
 }
-
 
 function databaseCategory(category){
 
-  const map = {
+const map={
+"Elektronikë":"Electronics",
+"Aksesorë":"Accessories",
+"Këpucë":"Shoes",
+"Fashion":"Fashion",
+"Të tjera":"Home"
+};
 
-    "Elektronikë":"Electronics",
-
-    "Aksesorë":"Accessories",
-
-    "Këpucë":"Shoes",
-
-    "Fashion":"Fashion",
-
-    "Të tjera":"Home"
-
-  };
-
-  return map[category] || category || "Home";
+return map[category]||"Home";
 }
 
 
-/* =========================================
-   LOAD PRODUCTS
-========================================= */
+/* LOAD */
 
 async function loadProducts(){
 
-  const data =
-    await apiFetch("/products");
+const data=await apiFetch("/products");
 
-  products =
-    Array.isArray(data)
-      ? data
-      : (data.products || []);
-
+if(Array.isArray(data)){
+products=data;
+}else if(Array.isArray(data?.products)){
+products=data.products;
+}else{
+products=[];
 }
 
-
-/* =========================================
-   LOAD ORDERS
-========================================= */
+}
 
 async function loadOrders(){
 
-  const data =
-    await apiFetch("/orders");
+const data=await apiFetch("/orders");
 
-  orders =
-    Array.isArray(data)
-      ? data
-      : (data.orders || []);
+if(Array.isArray(data)){
+orders=data;
+}else if(Array.isArray(data?.orders)){
+orders=data.orders;
+}else{
+orders=[];
+}
 
 }
 
 
-/* =========================================
-   LOAD EVERYTHING
-========================================= */
+/* LOAD ALL */
 
 async function loadData(){
 
-  hideError();
+hideError();
 
+try{
 
-  document.getElementById("productsTable").innerHTML = `
-    <tr>
-      <td colspan="5">
-        <div class="loading">
-          Duke ngarkuar produktet...
-        </div>
-      </td>
-    </tr>
-  `;
+await Promise.all([
+loadProducts(),
+loadOrders()
+]);
 
+updateStats();
+renderProducts();
+renderSellers();
+renderOrders();
 
-  document.getElementById("ordersTable").innerHTML = `
-    <tr>
-      <td colspan="7">
-        <div class="loading">
-          Duke ngarkuar porositë...
-        </div>
-      </td>
-    </tr>
-  `;
+}catch(error){
 
+console.error(error);
 
-  try{
+showError(
+"Nuk u arrit të ngarkoheshin të dhënat: "+
+error.message
+);
 
-    await Promise.all([
-      loadProducts(),
-      loadOrders()
-    ]);
+document.getElementById("productsTable").innerHTML=`
+<tr>
+<td colspan="5">
+<div class="empty">
+Gabim gjatë ngarkimit të produkteve.<br>
+<small>${escapeHtml(error.message)}</small>
+</div>
+</td>
+</tr>`;
 
+document.getElementById("ordersTable").innerHTML=`
+<tr>
+<td colspan="7">
+<div class="empty">
+Gabim gjatë ngarkimit të porosive.
+</div>
+</td>
+</tr>`;
 
-    updateStats();
-
-    renderProducts();
-
-    renderSellers();
-
-    renderOrders();
-
-  }catch(error){
-
-    console.error(error);
-
-    showError(
-      "Nuk u arrit të lidhej me serverin: " +
-      error.message
-    );
-
-    document.getElementById("productsTable").innerHTML = `
-      <tr>
-        <td colspan="5">
-          <div class="empty">
-            Gabim gjatë ngarkimit.
-          </div>
-        </td>
-      </tr>
-    `;
-
-    document.getElementById("ordersTable").innerHTML = `
-      <tr>
-        <td colspan="7">
-          <div class="empty">
-            Gabim gjatë ngarkimit.
-          </div>
-        </td>
-      </tr>
-    `;
-
-  }
+}
 
 }
 
 
-/* =========================================
-   STATS
-========================================= */
+/* STATS */
 
 function updateStats(){
 
-  document.getElementById("statProducts").textContent =
-    products.length;
+document.getElementById("statProducts").textContent=
+products.length;
 
+document.getElementById("statOrders").textContent=
+orders.length;
 
-  document.getElementById("statOrders").textContent =
-    orders.length;
-
-
-  document.getElementById("statSellers").textContent =
-    getSellers().length;
+document.getElementById("statSellers").textContent=
+getSellers().length;
 
 }
 
 
-/* =========================================
-   SELLERS
-========================================= */
+/* SELLERS */
 
 function getSellers(){
 
-  const map = {};
+const map={};
 
+products.forEach(product=>{
 
-  products.forEach(product => {
+const sellerId=
+product.seller_id ??
+product.sellerId ??
+"unknown";
 
-    const sellerId =
-      product.seller_id ||
-      product.sellerId ||
-      product.seller ||
-      "unknown";
+const sellerName=
+product.sellerName ||
+product.seller ||
+"Pa shitës";
 
+const contact=
+product.sellerEmail ||
+product.sellerPhone ||
+"";
 
-    const sellerName =
-      product.sellerName ||
-      product.seller ||
-      "Pa shitës";
+if(!map[sellerId]){
 
+map[sellerId]={
+id:sellerId,
+name:sellerName,
+contact:contact,
+products:0,
+sales:0
+};
 
-    const sellerEmail =
-      product.sellerEmail ||
-      product.sellerPhone ||
-      "";
+}
 
+map[sellerId].products++;
 
-    if(!map[sellerId]){
+});
 
-      map[sellerId] = {
+orders.forEach(order=>{
 
-        id:sellerId,
+const sellerId=
+order.seller_id ??
+order.sellerId ??
+"unknown";
 
-        name:sellerName,
+if(!map[sellerId]){
 
-        contact:sellerEmail,
+map[sellerId]={
+id:sellerId,
+name:order.sellerName||"Pa shitës",
+contact:order.sellerEmail||"",
+products:0,
+sales:0
+};
 
-        products:0,
+}
 
-        sales:0
+map[sellerId].sales+=
+Number(order.total_price||order.total||0);
 
-      };
+});
 
-    }
-
-
-    map[sellerId].products++;
-
-  });
-
-
-  orders.forEach(order => {
-
-    const sellerId =
-      order.seller_id ||
-      order.sellerId ||
-      "unknown";
-
-
-    const sellerName =
-      order.sellerName ||
-      order.seller ||
-      "Pa shitës";
-
-
-    if(!map[sellerId]){
-
-      map[sellerId] = {
-
-        id:sellerId,
-
-        name:sellerName,
-
-        contact:
-          order.sellerEmail || "",
-
-        products:0,
-
-        sales:0
-
-      };
-
-    }
-
-
-    map[sellerId].sales +=
-      Number(
-        order.total_price ||
-        order.total ||
-        0
-      );
-
-  });
-
-
-  return Object.values(map);
+return Object.values(map);
 
 }
 
 
-/* =========================================
-   PRODUCTS TABLE
-========================================= */
+/* PRODUCTS */
 
 function renderProducts(){
 
-  const tbody =
-    document.getElementById("productsTable");
+const tbody=document.getElementById("productsTable");
 
+const search=
+document.getElementById("productSearch").value
+.toLowerCase()
+.trim();
 
-  const search =
-    document
-      .getElementById("productSearch")
-      .value
-      .toLowerCase()
-      .trim();
+const filtered=products.filter(product=>{
 
+const text=[
+product.name,
+product.title,
+product.category,
+product.seller,
+product.sellerName,
+product.sellerEmail
+].filter(Boolean).join(" ").toLowerCase();
 
-  const filtered =
-    products.filter(product => {
+return text.includes(search);
 
-      const text = `
+});
 
-        ${product.name || ""}
+if(!filtered.length){
 
-        ${product.title || ""}
+tbody.innerHTML=`
+<tr>
+<td colspan="5">
+<div class="empty">
+Nuk u gjet asnjë produkt.
+<br><br>
+<button class="btn primary" onclick="openAddProduct()">
+＋ Shto produkt
+</button>
+</div>
+</td>
+</tr>`;
 
-        ${product.category || ""}
+return;
+}
 
-        ${product.seller || ""}
+tbody.innerHTML=filtered.map(product=>{
 
-        ${product.sellerName || ""}
+const id=product.id;
 
-        ${product.sellerEmail || ""}
+const name=
+product.name ||
+product.title ||
+"Pa emër";
 
-      `.toLowerCase();
+const seller=
+product.sellerName ||
+product.seller ||
+"Pa shitës";
 
+const image=
+product.image ||
+product.image_url ||
+"https://via.placeholder.com/100";
 
-      return text.includes(search);
+const category=
+displayCategory(product.category);
 
-    });
+return`
+<tr>
 
+<td>
+<div class="productCell">
 
-  if(!filtered.length){
+<img
+class="productImg"
+src="${escapeHtml(image)}"
+onerror="this.src='https://via.placeholder.com/100'">
 
-    tbody.innerHTML = `
-      <tr>
+<div>
 
-        <td colspan="5">
+<strong>${escapeHtml(name)}</strong>
 
-          <div class="empty">
+<div class="muted">
+ID: ${escapeHtml(String(id))}
+</div>
 
-            Nuk u gjet asnjë produkt.
+</div>
 
-          </div>
+</div>
+</td>
 
-        </td>
+<td>${escapeHtml(category)}</td>
 
-      </tr>
-    `;
+<td>${escapeHtml(seller)}</td>
 
-    return;
+<td class="price">
+${Number(product.price||0).toFixed(2)}€
+</td>
 
-  }
+<td>
 
+<div class="actions">
 
-  tbody.innerHTML =
+<button
+class="smallBtn"
+onclick="editProduct('${safeId(id)}')">
+✏️ Ndrysho
+</button>
 
-    filtered.map(product => {
+<button
+class="smallBtn delete"
+onclick="deleteProduct('${safeId(id)}')">
+🗑️ Fshi
+</button>
 
-      const name =
-        product.name ||
-        product.title ||
-        "Pa emër";
+</div>
 
+</td>
 
-      const seller =
-        product.sellerName ||
-        product.seller ||
-        "Pa shitës";
+</tr>`;
 
-
-      const image =
-        product.image ||
-        product.image_url ||
-        "https://via.placeholder.com/100";
-
-
-      const category =
-        displayCategory(
-          product.category
-        );
-
-
-      const id =
-        product.id;
-
-
-      return `
-
-        <tr>
-
-          <td>
-
-            <div class="productCell">
-
-              <img
-                class="productImg"
-                src="${escapeHtml(image)}"
-                onerror="this.src='https://via.placeholder.com/100'"
-              >
-
-              <div>
-
-                <strong>
-                  ${escapeHtml(name)}
-                </strong>
-
-                <div class="muted">
-                  ID: ${escapeHtml(String(id))}
-                </div>
-
-              </div>
-
-            </div>
-
-          </td>
-
-
-          <td>
-            ${escapeHtml(category)}
-          </td>
-
-
-          <td>
-            ${escapeHtml(seller)}
-          </td>
-
-
-          <td class="price">
-            ${Number(product.price || 0).toFixed(2)}€
-          </td>
-
-
-          <td>
-
-            <div class="actions">
-
-              <button
-                class="smallBtn"
-                onclick="editProduct('${safeId(id)}')">
-
-                ✏️ Ndrysho
-
-              </button>
-
-
-              <button
-                class="smallBtn delete"
-                onclick="deleteProduct('${safeId(id)}')">
-
-                🗑️ Fshi
-
-              </button>
-
-            </div>
-
-          </td>
-
-        </tr>
-
-      `;
-
-    }).join("");
+}).join("");
 
 }
 
 
-/* =========================================
-   EDIT PRODUCT
-========================================= */
+/* ADD PRODUCT */
+
+function openAddProduct(){
+
+addingProduct=true;
+editingProductId=null;
+
+document.getElementById("productModalTitle").textContent=
+"Shto produkt";
+
+document.getElementById("editName").value="";
+document.getElementById("editPrice").value="";
+document.getElementById("editCategory").value="Fashion";
+document.getElementById("editStock").value="1";
+document.getElementById("editImage").value="";
+document.getElementById("editDescription").value="";
+
+document
+.getElementById("productModal")
+.classList.add("show");
+
+}
+
+
+/* EDIT */
 
 function editProduct(id){
 
-  const product =
-    products.find(
-      p =>
-        String(p.id) === String(id)
-    );
+const product=products.find(
+p=>String(p.id)===String(id)
+);
 
+if(!product)return;
 
-  if(!product) return;
+addingProduct=false;
+editingProductId=product.id;
 
+document.getElementById("productModalTitle").textContent=
+"Ndrysho produktin";
 
-  editingProductId =
-    product.id;
+document.getElementById("editName").value=
+product.name||product.title||"";
 
+document.getElementById("editPrice").value=
+product.price??"";
 
-  document.getElementById("editName").value =
-    product.name ||
-    product.title ||
-    "";
+document.getElementById("editCategory").value=
+displayCategory(product.category);
 
+document.getElementById("editStock").value=
+product.stock??0;
 
-  document.getElementById("editPrice").value =
-    product.price || "";
+document.getElementById("editImage").value=
+product.image||product.image_url||"";
 
+document.getElementById("editDescription").value=
+product.description||"";
 
-  document.getElementById("editCategory").value =
-    displayCategory(
-      product.category
-    );
-
-
-  document.getElementById("editSeller").value =
-    product.sellerName ||
-    product.seller ||
-    "Pa shitës";
-
-
-  document.getElementById("editImage").value =
-    product.image ||
-    product.image_url ||
-    "";
-
-
-  document.getElementById("editDescription").value =
-    product.description ||
-    "";
-
-
-  document
-    .getElementById("productModal")
-    .classList.add("show");
+document
+.getElementById("productModal")
+.classList.add("show");
 
 }
 
 
 function closeProductModal(){
 
-  editingProductId = null;
+editingProductId=null;
+addingProduct=false;
 
-
-  document
-    .getElementById("productModal")
-    .classList.remove("show");
-
-}
-
-
-/* =========================================
-   SAVE PRODUCT
-========================================= */
-
-async function saveProductEdit(){
-
-  const product =
-    products.find(
-      p =>
-        String(p.id) ===
-        String(editingProductId)
-    );
-
-
-  if(!product) return;
-
-
-  const title =
-    document
-      .getElementById("editName")
-      .value
-      .trim();
-
-
-  const price =
-    Number(
-      document
-        .getElementById("editPrice")
-        .value || 0
-    );
-
-
-  const category =
-    document
-      .getElementById("editCategory")
-      .value;
-
-
-  const image =
-    document
-      .getElementById("editImage")
-      .value
-      .trim();
-
-
-  const description =
-    document
-      .getElementById("editDescription")
-      .value
-      .trim();
-
-
-  if(!title){
-
-    alert("Vendos emrin e produktit.");
-
-    return;
-
-  }
-
-
-  if(price < 0){
-
-    alert("Çmimi nuk mund të jetë negativ.");
-
-    return;
-
-  }
-
-
-  try{
-
-    const result =
-      await apiFetch(
-        `/products/${encodeURIComponent(editingProductId)}`,
-        {
-
-          method:"PUT",
-
-          body:JSON.stringify({
-
-            title:title,
-
-            name:title,
-
-            price:price,
-
-            category:
-              databaseCategory(category),
-
-            image_url:image,
-
-            image:image,
-
-            description:description
-
-          })
-
-        }
-      );
-
-
-    closeProductModal();
-
-
-    await loadData();
-
-
-    alert(
-      result?.message ||
-      "Produkti u ndryshua me sukses ✅"
-    );
-
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      "Nuk u ruajt produkti: " +
-      error.message
-    );
-
-  }
+document
+.getElementById("productModal")
+.classList.remove("show");
 
 }
 
 
-/* =========================================
-   DELETE PRODUCT
-========================================= */
+/* SAVE / ADD */
+
+async function saveProduct(){
+
+const title=
+document.getElementById("editName").value.trim();
+
+const price=
+Number(document.getElementById("editPrice").value||0);
+
+const category=
+document.getElementById("editCategory").value;
+
+const stock=
+Number(document.getElementById("editStock").value||0);
+
+const image=
+document.getElementById("editImage").value.trim();
+
+const description=
+document.getElementById("editDescription").value.trim();
+
+if(!title){
+alert("Vendos emrin e produktit.");
+return;
+}
+
+if(price<0){
+alert("Çmimi nuk mund të jetë negativ.");
+return;
+}
+
+if(stock<0){
+alert("Stoku nuk mund të jetë negativ.");
+return;
+}
+
+try{
+
+/* ADD */
+
+if(addingProduct){
+
+let sellerId=
+localStorage.getItem("sabiUserId");
+
+if(!sellerId){
+
+const email=
+localStorage.getItem("sabiUserContact") ||
+"admin@sabi.com";
+
+try{
+
+const user=
+await apiFetch(
+"/users/find?email="+
+encodeURIComponent(email)
+);
+
+sellerId=user?.id;
+
+}catch(e){}
+
+}
+
+if(!sellerId){
+sellerId=1;
+}
+
+await apiFetch("/products",{
+
+method:"POST",
+
+body:JSON.stringify({
+
+title:title,
+name:title,
+description:description,
+price:price,
+image_url:image,
+image:image,
+seller_id:Number(sellerId),
+category:databaseCategory(category),
+stock:stock
+
+})
+
+});
+
+closeProductModal();
+
+await loadData();
+
+showSuccess("Produkti u shtua në D1 ✅");
+
+return;
+}
+
+
+/* EDIT */
+
+await apiFetch(
+"/products/"+encodeURIComponent(editingProductId),
+{
+method:"PUT",
+body:JSON.stringify({
+
+title:title,
+name:title,
+description:description,
+price:price,
+image_url:image,
+image:image,
+category:databaseCategory(category),
+stock:stock
+
+})
+}
+);
+
+closeProductModal();
+
+await loadData();
+
+showSuccess("Produkti u ndryshua në D1 ✅");
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"Nuk u ruajt produkti: "+
+error.message
+);
+
+}
+
+}
+
+
+/* DELETE */
 
 async function deleteProduct(id){
 
-  const product =
-    products.find(
-      p =>
-        String(p.id) === String(id)
-    );
+const product=products.find(
+p=>String(p.id)===String(id)
+);
 
+if(!product)return;
 
-  if(!product) return;
+const name=
+product.name||
+product.title||
+"produktin";
 
+if(!confirm(
+`A je i sigurt që do të fshish "${name}"?`
+))return;
 
-  const name =
-    product.name ||
-    product.title ||
-    "produktin";
+try{
 
+await apiFetch(
+"/products/"+encodeURIComponent(id),
+{
+method:"DELETE"
+}
+);
 
-  const ok =
-    confirm(
-      `A je i sigurt që do të fshish "${name}"?`
-    );
+await loadData();
 
+showSuccess("Produkti u fshi nga D1 ✅");
 
-  if(!ok) return;
+}catch(error){
 
+alert(
+"Produkti nuk u fshi: "+
+error.message
+);
 
-  try{
-
-    await apiFetch(
-      `/products/${encodeURIComponent(id)}`,
-      {
-        method:"DELETE"
-      }
-    );
-
-
-    await loadData();
-
-
-    alert(
-      "Produkti u fshi nga D1 ✅"
-    );
-
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      "Produkti nuk u fshi: " +
-      error.message
-    );
-
-  }
+}
 
 }
 
 
-/* =========================================
-   SELLERS TABLE
-========================================= */
+/* SELLERS TABLE */
 
 function renderSellers(){
 
-  const tbody =
-    document.getElementById("sellersTable");
+const tbody=
+document.getElementById("sellersTable");
 
+const search=
+document.getElementById("sellerSearch").value
+.toLowerCase()
+.trim();
 
-  const search =
-    document
-      .getElementById("sellerSearch")
-      .value
-      .toLowerCase()
-      .trim();
+const sellers=getSellers().filter(seller=>
+`${seller.name} ${seller.contact}`
+.toLowerCase()
+.includes(search)
+);
 
+if(!sellers.length){
 
-  const sellers =
-    getSellers().filter(seller => {
+tbody.innerHTML=`
+<tr>
+<td colspan="6">
+<div class="empty">
+Nuk ka shitës.
+</div>
+</td>
+</tr>`;
 
-      return `
+return;
+}
 
-        ${seller.name}
+tbody.innerHTML=sellers.map(seller=>`
 
-        ${seller.contact}
+<tr>
 
-      `.toLowerCase()
-       .includes(search);
+<td>
+<strong>${escapeHtml(seller.name)}</strong>
+</td>
 
-    });
+<td>${escapeHtml(seller.contact||"—")}</td>
 
+<td>${seller.products}</td>
 
-  if(!sellers.length){
+<td class="price">
+${Number(seller.sales||0).toFixed(2)}€
+</td>
 
-    tbody.innerHTML = `
-      <tr>
+<td>
+<span class="status active">AKTIV</span>
+</td>
 
-        <td colspan="6">
+<td>
 
-          <div class="empty">
-            Nuk ka shitës.
-          </div>
+<div class="actions">
 
-        </td>
+<button
+class="smallBtn"
+onclick="viewSeller('${safeText(seller.name)}')">
+👁️ Shiko
+</button>
 
-      </tr>
-    `;
+<button
+class="smallBtn"
+onclick="viewSellerProducts('${safeText(seller.name)}')">
+📦 Produktet
+</button>
 
-    return;
+</div>
 
-  }
+</td>
 
+</tr>
 
-  tbody.innerHTML =
-
-    sellers.map(seller => {
-
-      return `
-
-        <tr>
-
-          <td>
-
-            <strong>
-              ${escapeHtml(seller.name)}
-            </strong>
-
-          </td>
-
-
-          <td>
-            ${escapeHtml(
-              seller.contact || "—"
-            )}
-          </td>
-
-
-          <td>
-            ${seller.products}
-          </td>
-
-
-          <td class="price">
-            ${Number(seller.sales || 0).toFixed(2)}€
-          </td>
-
-
-          <td>
-
-            <span class="status active">
-              AKTIV
-            </span>
-
-          </td>
-
-
-          <td>
-
-            <div class="actions">
-
-              <button
-                class="smallBtn"
-                onclick="viewSeller('${safeText(seller.name)}')">
-
-                👁️ Shiko
-
-              </button>
-
-
-              <button
-                class="smallBtn"
-                onclick="viewSellerProducts('${safeText(seller.name)}')">
-
-                📦 Produktet
-
-              </button>
-
-            </div>
-
-          </td>
-
-        </tr>
-
-      `;
-
-    }).join("");
+`).join("");
 
 }
 
 
-/* =========================================
-   VIEW SELLER
-========================================= */
-
 function viewSeller(name){
 
-  const seller =
-    getSellers().find(
-      s => s.name === name
-    );
+const seller=getSellers().find(
+s=>s.name===name
+);
 
+if(!seller)return;
 
-  if(!seller) return;
-
-
-  alert(
-
+alert(
 `Dyqani: ${seller.name}
 
-Kontakt: ${seller.contact || "Nuk ka"}
+Kontakt: ${seller.contact||"Nuk ka"}
 
 Produkte: ${seller.products}
 
-Shitje: ${Number(seller.sales || 0).toFixed(2)}€`
-
-  );
+Shitje: ${Number(seller.sales||0).toFixed(2)}€`
+);
 
 }
 
 
 function viewSellerProducts(name){
 
-  showTabByName("products");
+showTabByName("products");
 
+document.getElementById("productSearch").value=name;
 
-  document
-    .getElementById("productSearch")
-    .value = name;
-
-
-  renderProducts();
+renderProducts();
 
 }
 
 
-/* =========================================
-   ORDERS TABLE
-========================================= */
+/* ORDERS */
 
 function renderOrders(){
 
-  const tbody =
-    document.getElementById("ordersTable");
+const tbody=
+document.getElementById("ordersTable");
 
+const search=
+document.getElementById("orderSearch").value
+.toLowerCase()
+.trim();
 
-  const search =
-    document
-      .getElementById("orderSearch")
-      .value
-      .toLowerCase()
-      .trim();
+const filtered=orders.filter(order=>{
 
+const text=[
+order.id,
+order.buyer_name,
+order.customer,
+order.buyer_email,
+order.product_name,
+order.title,
+order.name,
+order.status,
+order.created_at
+].filter(Boolean)
+.join(" ")
+.toLowerCase();
 
-  const filtered =
-    orders.filter(order => {
+return text.includes(search);
 
-      const text = `
+});
 
-        ${order.id || ""}
+if(!filtered.length){
 
-        ${order.buyer_name || ""}
+tbody.innerHTML=`
+<tr>
+<td colspan="7">
+<div class="empty">
+Nuk ka porosi.
+</div>
+</td>
+</tr>`;
 
-        ${order.customer || ""}
+return;
+}
 
-        ${order.buyer_email || ""}
+tbody.innerHTML=filtered.map(order=>{
 
-        ${order.product_name || ""}
+const quantity=
+Number(order.quantity||order.qty||1);
 
-        ${order.title || ""}
+const total=
+Number(order.total_price||order.total||0);
 
-        ${order.status || ""}
+const status=
+order.status||"pending";
 
-        ${order.created_at || ""}
+const customer=
+order.buyer_name||
+order.customer||
+order.buyer_email||
+"Klient";
 
-      `.toLowerCase();
+const productName=
+order.product_name||
+order.title||
+order.name||
+"Produkt";
 
+return`
 
-      return text.includes(search);
+<tr>
 
-    });
+<td>
+<strong>${escapeHtml(String(order.id))}</strong>
+</td>
 
+<td>${escapeHtml(customer)}</td>
 
-  if(!filtered.length){
+<td>
 
-    tbody.innerHTML = `
-      <tr>
+${escapeHtml(productName)}
 
-        <td colspan="7">
+<div class="muted">
+${quantity} copë
+</div>
 
-          <div class="empty">
-            Nuk ka porosi.
-          </div>
+</td>
 
-        </td>
+<td class="price">
+${total.toFixed(2)}€
+</td>
 
-      </tr>
-    `;
+<td>
+${escapeHtml(formatDate(
+order.created_at||order.date
+))}
+</td>
 
-    return;
+<td>
 
-  }
+<span class="status ${getOrderStatusClass(status)}">
+${escapeHtml(translateStatus(status))}
+</span>
 
+</td>
 
-  tbody.innerHTML =
+<td>
 
-    filtered.map(order => {
+<div class="actions">
 
-      const quantity =
-        Number(
-          order.quantity ||
-          order.qty ||
-          1
-        );
+<button
+class="smallBtn"
+onclick="viewOrder('${safeId(order.id)}')">
+👁️ Shiko
+</button>
 
+<button
+class="smallBtn"
+onclick="changeOrderStatus('${safeId(order.id)}')">
+🔄 Status
+</button>
 
-      const total =
-        Number(
-          order.total_price ||
-          order.total ||
-          0
-        );
+</div>
 
+</td>
 
-      const status =
-        order.status ||
-        "pending";
+</tr>`;
 
-
-      const statusClass =
-        getOrderStatusClass(status);
-
-
-      const customer =
-        order.buyer_name ||
-        order.customer ||
-        order.buyer_email ||
-        "Klient";
-
-
-      const productName =
-        order.product_name ||
-        order.title ||
-        order.name ||
-        "Produkt";
-
-
-      const date =
-        order.created_at ||
-        order.date ||
-        "—";
-
-
-      return `
-
-        <tr>
-
-          <td>
-            <strong>
-              ${escapeHtml(String(order.id))}
-            </strong>
-          </td>
-
-
-          <td>
-            ${escapeHtml(customer)}
-          </td>
-
-
-          <td>
-
-            ${escapeHtml(productName)}
-
-            <div class="muted">
-              ${quantity} copë
-            </div>
-
-          </td>
-
-
-          <td class="price">
-            ${total.toFixed(2)}€
-          </td>
-
-
-          <td>
-            ${escapeHtml(
-              formatDate(date)
-            )}
-          </td>
-
-
-          <td>
-
-            <span
-              class="status ${statusClass}">
-
-              ${escapeHtml(
-                translateStatus(status)
-              )}
-
-            </span>
-
-          </td>
-
-
-          <td>
-
-            <div class="actions">
-
-              <button
-                class="smallBtn"
-                onclick="viewOrder('${safeId(order.id)}')">
-
-                👁️ Shiko
-
-              </button>
-
-
-              <button
-                class="smallBtn"
-                onclick="changeOrderStatus('${safeId(order.id)}')">
-
-                🔄 Status
-
-              </button>
-
-            </div>
-
-          </td>
-
-        </tr>
-
-      `;
-
-    }).join("");
+}).join("");
 
 }
 
 
-/* =========================================
-   STATUS HELPERS
-========================================= */
+/* ORDER STATUS */
 
 function getOrderStatusClass(status){
 
-  const value =
-    String(status || "")
-      .toLowerCase();
+const v=String(status||"").toLowerCase();
 
+if(
+v.includes("cancel")||
+v.includes("anull")
+)return"cancel";
 
-  if(
-    value.includes("cancel") ||
-    value.includes("anull")
-  ){
+if(
+v.includes("done")||
+v.includes("complete")||
+v.includes("përfund")||
+v.includes("dorëz")||
+v.includes("deliver")
+)return"done";
 
-    return "cancel";
-
-  }
-
-
-  if(
-    value.includes("done") ||
-    value.includes("complete") ||
-    value.includes("përfund") ||
-    value.includes("dorëz")
-  ){
-
-    return "done";
-
-  }
-
-
-  return "new";
-
+return"new";
 }
 
 
 function translateStatus(status){
 
-  const value =
-    String(status || "")
-      .toLowerCase();
+const map={
+pending:"Në pritje",
+new:"E re",
+processing:"Në përpunim",
+shipped:"Dërguar",
+delivered:"Dorëzuar",
+completed:"Përfunduar",
+done:"Përfunduar",
+cancelled:"Anuluar",
+canceled:"Anuluar"
+};
 
-
-  const map = {
-
-    "pending":"Në pritje",
-
-    "new":"E re",
-
-    "processing":"Në përpunim",
-
-    "shipped":"Dërguar",
-
-    "delivered":"Dorëzuar",
-
-    "completed":"Përfunduar",
-
-    "done":"Përfunduar",
-
-    "cancelled":"Anuluar",
-
-    "canceled":"Anuluar"
-
-  };
-
-
-  return map[value] ||
-    status ||
-    "Në pritje";
+return map[String(status||"").toLowerCase()]
+||status
+||"Në pritje";
 
 }
 
 
 function formatDate(value){
 
-  if(!value) return "—";
+if(!value)return"—";
 
+const date=new Date(value);
 
-  const date =
-    new Date(value);
+if(Number.isNaN(date.getTime()))
+return String(value);
 
-
-  if(
-    Number.isNaN(
-      date.getTime()
-    )
-  ){
-
-    return String(value);
-
-  }
-
-
-  return date.toLocaleString(
-    "sq-AL",
-    {
-      day:"2-digit",
-      month:"2-digit",
-      year:"numeric",
-      hour:"2-digit",
-      minute:"2-digit"
-    }
-  );
+return date.toLocaleString(
+"sq-AL",
+{
+day:"2-digit",
+month:"2-digit",
+year:"numeric",
+hour:"2-digit",
+minute:"2-digit"
+}
+);
 
 }
 
 
-/* =========================================
-   VIEW ORDER
-========================================= */
+/* VIEW ORDER */
 
 function viewOrder(id){
 
-  const order =
-    orders.find(
-      o =>
-        String(o.id) ===
-        String(id)
-    );
+const order=orders.find(
+o=>String(o.id)===String(id)
+);
 
+if(!order)return;
 
-  if(!order) return;
+const quantity=
+Number(order.quantity||order.qty||1);
 
+const total=
+Number(order.total_price||order.total||0);
 
-  const quantity =
-    Number(
-      order.quantity ||
-      order.qty ||
-      1
-    );
+const productName=
+order.product_name||
+order.title||
+order.name||
+"Produkt";
 
+const customer=
+order.buyer_name||
+order.customer||
+order.buyer_email||
+"Klient";
 
-  const total =
-    Number(
-      order.total_price ||
-      order.total ||
-      0
-    );
+const status=
+order.status||"pending";
 
+document.getElementById("orderDetails").innerHTML=`
 
-  const productName =
-    order.product_name ||
-    order.title ||
-    order.name ||
-    "Produkt";
+<p>
+<span class="muted">ID:</span>
+<strong>${escapeHtml(String(order.id))}</strong>
+</p>
 
+<br>
 
-  const customer =
-    order.buyer_name ||
-    order.customer ||
-    order.buyer_email ||
-    "Klient";
+<p>
+<span class="muted">Klienti:</span>
+${escapeHtml(customer)}
+</p>
 
+<br>
 
-  const status =
-    order.status ||
-    "pending";
+${order.buyer_email?`
+<p>
+<span class="muted">Email:</span>
+${escapeHtml(order.buyer_email)}
+</p>
+<br>`:""}
 
+<p>
+<span class="muted">Produkti:</span>
+${escapeHtml(productName)}
+</p>
 
-  document
-    .getElementById("orderDetails")
-    .innerHTML = `
+<br>
 
-      <p>
+<p>
+<span class="muted">Sasia:</span>
+${quantity} copë
+</p>
 
-        <span class="muted">
-          ID:
-        </span>
+<br>
 
-        <strong>
-          ${escapeHtml(
-            String(order.id)
-          )}
-        </strong>
+<p>
+<span class="muted">Data:</span>
+${escapeHtml(formatDate(
+order.created_at||order.date
+))}
+</p>
 
-      </p>
+<br>
 
+<p>
+<span class="muted">Statusi:</span>
+${escapeHtml(translateStatus(status))}
+</p>
 
-      <br>
+<div class="orderItems">
 
+<div class="orderItem">
 
-      <p>
+<div>
+<strong>${escapeHtml(productName)}</strong>
+<div class="muted">${quantity} copë</div>
+</div>
 
-        <span class="muted">
-          Klienti:
-        </span>
+<strong>${total.toFixed(2)}€</strong>
 
-        ${escapeHtml(customer)}
+</div>
 
-      </p>
+</div>
 
+<br>
 
-      <br>
+<p style="font-size:20px">
+Total:
+<strong>${total.toFixed(2)}€</strong>
+</p>
+`;
 
-
-      ${
-        order.buyer_email
-          ? `
-            <p>
-              <span class="muted">
-                Email:
-              </span>
-
-              ${escapeHtml(
-                order.buyer_email
-              )}
-            </p>
-
-            <br>
-          `
-          : ""
-      }
-
-
-      <p>
-
-        <span class="muted">
-          Produkti:
-        </span>
-
-        ${escapeHtml(productName)}
-
-      </p>
-
-
-      <br>
-
-
-      <p>
-
-        <span class="muted">
-          Sasia:
-        </span>
-
-        ${quantity} copë
-
-      </p>
-
-
-      <br>
-
-
-      <p>
-
-        <span class="muted">
-          Data:
-        </span>
-
-        ${escapeHtml(
-          formatDate(
-            order.created_at ||
-            order.date
-          )
-        )}
-
-      </p>
-
-
-      <br>
-
-
-      <p>
-
-        <span class="muted">
-          Statusi:
-        </span>
-
-        ${escapeHtml(
-          translateStatus(status)
-        )}
-
-      </p>
-
-
-      <div class="orderItems">
-
-        <div class="orderItem">
-
-          <div>
-
-            <strong>
-              ${escapeHtml(productName)}
-            </strong>
-
-            <div class="muted">
-              ${quantity} copë
-            </div>
-
-          </div>
-
-
-          <strong>
-            ${total.toFixed(2)}€
-          </strong>
-
-        </div>
-
-      </div>
-
-
-      <br>
-
-
-      <p style="font-size:20px">
-
-        Total:
-
-        <strong>
-          ${total.toFixed(2)}€
-        </strong>
-
-      </p>
-
-  `;
-
-
-  document
-    .getElementById("orderModal")
-    .classList.add("show");
+document
+.getElementById("orderModal")
+.classList.add("show");
 
 }
 
 
 function closeOrderModal(){
 
-  document
-    .getElementById("orderModal")
-    .classList.remove("show");
+document
+.getElementById("orderModal")
+.classList.remove("show");
 
 }
 
 
-/* =========================================
-   CHANGE ORDER STATUS
-========================================= */
+/* CHANGE ORDER STATUS */
 
 async function changeOrderStatus(id){
 
-  const order =
-    orders.find(
-      o =>
-        String(o.id) ===
-        String(id)
-    );
+const order=orders.find(
+o=>String(o.id)===String(id)
+);
 
+if(!order)return;
 
-  if(!order) return;
+const current=order.status||"pending";
 
-
-  const current =
-    order.status ||
-    "pending";
-
-
-  const newStatus =
-    prompt(
-
-      `Vendos statusin e ri:
+const newStatus=prompt(
+`Vendos statusin e ri:
 
 pending = Në pritje
 processing = Në përpunim
@@ -2568,186 +1567,121 @@ shipped = Dërguar
 delivered = Dorëzuar
 completed = Përfunduar
 cancelled = Anuluar`,
+current
+);
 
-      current
+if(newStatus===null)return;
 
-    );
+const clean=newStatus.trim();
 
+if(!clean)return;
 
-  if(newStatus === null) return;
+try{
 
+await apiFetch(
+"/orders/"+encodeURIComponent(id),
+{
+method:"PUT",
+body:JSON.stringify({
+status:clean
+})
+}
+);
 
-  const clean =
-    newStatus.trim();
+await loadData();
 
+showSuccess("Statusi u ndryshua në D1 ✅");
 
-  if(!clean) return;
+}catch(error){
 
+alert(
+"Statusi nuk u ndryshua: "+
+error.message
+);
 
-  try{
-
-    await apiFetch(
-      `/orders/${encodeURIComponent(id)}`,
-      {
-
-        method:"PUT",
-
-        body:JSON.stringify({
-
-          status:clean
-
-        })
-
-      }
-    );
-
-
-    await loadData();
-
-
-    alert(
-      "Statusi u ndryshua në D1 ✅"
-    );
-
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      "Statusi nuk u ndryshua: " +
-      error.message
-    );
-
-  }
+}
 
 }
 
 
-/* =========================================
-   TABS
-========================================= */
+/* TABS */
 
-function showTab(tab, button){
+function showTab(tab,button){
 
-  document
-    .querySelectorAll(".tab")
-    .forEach(
-      b =>
-        b.classList.remove("active")
-    );
+document
+.querySelectorAll(".tab")
+.forEach(b=>b.classList.remove("active"));
 
+button.classList.add("active");
 
-  button.classList.add("active");
+document.getElementById("productsPanel").style.display=
+tab==="products"?"block":"none";
 
+document.getElementById("sellersPanel").style.display=
+tab==="sellers"?"block":"none";
 
-  document
-    .getElementById("productsPanel")
-    .style.display =
-      tab === "products"
-        ? "block"
-        : "none";
-
-
-  document
-    .getElementById("sellersPanel")
-    .style.display =
-      tab === "sellers"
-        ? "block"
-        : "none";
-
-
-  document
-    .getElementById("ordersPanel")
-    .style.display =
-      tab === "orders"
-        ? "block"
-        : "none";
+document.getElementById("ordersPanel").style.display=
+tab==="orders"?"block":"none";
 
 }
 
 
 function showTabByName(tab){
 
-  const tabs =
-    document.querySelectorAll(".tab");
+const index=
+tab==="products"?0:
+tab==="sellers"?1:2;
 
-
-  const index =
-    tab === "products"
-      ? 0
-      : tab === "sellers"
-        ? 1
-        : 2;
-
-
-  tabs[index].click();
+document.querySelectorAll(".tab")[index].click();
 
 }
 
 
-/* =========================================
-   NAVIGATION
-========================================= */
+/* NAVIGATION */
 
 function goMarketplace(){
-
-  window.location.href =
-    "index.html";
-
+window.location.href="index.html";
 }
-
 
 function logout(){
 
-  localStorage.removeItem(
-    "sabiUserRole"
-  );
-
-
-  window.location.href =
-    "login.html";
+localStorage.removeItem("sabiUserRole");
+window.location.href="login.html";
 
 }
 
 
-/* =========================================
-   SECURITY / TEXT
-========================================= */
+/* ESCAPE */
 
 function escapeHtml(value){
 
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+return String(value??"")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
 
 }
-
 
 function safeId(value){
 
-  return String(value ?? "")
-    .replace(/\\/g,"\\\\")
-    .replace(/'/g,"\\'");
+return String(value??"")
+.replace(/\\/g,"\\\\")
+.replace(/'/g,"\\'");
 
 }
-
 
 function safeText(value){
 
-  return String(value ?? "")
-    .replace(/\\/g,"\\\\")
-    .replace(/'/g,"\\'");
+return String(value??"")
+.replace(/\\/g,"\\\\")
+.replace(/'/g,"\\'");
 
 }
 
 
-/* =========================================
-   START
-========================================= */
+/* START */
 
 loadData();
 
