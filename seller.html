@@ -630,17 +630,152 @@ const API =
 let products = [];
 let orders = [];
 
-let sellerId =
-  localStorage.getItem("sabiUserId") || "";
-
-let sellerContact =
-  localStorage.getItem("sabiUserContact") || "";
-
+let sellerId = "";
+let sellerContact = "";
 let sellerName = "";
 let sellerPhone = "";
+let sellerRole = "";
 
 let currentShop =
   localStorage.getItem("sabiShop") || "";
+
+
+/* ================================
+   AUTH
+================================ */
+
+function getAuthToken(){
+  return localStorage.getItem("sabiAuthToken") || "";
+}
+
+
+function authHeaders(extra = {}){
+
+  const token = getAuthToken();
+
+  return {
+    ...extra,
+    ...(token
+      ? { "Authorization": `Bearer ${token}` }
+      : {})
+  };
+}
+
+
+async function checkAuth(){
+
+  const token = getAuthToken();
+
+  if(!token){
+
+    window.location.href = "login.html";
+    return false;
+  }
+
+  try{
+
+    const response =
+      await fetch(`${API}/auth/me`,{
+        headers:authHeaders()
+      });
+
+    if(!response.ok){
+
+      localStorage.removeItem("sabiAuthToken");
+      localStorage.removeItem("sabiUserId");
+      localStorage.removeItem("sabiUserRole");
+      localStorage.removeItem("sabiUserContact");
+      localStorage.removeItem("sabiUserName");
+      localStorage.removeItem("sabiUserEmail");
+
+      window.location.href = "login.html";
+
+      return false;
+    }
+
+    const user =
+      await response.json();
+
+    /*
+      Lejojmë seller dhe admin.
+    */
+
+    const role =
+      String(user.role || "").toLowerCase();
+
+    if(role !== "seller" && role !== "admin"){
+
+      alert(
+        "Kjo faqe është vetëm për shitësit."
+      );
+
+      window.location.href = "index.html";
+
+      return false;
+    }
+
+    sellerId =
+      String(user.id || "");
+
+    sellerName =
+      user.name || "Shitës SABI";
+
+    sellerContact =
+      user.email ||
+      user.identifier ||
+      "";
+
+    sellerRole = role;
+
+    localStorage.setItem(
+      "sabiUserId",
+      sellerId
+    );
+
+    localStorage.setItem(
+      "sabiUserRole",
+      sellerRole
+    );
+
+    localStorage.setItem(
+      "sabiUserName",
+      sellerName
+    );
+
+    localStorage.setItem(
+      "sabiUserContact",
+      sellerContact
+    );
+
+    if(sellerRole === "admin"){
+
+      currentShop =
+        "Shitës SABI";
+
+    }else if(!currentShop){
+
+      currentShop =
+        sellerName;
+    }
+
+    localStorage.setItem(
+      "sabiShop",
+      currentShop
+    );
+
+    return true;
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Nuk u lidh dot me sistemin e SABI."
+    );
+
+    return false;
+  }
+}
 
 
 /* ================================
@@ -671,6 +806,7 @@ function toDbCategory(category){
   return "Fashion";
 }
 
+
 function fromDbCategory(category){
 
   if(category === "Electronics") return "Elektronikë";
@@ -686,169 +822,29 @@ function fromDbCategory(category){
    PREPARE SELLER
 ================================ */
 
-async function prepareSeller(){
+function prepareSeller(){
 
-  /*
-    PRODUKTET EKZISTUESE NË D1
-    janë me seller_id = 1.
-
-    Nëse përdoruesi është admin,
-    e lidhim direkt me seller ID 1.
-  */
-
-  const role =
-    localStorage.getItem("sabiUserRole") || "";
-
-  const contact =
-    localStorage.getItem("sabiUserContact") || "";
-
-
-  if(
-    role === "admin" ||
-    contact.toLowerCase() === "admin" ||
-    contact.toLowerCase() === "admin@sabi.com"
-  ){
-
-    sellerId = "1";
-
-    localStorage.setItem(
-      "sabiUserId",
-      "1"
-    );
-
-    sellerName = "Admin";
-    currentShop = "Shitës SABI";
-
-    localStorage.setItem(
-      "sabiShop",
-      currentShop
-    );
-
-    return true;
-  }
-
-
-  /*
-    Nëse kemi ID valide,
-    përdorim atë.
-  */
-
-  if(sellerId){
-
-    return true;
-  }
-
-
-  /*
-    Nëse kemi email,
-    kërkojmë user-in në D1.
-  */
-
-  if(
-    sellerContact &&
-    sellerContact.includes("@")
-  ){
-
-    try{
-
-      const response =
-        await fetch(
-          `${API}/users/find?email=${encodeURIComponent(sellerContact)}`
-        );
-
-      if(response.ok){
-
-        const user =
-          await response.json();
-
-        if(user && user.id){
-
-          sellerId =
-            String(user.id);
-
-          sellerName =
-            user.name || "";
-
-          localStorage.setItem(
-            "sabiUserId",
-            sellerId
-          );
-
-          return true;
-        }
-      }
-
-    }catch(error){
-
-      console.error(error);
-
-    }
-  }
-
-
-  /*
-    Nëse nuk ekziston user,
-    krijojmë një të ri.
-  */
-
-  try{
-
-    const name =
-      localStorage.getItem("sabiSellerName") ||
-      "Shitës SABI";
-
-    const email =
-      sellerContact &&
-      sellerContact.includes("@")
-        ? sellerContact
-        : `seller_${Date.now()}@sabi.local`;
-
-    const response =
-      await fetch(`${API}/users`,{
-
-        method:"POST",
-
-        headers:{
-          "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-          name:name,
-          email:email
-        })
-
-      });
-
-    const data =
-      await response.json();
-
-    if(!response.ok){
-
-      throw new Error(
-        data.error ||
-        "Nuk u krijua përdoruesi."
-      );
-    }
+  if(!sellerId){
 
     sellerId =
-      String(data.id);
+      localStorage.getItem("sabiUserId") || "";
+  }
+
+  if(!sellerName){
 
     sellerName =
-      data.name || name;
-
-    localStorage.setItem(
-      "sabiUserId",
-      sellerId
-    );
-
-    return true;
-
-  }catch(error){
-
-    console.error(error);
-
-    return false;
+      localStorage.getItem("sabiUserName") ||
+      "Shitës SABI";
   }
+
+  if(!sellerContact){
+
+    sellerContact =
+      localStorage.getItem("sabiUserContact") ||
+      "";
+  }
+
+  return !!sellerId;
 }
 
 
@@ -916,11 +912,21 @@ async function loadOrders(){
   try{
 
     const response =
-      await fetch(`${API}/orders`);
+      await fetch(
+        `${API}/orders`,
+        {
+          headers:authHeaders()
+        }
+      );
 
     if(!response.ok){
 
+      const errorData =
+        await response.json()
+          .catch(() => ({}));
+
       throw new Error(
+        errorData.error ||
         "API orders error: " +
         response.status
       );
@@ -961,6 +967,18 @@ async function loadOrders(){
 
 function getMyProducts(){
 
+  /*
+    Admini mund të shohë produktet ekzistuese
+    të seller_id = 1.
+  */
+
+  if(sellerRole === "admin"){
+
+    return products.filter(product =>
+      Number(product.seller_id) === 1
+    );
+  }
+
   return products.filter(product =>
     Number(product.seller_id) ===
     Number(sellerId)
@@ -973,6 +991,19 @@ function getMyProducts(){
 ================================ */
 
 function getMyOrders(){
+
+  /*
+    Worker-i i ri tashmë filtron
+    porositë sipas përdoruesit.
+
+    Këtu bëjmë edhe filtrin në frontend
+    për siguri të dyfishtë.
+  */
+
+  if(sellerRole === "admin"){
+
+    return orders;
+  }
 
   const myProductIds =
     new Set(
@@ -1013,42 +1044,33 @@ function renderShop(){
   const first =
     myProducts[0];
 
-  if(first){
+  if(first && sellerRole !== "admin"){
 
     sellerName =
+      first.seller_name ||
       first.sellerName ||
       first.seller ||
       sellerName ||
       "Shitës SABI";
+  }
 
-    sellerPhone =
-      first.sellerPhone ||
-      sellerPhone ||
-      "";
+  if(sellerRole === "admin"){
 
-    if(!currentShop){
+    currentShop = "Shitës SABI";
 
-      currentShop =
-        first.seller ||
-        first.sellerName ||
-        sellerName;
+  }else if(!currentShop){
 
-      localStorage.setItem(
-        "sabiShop",
-        currentShop
-      );
-    }
+    currentShop =
+      sellerName ||
+      "Shitës SABI";
   }
 
   document.getElementById("shopName")
     .textContent =
-      currentShop ||
-      sellerName ||
-      "Shitës SABI";
+      currentShop;
 
   document.getElementById("shopPhone")
     .textContent =
-      sellerPhone ||
       sellerContact ||
       "-";
 }
@@ -1433,6 +1455,19 @@ function closeProductModal(){
 
 async function saveProduct(){
 
+  const token =
+    getAuthToken();
+
+  if(!token){
+
+    alert(
+      "Sesioni ka përfunduar. Hyr përsëri."
+    );
+
+    window.location.href = "login.html";
+    return;
+  }
+
   const editId =
     document.getElementById("editId").value;
 
@@ -1477,13 +1512,10 @@ async function saveProduct(){
     return;
   }
 
-  const ready =
-    await prepareSeller();
-
-  if(!ready || !sellerId){
+  if(!prepareSeller()){
 
     alert(
-      "Nuk u gjet llogaria e shitësit. Hyr përsëri."
+      "Nuk u gjet llogaria e shitësit."
     );
 
     return;
@@ -1504,9 +1536,9 @@ async function saveProduct(){
           {
             method:"PUT",
 
-            headers:{
+            headers:authHeaders({
               "Content-Type":"application/json"
-            },
+            }),
 
             body:JSON.stringify({
               title:name,
@@ -1527,9 +1559,9 @@ async function saveProduct(){
           {
             method:"POST",
 
-            headers:{
+            headers:authHeaders({
               "Content-Type":"application/json"
-            },
+            }),
 
             body:JSON.stringify({
               title:name,
@@ -1545,7 +1577,19 @@ async function saveProduct(){
     }
 
     const data =
-      await response.json();
+      await response.json()
+        .catch(() => ({}));
+
+    if(response.status === 401){
+
+      alert(
+        "Sesioni ka përfunduar. Hyr përsëri."
+      );
+
+      localStorage.removeItem("sabiAuthToken");
+      window.location.href = "login.html";
+      return;
+    }
 
     if(!response.ok){
 
@@ -1596,7 +1640,13 @@ function editProduct(id){
     return;
   }
 
+  /*
+    Admini mund të menaxhojë produktet
+    ekzistuese të Admin/seller 1.
+  */
+
   if(
+    sellerRole !== "admin" &&
     Number(product.seller_id) !==
     Number(sellerId)
   ){
@@ -1657,6 +1707,19 @@ function editProduct(id){
 
 async function deleteProduct(id){
 
+  const token =
+    getAuthToken();
+
+  if(!token){
+
+    alert(
+      "Sesioni ka përfunduar. Hyr përsëri."
+    );
+
+    window.location.href = "login.html";
+    return;
+  }
+
   const product =
     products.find(
       p =>
@@ -1671,6 +1734,7 @@ async function deleteProduct(id){
   }
 
   if(
+    sellerRole !== "admin" &&
     Number(product.seller_id) !==
     Number(sellerId)
   ){
@@ -1701,12 +1765,25 @@ async function deleteProduct(id){
       await fetch(
         `${API}/products/${encodeURIComponent(id)}`,
         {
-          method:"DELETE"
+          method:"DELETE",
+          headers:authHeaders()
         }
       );
 
     const data =
-      await response.json();
+      await response.json()
+        .catch(() => ({}));
+
+    if(response.status === 401){
+
+      alert(
+        "Sesioni ka përfunduar. Hyr përsëri."
+      );
+
+      localStorage.removeItem("sabiAuthToken");
+      window.location.href = "login.html";
+      return;
+    }
 
     if(!response.ok){
 
@@ -1800,11 +1877,36 @@ function goMarketplace(){
    LOGOUT
 ================================ */
 
-function logout(){
+async function logout(){
 
+  const token =
+    getAuthToken();
+
+  try{
+
+    if(token){
+
+      await fetch(
+        `${API}/auth/logout`,
+        {
+          method:"POST",
+          headers:authHeaders()
+        }
+      );
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
+  localStorage.removeItem("sabiAuthToken");
   localStorage.removeItem("sabiUserRole");
   localStorage.removeItem("sabiUserContact");
   localStorage.removeItem("sabiUserId");
+  localStorage.removeItem("sabiUserName");
+  localStorage.removeItem("sabiUserEmail");
 
   window.location.href =
     "login.html";
@@ -1836,23 +1938,39 @@ document
 async function start(){
 
   /*
-    Shumë e rëndësishme:
-    së pari përcaktojmë seller ID.
+    1. Kontrollojmë token-in real.
   */
 
-  await prepareSeller();
+  const authenticated =
+    await checkAuth();
+
+  if(!authenticated){
+    return;
+  }
 
   /*
-    Pastaj marrim produktet nga D1.
+    2. Përgatisim shitësin.
+  */
+
+  prepareSeller();
+
+  /*
+    3. Marrim produktet.
   */
 
   await loadProducts();
 
   /*
-    Pastaj porositë.
+    4. Marrim porositë me token.
   */
 
   await loadOrders();
+
+  /*
+    5. Rifreskojmë UI.
+  */
+
+  renderAll();
 }
 
 start();
