@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Porositë e mia • SABI</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:
+    radial-gradient(circle at top,#18202d 0%,#080a0f 45%,#050608 100%);
+  color:#fff;
+  min-height:100vh;
+}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:rgba(5,7,10,.88);
+  backdrop-filter:blur(15px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  padding:16px;
+}
+
+.header-inner{
+  max-width:1000px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.logo{
+  font-size:24px;
+  font-weight:900;
+  letter-spacing:2px;
+}
+
+.logo span{
+  color:#00ff88;
+}
+
+.back-btn{
+  border:1px solid rgba(255,255,255,.12);
+  background:#11151c;
+  color:white;
+  padding:10px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  font-size:14px;
+}
+
+.container{
+  width:100%;
+  max-width:1000px;
+  margin:auto;
+  padding:25px 15px 60px;
+}
+
+.hero{
+  margin-bottom:25px;
+}
+
+.hero h1{
+  font-size:30px;
+  margin-bottom:7px;
+}
+
+.hero p{
+  color:#9ca3af;
+  font-size:14px;
+}
+
+.refresh{
+  margin-top:14px;
+  border:none;
+  background:#00ff88;
+  color:#00150b;
+  font-weight:800;
+  padding:11px 16px;
+  border-radius:12px;
+  cursor:pointer;
+}
+
+.orders{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.order{
+  background:rgba(16,20,27,.94);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:20px;
+  padding:18px;
+  box-shadow:0 15px 45px rgba(0,0,0,.22);
+}
+
+.order-top{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+  margin-bottom:18px;
+}
+
+.order-code{
+  font-size:14px;
+  font-weight:900;
+  color:#00ff88;
+  word-break:break-all;
+}
+
+.date{
+  color:#7f8793;
+  font-size:12px;
+  margin-top:5px;
+}
+
+.status{
+  padding:8px 11px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.status.pending{
+  background:#3a2d08;
+  color:#ffd45a;
+}
+
+.status.confirmed{
+  background:#102d45;
+  color:#5dbaff;
+}
+
+.status.shipped{
+  background:#27204a;
+  color:#bca5ff;
+}
+
+.status.delivered{
+  background:#0c3825;
+  color:#54ff9a;
+}
+
+.status.cancelled{
+  background:#3b1518;
+  color:#ff7777;
+}
+
+.product{
+  display:flex;
+  gap:14px;
+  align-items:center;
+  padding:13px;
+  border-radius:15px;
+  background:#0c1016;
+  margin-bottom:15px;
+}
+
+.product img{
+  width:72px;
+  height:72px;
+  object-fit:cover;
+  border-radius:12px;
+  background:#151a22;
+}
+
+.product-info{
+  min-width:0;
+  flex:1;
+}
+
+.product-name{
+  font-size:16px;
+  font-weight:800;
+  margin-bottom:5px;
+}
+
+.product-meta{
+  color:#8d95a1;
+  font-size:13px;
+}
+
+.product-price{
+  color:#00ff88;
+  font-weight:900;
+  margin-top:5px;
+}
+
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.info{
+  background:#0c1016;
+  border-radius:13px;
+  padding:12px;
+}
+
+.info-label{
+  color:#737b87;
+  font-size:11px;
+  margin-bottom:5px;
+}
+
+.info-value{
+  font-size:13px;
+  font-weight:700;
+  word-break:break-word;
+}
+
+.timeline{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  position:relative;
+  margin:22px 5px 5px;
+}
+
+.timeline::before{
+  content:"";
+  position:absolute;
+  top:13px;
+  left:8%;
+  right:8%;
+  height:2px;
+  background:#252b34;
+  z-index:0;
+}
+
+.step{
+  position:relative;
+  z-index:1;
+  width:25%;
+  text-align:center;
+  color:#646c77;
+  font-size:10px;
+}
+
+.dot{
+  width:27px;
+  height:27px;
+  margin:auto;
+  border-radius:50%;
+  background:#1b2028;
+  border:2px solid #303640;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  font-weight:900;
+}
+
+.step.active{
+  color:#00ff88;
+}
+
+.step.active .dot{
+  background:#00ff88;
+  color:#00150b;
+  border-color:#00ff88;
+}
+
+.step.cancelled-step{
+  color:#ff7777;
+}
+
+.step.cancelled-step .dot{
+  background:#ff4444;
+  border-color:#ff4444;
+  color:white;
+}
+
+.cancelled-box{
+  margin-top:15px;
+  padding:12px;
+  border-radius:12px;
+  background:#321316;
+  color:#ff7777;
+  font-size:13px;
+  font-weight:700;
+  text-align:center;
+}
+
+.empty{
+  text-align:center;
+  padding:60px 20px;
+  border:1px dashed rgba(255,255,255,.12);
+  border-radius:20px;
+  color:#8d95a1;
+}
+
+.empty strong{
+  display:block;
+  color:white;
+  font-size:20px;
+  margin-bottom:8px;
+}
+
+.loading{
+  text-align:center;
+  padding:50px;
+  color:#8d95a1;
+}
+
+.error{
+  background:#321316;
+  color:#ff7777;
+  padding:15px;
+  border-radius:14px;
+  text-align:center;
+}
+
+@media(max-width:600px){
+
+  .container{
+    padding:20px 11px 45px;
+  }
+
+  .hero h1{
+    font-size:25px;
+  }
+
+  .order{
+    padding:14px;
+    border-radius:17px;
+  }
+
+  .order-top{
+    flex-direction:column;
+  }
+
+  .info-grid{
+    grid-template-columns:1fr;
+  }
+
+  .product img{
+    width:62px;
+    height:62px;
+  }
+
+  .product-name{
+    font-size:14px;
+  }
+
+  .timeline{
+    margin-left:0;
+    margin-right:0;
+  }
+
+  .step{
+    font-size:8px;
+  }
+
+  .dot{
+    width:24px;
+    height:24px;
+    font-size:9px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-inner">
+
+    <div class="logo">
+      SABI<span>.</span>
+    </div>
+
+    <a href="index.html" class="back-btn">
+      ← Dyqani
+    </a>
+
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="hero">
+    <h1>Porositë e mia</h1>
+    <p>Këtu mund të shikosh porositë dhe statusin e tyre.</p>
+
+    <button class="refresh" onclick="loadOrders()">
+      ↻ Rifresko
+    </button>
+  </div>
+
+  <div id="content" class="loading">
+    Po ngarkohen porositë...
+  </div>
+
+</div>
+
+<script>
+
+const API =
+  location.hostname.includes("github.io")
+    ? "https://sabi-marketplace.babasabfreefire2.workers.dev/api"
+    : "/api";
+
+function getAuthToken(){
+  return localStorage.getItem("sabiAuthToken");
+}
+
+function escapeHTML(value){
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function money(value){
+  return Number(value || 0).toLocaleString("sq-AL") + " €";
+}
+
+function formatDate(value){
+
+  if(!value) return "";
+
+  const d = new Date(value);
+
+  if(Number.isNaN(d.getTime())){
+    return value;
+  }
+
+  return d.toLocaleString("sq-AL",{
+    day:"2-digit",
+    month:"2-digit",
+    year:"numeric",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+}
+
+function statusText(status){
+
+  const map = {
+    pending:"Në pritje",
+    confirmed:"E konfirmuar",
+    shipped:"E nisur",
+    delivered:"E dorëzuar",
+    cancelled:"E anuluar"
+  };
+
+  return map[status] || status;
+}
+
+function statusIndex(status){
+
+  const map = {
+    pending:0,
+    confirmed:1,
+    shipped:2,
+    delivered:3
+  };
+
+  return map[status] ?? 0;
+}
+
+function renderTimeline(status){
+
+  if(status === "cancelled"){
+
+    return `
+      <div class="timeline">
+
+        <div class="step cancelled-step">
+          <div class="dot">×</div>
+          Anuluar
+        </div>
+
+      </div>
+
+      <div class="cancelled-box">
+        Kjo porosi është anuluar.
+      </div>
+    `;
+  }
+
+  const current = statusIndex(status);
+
+  const steps = [
+    ["Porositur","✓"],
+    ["Konfirmuar","✓"],
+    ["Nisur","→"],
+    ["Dorëzuar","✓"]
+  ];
+
+  return `
+    <div class="timeline">
+
+      ${steps.map((step,index)=>`
+
+        <div class="step ${index <= current ? "active" : ""}">
+
+          <div class="dot">
+            ${index <= current ? step[1] : ""}
+          </div>
+
+          ${step[0]}
+
+        </div>
+
+      `).join("")}
+
+    </div>
+  `;
+}
+
+function groupOrders(rows){
+
+  const groups = {};
+
+  rows.forEach(row => {
+
+    const code = row.order_code || `ORDER-${row.id}`;
+
+    if(!groups[code]){
+      groups[code] = {
+        code,
+        date:row.created_at,
+        customer_name:row.customer_name,
+        customer_phone:row.customer_phone,
+        customer_city:row.customer_city,
+        customer_address:row.customer_address,
+        payment_method:row.payment_method,
+        items:[],
+        status:row.status
+      };
+    }
+
+    groups[code].items.push(row);
+
+    const priority = {
+      pending:0,
+      confirmed:1,
+      shipped:2,
+      delivered:3,
+      cancelled:4
+    };
+
+    if((priority[row.status] ?? 0) > (priority[groups[code].status] ?? 0)){
+      groups[code].status = row.status;
+    }
+
+  });
+
+  return Object.values(groups);
+}
+
+function renderOrders(rows){
+
+  const content = document.getElementById("content");
+
+  if(!rows.length){
+
+    content.innerHTML = `
+      <div class="empty">
+        <strong>Nuk ke ende porosi</strong>
+        Kur të bësh një porosi, ajo do të shfaqet këtu.
+      </div>
+    `;
+
+    return;
+  }
+
+  const groups = groupOrders(rows);
+
+  content.innerHTML = `
+    <div class="orders">
+
+      ${groups.map(order => {
+
+        const total = order.items.reduce(
+          (sum,item) => sum + Number(item.total_price || 0),
+          0
+        );
+
+        return `
+
+          <div class="order">
+
+            <div class="order-top">
+
+              <div>
+                <div class="order-code">
+                  ${escapeHTML(order.code)}
+                </div>
+
+                <div class="date">
+                  ${escapeHTML(formatDate(order.date))}
+                </div>
+              </div>
+
+              <div class="status ${escapeHTML(order.status)}">
+                ${escapeHTML(statusText(order.status))}
+              </div>
+
+            </div>
+
+            ${order.items.map(item => `
+
+              <div class="product">
+
+                ${
+                  item.product_image
+                  ? `<img src="${escapeHTML(item.product_image)}" alt="">`
+                  : `<div style="width:72px;height:72px;border-radius:12px;background:#151a22;display:flex;align-items:center;justify-content:center;">SABI</div>`
+                }
+
+                <div class="product-info">
+
+                  <div class="product-name">
+                    ${escapeHTML(item.product_name || "Produkt")}
+                  </div>
+
+                  <div class="product-meta">
+                    Sasia: ${Number(item.quantity || 0)}
+                  </div>
+
+                  <div class="product-price">
+                    ${money(item.total_price)}
+                  </div>
+
+                </div>
+
+              </div>
+
+            `).join("")}
+
+            <div class="info-grid">
+
+              <div class="info">
+                <div class="info-label">EMRI</div>
+                <div class="info-value">
+                  ${escapeHTML(order.customer_name)}
+                </div>
+              </div>
+
+              <div class="info">
+                <div class="info-label">TELEFONI</div>
+                <div class="info-value">
+                  ${escapeHTML(order.customer_phone)}
+                </div>
+              </div>
+
+              <div class="info">
+                <div class="info-label">QYTETI</div>
+                <div class="info-value">
+                  ${escapeHTML(order.customer_city)}
+                </div>
+              </div>
+
+              <div class="info">
+                <div class="info-label">ADRESA</div>
+                <div class="info-value">
+                  ${escapeHTML(order.customer_address)}
+                </div>
+              </div>
+
+              <div class="info">
+                <div class="info-label">PAGESA</div>
+                <div class="info-value">
+                  Cash në dorëzim
+                </div>
+              </div>
+
+              <div class="info">
+                <div class="info-label">TOTALI</div>
+                <div class="info-value" style="color:#00ff88;">
+                  ${money(total)}
+                </div>
+              </div>
+
+            </div>
+
+            ${renderTimeline(order.status)}
+
+          </div>
+
+        `;
+
+      }).join("")}
+
+    </div>
+  `;
+}
+
+async function loadOrders(){
+
+  const token = getAuthToken();
+
+  const content = document.getElementById("content");
+
+  if(!token){
+
+    content.innerHTML = `
+      <div class="error">
+        Duhet të identifikohesh për të parë porositë.
+        <br><br>
+        <a href="index.html" style="color:#00ff88;">
+          Kthehu te dyqani
+        </a>
+      </div>
+    `;
+
+    return;
+  }
+
+  try{
+
+    const response = await fetch(`${API}/my-orders`,{
+      headers:{
+        "Authorization":`Bearer ${token}`
+      }
+    });
+
+    const data = await response.json();
+
+    if(response.status === 401){
+
+      localStorage.removeItem("sabiAuthToken");
+
+      content.innerHTML = `
+        <div class="error">
+          Sesioni ka skaduar.
+          <br><br>
+          Hyr përsëri në llogarinë tënde.
+        </div>
+      `;
+
+      return;
+    }
+
+    if(!response.ok || !data.success){
+
+      throw new Error(
+        data.error || "Nuk u ngarkuan porositë."
+      );
+
+    }
+
+    renderOrders(data.orders || []);
+
+  }catch(error){
+
+    content.innerHTML = `
+      <div class="error">
+        ${escapeHTML(error.message)}
+      </div>
+    `;
+
+  }
+
+}
+
+loadOrders();
+
+// Kontrollo automatikisht çdo 15 sekonda
+setInterval(loadOrders,15000);
+
+</script>
+
+</body>
+</html>
