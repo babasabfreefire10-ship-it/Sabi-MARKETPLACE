@@ -23,7 +23,6 @@ export default {
     }
     // =========================================================
     // AUTH TABLES
-    // Krijohen automatikisht. Nuk prekin tabelat ekzistuese.
     // =========================================================
     try {
       await env.DB.prepare(`
@@ -185,6 +184,7 @@ export default {
             u.id,
             u.name,
             u.email,
+            a.identifier,
             a.role
           FROM sessions s
           JOIN users u
@@ -284,8 +284,6 @@ export default {
             error: "Kjo llogari ekziston."
           }, 409);
         }
-        // users.email është NOT NULL.
-        // Për telefon përdorim një adresë teknike unike.
         const email =
           identifier.includes("@")
             ? identifier
@@ -341,6 +339,7 @@ export default {
             id: user.id,
             name: user.name,
             email: user.email,
+            identifier,
             role
           }
         }, 201);
@@ -484,6 +483,7 @@ export default {
             id: user.user_id,
             name: user.name,
             email: user.email,
+            identifier: user.identifier || "",
             role: user.role
           }
         });
@@ -733,8 +733,6 @@ export default {
               ? Number(body.stock)
               : 1
           );
-        // Për siguri, produkti i shitësit lidhet
-        // me user-in e sesionit.
         const sellerId =
           Number(auth.user_id);
         if (!title) {
@@ -980,7 +978,7 @@ export default {
       }
     }
     // =========================================================
-    // CREATE ORDERS
+    // CREATE ORDER - CASH ON DELIVERY
     // =========================================================
     if (
       url.pathname === "/api/orders" &&
@@ -996,10 +994,66 @@ export default {
           await request.json();
         const buyerId =
           Number(auth.user_id);
+        const customerName =
+          String(
+            body.customer_name || ""
+          ).trim();
+        const customerPhone =
+          String(
+            body.customer_phone || ""
+          ).trim();
+        const customerCity =
+          String(
+            body.customer_city || ""
+          ).trim();
+        const customerAddress =
+          String(
+            body.customer_address || ""
+          ).trim();
         const items =
           Array.isArray(body.items)
             ? body.items
             : [];
+        // -----------------------------------------------------
+        // VALIDATION
+        // -----------------------------------------------------
+        if (!customerName) {
+          return json({
+            success: false,
+            error:
+              "Emri dhe mbiemri janë të detyrueshëm."
+          }, 400);
+        }
+        if (!customerPhone) {
+          return json({
+            success: false,
+            error:
+              "Numri i telefonit është i detyrueshëm."
+          }, 400);
+        }
+        if (
+          customerPhone.replace(/\D/g, "").length < 8
+        ) {
+          return json({
+            success: false,
+            error:
+              "Numri i telefonit nuk është i vlefshëm."
+          }, 400);
+        }
+        if (!customerCity) {
+          return json({
+            success: false,
+            error:
+              "Qyteti është i detyrueshëm."
+          }, 400);
+        }
+        if (!customerAddress) {
+          return json({
+            success: false,
+            error:
+              "Adresa është e detyrueshme."
+          }, 400);
+        }
         if (!items.length) {
           return json({
             success: false,
@@ -1007,86 +1061,259 @@ export default {
               "Shporta është bosh."
           }, 400);
         }
-        const created = [];
+        // -----------------------------------------------------
+        // NORMALIZE CART
+        // -----------------------------------------------------
+        const quantities = new Map();
         for (const item of items) {
           const productId =
             Number(item.id);
-          const quantity =
-            Math.max(
-              1,
+          const qty =
+            Math.floor(
               Number(item.qty || 1)
             );
-          if (!Number.isInteger(productId)) {
+          if (
+            !Number.isInteger(productId) ||
+            !Number.isInteger(qty) ||
+            qty < 1
+          ) {
             continue;
           }
+          quantities.set(
+            productId,
+            (quantities.get(productId) || 0) + qty
+          );
+        }
+        if (!quantities.size) {
+          return json({
+            success: false,
+            error:
+              "Produktet e shportës nuk janë të vlefshme."
+          }, 400);
+        }
+        // -----------------------------------------------------
+        // LOAD PRODUCTS AND CHECK STOCK
+        // -----------------------------------------------------
+        const orderItems = [];
+        let grandTotal = 0;
+        for (const [productId, quantity] of quantities) {
           const product =
             await env.DB.prepare(`
               SELECT
                 id,
+                title,
                 price,
-                stock
+                stock,
+                seller_id
               FROM products
               WHERE id = ?
             `)
             .bind(productId)
             .first();
           if (!product) {
-            continue;
-          }
-          if (
-            Number(product.stock) <
-            quantity
-          ) {
             return json({
               success: false,
               error:
-                "Nuk ka stok të mjaftueshëm për produktin ID " +
-                productId
+                `Produkti me ID ${productId} nuk ekziston.`
+            }, 404);
+          }
+          const stock =
+            Number(product.stock || 0);
+          if (stock <= 0) {
+            return json({
+              success: false,
+              error:
+                `Produkti "${product.title}" nuk ka më stok.`
             }, 400);
           }
+          if (stock < quantity) {
+            return json({
+              success: false,
+              error:
+                `Për "${product.title}" ka vetëm ${stock} copë në stok.`
+            }, 400);
+          }
+          const unitPrice =
+            Number(product.price || 0);
           const totalPrice =
-            Number(product.price) *
-            quantity;
-          const result =
+            unitPrice * quantity;
+          grandTotal += totalPrice;
+          orderItems.push({
+            productId,
+            quantity,
+            unitPrice,
+            totalPrice,
+            productName: product.title
+          });
+        }
+        // -----------------------------------------------------
+        // UNIQUE SABI ORDER CODE
+        // -----------------------------------------------------
+        let orderCode = "";
+        for (let attempt = 0; attempt < 5; attempt++) {
+          const random =
+            crypto
+              .getRandomValues(
+                new Uint8Array(4)
+              )
+              .reduce(
+                (str, byte) =>
+                  str +
+                  byte.toString(16).padStart(2, "0"),
+                ""
+              )
+              .toUpperCase();
+          const candidate =
+            `SABI-${Date.now().toString().slice(-7)}-${random}`;
+          const exists =
             await env.DB.prepare(`
+              SELECT id
+              FROM orders
+              WHERE order_code = ?
+              LIMIT 1
+            `)
+            .bind(candidate)
+            .first();
+          if (!exists) {
+            orderCode = candidate;
+            break;
+          }
+        }
+        if (!orderCode) {
+          return json({
+            success: false,
+            error:
+              "Nuk u krijua numri i porosisë."
+          }, 500);
+        }
+        // -----------------------------------------------------
+        // ATOMIC BATCH
+        // -----------------------------------------------------
+        const statements = [];
+        for (const item of orderItems) {
+          /*
+            Fillimisht ulet stoku.
+            Më pas futet porosia.
+            D1 batch i ekzekuton si një transaksion.
+          */
+          statements.push(
+            env.DB.prepare(`
+              UPDATE products
+              SET stock = stock - ?
+              WHERE id = ?
+                AND stock >= ?
+            `)
+            .bind(
+              item.quantity,
+              item.productId,
+              item.quantity
+            )
+          );
+          statements.push(
+            env.DB.prepare(`
               INSERT INTO orders
               (
                 product_id,
                 buyer_id,
                 quantity,
                 total_price,
-                status
+                status,
+                customer_name,
+                customer_phone,
+                customer_city,
+                customer_address,
+                payment_method,
+                order_code
               )
-              VALUES (?, ?, ?, ?, ?)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             `)
             .bind(
-              productId,
+              item.productId,
               buyerId,
-              quantity,
-              totalPrice,
-              "pending"
+              item.quantity,
+              item.totalPrice,
+              "pending",
+              customerName,
+              customerPhone,
+              customerCity,
+              customerAddress,
+              "cash_on_delivery",
+              orderCode
             )
-            .run();
-          await env.DB.prepare(`
-            UPDATE products
-            SET stock = stock - ?
-            WHERE id = ?
-          `)
-          .bind(
-            quantity,
-            productId
-          )
-          .run();
-          created.push({
-            id: result.meta.last_row_id,
-            product_id: productId,
-            quantity,
-            total_price: totalPrice
-          });
+          );
         }
+        const batchResult =
+          await env.DB.batch(statements);
+        if (!batchResult || !batchResult.length) {
+          return json({
+            success: false,
+            error:
+              "Porosia nuk u ruajt."
+          }, 500);
+        }
+        // -----------------------------------------------------
+        // FINAL STOCK SAFETY CHECK
+        // -----------------------------------------------------
+        for (const item of orderItems) {
+          const remaining =
+            await env.DB.prepare(`
+              SELECT stock
+              FROM products
+              WHERE id = ?
+            `)
+            .bind(item.productId)
+            .first();
+          if (
+            !remaining ||
+            Number(remaining.stock) < 0
+          ) {
+            return json({
+              success: false,
+              error:
+                "Gabim në përditësimin e stokut."
+            }, 500);
+          }
+        }
+        // -----------------------------------------------------
+        // GET CREATED ORDERS
+        // -----------------------------------------------------
+        const { results } =
+          await env.DB.prepare(`
+            SELECT
+              id,
+              product_id,
+              buyer_id,
+              quantity,
+              total_price,
+              status,
+              customer_name,
+              customer_phone,
+              customer_city,
+              customer_address,
+              payment_method,
+              order_code,
+              created_at
+            FROM orders
+            WHERE order_code = ?
+            ORDER BY id ASC
+          `)
+          .bind(orderCode)
+          .all();
         return json({
           success: true,
-          orders: created
+          message:
+            "Porosia u regjistrua me sukses në SABI.",
+          order_code: orderCode,
+          payment_method: "cash_on_delivery",
+          status: "pending",
+          customer: {
+            name: customerName,
+            phone: customerPhone,
+            city: customerCity,
+            address: customerAddress
+          },
+          total: grandTotal,
+          orders: results
         });
       } catch (error) {
         return json({
@@ -1116,6 +1343,12 @@ export default {
             o.quantity,
             o.total_price,
             o.status,
+            o.customer_name,
+            o.customer_phone,
+            o.customer_city,
+            o.customer_address,
+            o.payment_method,
+            o.order_code,
             o.created_at,
             p.title AS product_name,
             p.image_url AS product_image,
@@ -1211,10 +1444,24 @@ export default {
         }
         const body =
           await request.json();
+        const allowedStatuses = [
+          "pending",
+          "confirmed",
+          "shipped",
+          "delivered",
+          "cancelled"
+        ];
         const status =
           String(
             body.status || "pending"
-          );
+          ).toLowerCase();
+        if (!allowedStatuses.includes(status)) {
+          return json({
+            success: false,
+            error:
+              "Statusi nuk është i vlefshëm."
+          }, 400);
+        }
         await env.DB.prepare(`
           UPDATE orders
           SET status = ?
@@ -1226,7 +1473,8 @@ export default {
         )
         .run();
         return json({
-          success: true
+          success: true,
+          status
         });
       } catch (error) {
         return json({
