@@ -12,10 +12,15 @@
   padding:0;
 }
 
+html{
+  scroll-behavior:smooth;
+}
+
 body{
   font-family:Arial,Helvetica,sans-serif;
   background:#080808;
   color:#fff;
+  min-height:100vh;
 }
 
 button,input,select,textarea{
@@ -26,13 +31,17 @@ button{
   cursor:pointer;
 }
 
+/* =====================================================
+   HEADER
+===================================================== */
+
 .header{
   position:sticky;
   top:0;
   z-index:100;
   background:rgba(8,8,8,.96);
   border-bottom:1px solid #222;
-  backdrop-filter:blur(12px);
+  backdrop-filter:blur(16px);
 }
 
 .nav{
@@ -43,13 +52,14 @@ button{
   align-items:center;
   justify-content:space-between;
   padding:12px 20px;
-  gap:15px;
+  gap:20px;
 }
 
 .logo{
   font-size:28px;
   font-weight:900;
-  letter-spacing:3px;
+  letter-spacing:4px;
+  flex-shrink:0;
 }
 
 .logo span{
@@ -58,21 +68,26 @@ button{
 
 .nav-buttons{
   display:flex;
-  gap:10px;
   align-items:center;
+  justify-content:flex-end;
+  gap:9px;
+  min-width:0;
 }
 
 .btn{
   border:1px solid #333;
   background:#111;
   color:#fff;
-  padding:11px 16px;
-  border-radius:10px;
+  padding:11px 15px;
+  border-radius:11px;
   font-weight:700;
+  white-space:nowrap;
+  transition:.2s ease;
 }
 
 .btn:hover{
   border-color:#00ff88;
+  transform:translateY(-1px);
 }
 
 .btn-green{
@@ -81,36 +96,60 @@ button{
   border-color:#00ff88;
 }
 
+.sell-btn{
+  box-shadow:0 0 18px rgba(0,255,136,.08);
+}
+
+.login-btn{
+  min-width:76px;
+}
+
 .user-btn{
   display:none;
-  max-width:180px;
+  max-width:170px;
   overflow:hidden;
   text-overflow:ellipsis;
-  white-space:nowrap;
 }
 
 .orders-btn{
   display:none;
 }
 
+.logout-btn{
+  display:none;
+}
+
 .cart-btn{
   position:relative;
+  min-width:48px;
+  height:44px;
+  padding:0 13px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
 }
 
 .cart-count{
   position:absolute;
-  top:-7px;
-  right:-7px;
+  top:-6px;
+  right:-6px;
   width:21px;
   height:21px;
   border-radius:50%;
   background:#ff3b30;
   color:#fff;
-  font-size:12px;
+  font-size:11px;
+  font-weight:900;
   display:flex;
   align-items:center;
   justify-content:center;
+  border:2px solid #080808;
 }
+
+/* =====================================================
+   HERO
+===================================================== */
 
 .hero{
   max-width:1200px;
@@ -134,6 +173,10 @@ button{
   font-size:17px;
 }
 
+/* =====================================================
+   SEARCH
+===================================================== */
+
 .search-box{
   max-width:1200px;
   margin:0 auto;
@@ -154,6 +197,10 @@ button{
   border-color:#00ff88;
 }
 
+/* =====================================================
+   CATEGORIES
+===================================================== */
+
 .categories{
   max-width:1200px;
   margin:auto;
@@ -161,6 +208,11 @@ button{
   display:flex;
   gap:9px;
   overflow-x:auto;
+  scrollbar-width:none;
+}
+
+.categories::-webkit-scrollbar{
+  display:none;
 }
 
 .category{
@@ -178,6 +230,10 @@ button{
   color:#000;
   border-color:#00ff88;
 }
+
+/* =====================================================
+   PRODUCTS
+===================================================== */
 
 .container{
   max-width:1200px;
@@ -214,6 +270,7 @@ button{
   height:220px;
   object-fit:cover;
   background:#181818;
+  display:block;
 }
 
 .product-body{
@@ -287,7 +344,9 @@ button{
   color:#00ff88;
 }
 
-/* CART */
+/* =====================================================
+   CART
+===================================================== */
 
 .overlay{
   position:fixed;
@@ -407,12 +466,15 @@ button{
 .total{
   display:flex;
   justify-content:space-between;
+  gap:15px;
   font-size:21px;
   font-weight:900;
   margin-bottom:15px;
 }
 
-/* MODALS */
+/* =====================================================
+   MODALS
+===================================================== */
 
 .modal{
   position:fixed;
@@ -500,7 +562,9 @@ button{
   margin-bottom:15px;
 }
 
-/* COD */
+/* =====================================================
+   COD
+===================================================== */
 
 .cod-box{
   background:#0b1712;
@@ -550,49 +614,133 @@ button{
   margin-top:8px;
 }
 
+/* =====================================================
+   TABLET
+===================================================== */
+
 @media(max-width:900px){
 
   .nav{
-    flex-wrap:wrap;
+    padding:11px 16px;
+    gap:15px;
+  }
+
+  .logo{
+    font-size:25px;
   }
 
   .nav-buttons{
-    width:100%;
+    gap:7px;
     overflow-x:auto;
-    padding-bottom:3px;
+    scrollbar-width:none;
+  }
+
+  .nav-buttons::-webkit-scrollbar{
+    display:none;
   }
 
   .nav-buttons .btn{
-    white-space:nowrap;
+    flex:0 0 auto;
+    padding:10px 12px;
+    font-size:12px;
   }
 
 }
 
+/* =====================================================
+   MOBILE
+===================================================== */
+
 @media(max-width:600px){
 
+  .header{
+    position:sticky;
+    top:0;
+  }
+
   .nav{
-    padding:10px 14px;
+    min-height:auto;
+    padding:10px 12px 9px;
+    display:block;
   }
 
   .logo{
-    font-size:23px;
+    font-size:25px;
+    text-align:center;
+    letter-spacing:4px;
+    margin-bottom:10px;
   }
 
   .nav-buttons{
-    gap:6px;
+    width:100%;
+    display:flex;
+    justify-content:flex-start;
+    align-items:center;
+    gap:8px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding:2px 3px 5px;
+    scrollbar-width:none;
+  }
+
+  .nav-buttons::-webkit-scrollbar{
+    display:none;
   }
 
   .nav-buttons .btn{
-    padding:9px 10px;
+    flex:0 0 auto;
+    height:42px;
+    padding:0 13px;
     font-size:12px;
+    border-radius:11px;
+  }
+
+  .sell-btn{
+    min-width:130px;
+  }
+
+  .login-btn{
+    min-width:74px;
   }
 
   .user-btn{
-    max-width:100px;
+    max-width:125px;
+  }
+
+  .orders-btn{
+    max-width:none;
+  }
+
+  .logout-btn{
+    min-width:65px;
+  }
+
+  .cart-btn{
+    min-width:48px !important;
+    width:48px;
+    padding:0 !important;
+    font-size:18px !important;
+  }
+
+  .cart-count{
+    width:19px;
+    height:19px;
+    font-size:10px;
+    top:-5px;
+    right:-5px;
   }
 
   .hero{
     padding:40px 15px 25px;
+  }
+
+  .hero h1{
+    font-size:48px;
+  }
+
+  .hero p{
+    font-size:15px;
+    line-height:1.5;
   }
 
   .search-box,
@@ -602,9 +750,17 @@ button{
     padding-right:15px;
   }
 
+  .search{
+    padding:14px;
+  }
+
   .products{
     grid-template-columns:repeat(2,minmax(0,1fr));
     gap:10px;
+  }
+
+  .product{
+    border-radius:14px;
   }
 
   .product-img{
@@ -619,6 +775,10 @@ button{
     font-size:15px;
   }
 
+  .product-description{
+    font-size:12px;
+  }
+
   .price{
     font-size:17px;
   }
@@ -628,13 +788,74 @@ button{
     font-size:11px;
   }
 
+  .product-bottom{
+    gap:6px;
+  }
+
+  .modal{
+    padding:10px;
+  }
+
+  .modal-box{
+    border-radius:15px;
+    padding:17px;
+    max-height:94vh;
+  }
+
+}
+
+/* =====================================================
+   VERY SMALL PHONES
+===================================================== */
+
+@media(max-width:380px){
+
+  .logo{
+    font-size:23px;
+  }
+
+  .nav-buttons{
+    gap:6px;
+  }
+
+  .nav-buttons .btn{
+    font-size:11px;
+    padding:0 10px;
+  }
+
+  .sell-btn{
+    min-width:120px;
+  }
+
+  .login-btn{
+    min-width:68px;
+  }
+
+  .cart-btn{
+    min-width:44px !important;
+    width:44px;
+  }
+
+  .products{
+    gap:8px;
+  }
+
+  .product-img{
+    height:150px;
+  }
+
 }
 </style>
 </head>
 
 <body>
 
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
 <header class="header">
+
   <nav class="nav">
 
     <div class="logo">
@@ -644,18 +865,18 @@ button{
     <div class="nav-buttons">
 
       <button
-        class="btn btn-green"
+        class="btn btn-green sell-btn"
         onclick="openSellerModal()"
       >
-        Shit me SABI
+        🏷️ Shit me SABI
       </button>
 
       <button
         id="loginBtn"
-        class="btn"
+        class="btn login-btn"
         onclick="goLogin()"
       >
-        Hyr
+        🔐 Hyr
       </button>
 
       <button
@@ -663,10 +884,9 @@ button{
         class="btn user-btn"
         onclick="showAccount()"
       >
-        Klient
+        👤 Klient
       </button>
 
-      <!-- POROSITË E MIA -->
       <button
         id="myOrdersBtn"
         class="btn orders-btn"
@@ -677,7 +897,7 @@ button{
 
       <button
         id="logoutBtn"
-        class="btn"
+        class="btn logout-btn"
         onclick="logout()"
         style="display:none;"
       >
@@ -687,19 +907,29 @@ button{
       <button
         class="btn cart-btn"
         onclick="openCart()"
+        aria-label="Shporta"
       >
         🛒
+
         <span
           class="cart-count"
           id="cartCount"
         >
           0
         </span>
+
       </button>
 
     </div>
+
   </nav>
+
 </header>
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
 
 <section class="hero">
 
@@ -715,6 +945,11 @@ button{
 
 </section>
 
+
+<!-- =====================================================
+     SEARCH
+===================================================== -->
+
 <div class="search-box">
 
   <input
@@ -726,6 +961,11 @@ button{
   >
 
 </div>
+
+
+<!-- =====================================================
+     CATEGORIES
+===================================================== -->
 
 <div class="categories">
 
@@ -773,6 +1013,11 @@ button{
 
 </div>
 
+
+<!-- =====================================================
+     PRODUCTS
+===================================================== -->
+
 <main class="container">
 
   <div
@@ -786,14 +1031,19 @@ button{
     id="products"
     class="products"
   >
+
     <div class="loading">
       Po ngarkohen...
     </div>
+
   </div>
 
 </main>
 
-<!-- OVERLAY -->
+
+<!-- =====================================================
+     OVERLAY
+===================================================== -->
 
 <div
   id="overlay"
@@ -801,7 +1051,10 @@ button{
   onclick="closeCart()"
 ></div>
 
-<!-- CART -->
+
+<!-- =====================================================
+     CART
+===================================================== -->
 
 <aside
   id="cart"
@@ -855,7 +1108,10 @@ button{
 
 </aside>
 
-<!-- CHECKOUT MODAL -->
+
+<!-- =====================================================
+     CHECKOUT MODAL
+===================================================== -->
 
 <div
   id="checkoutModal"
@@ -880,11 +1136,13 @@ button{
     </div>
 
     <div class="notice">
+
       Plotëso të dhënat e dorëzimit.
       Pagesa bëhet
       <strong style="color:#fff;">
         cash kur merr produktin.
       </strong>
+
     </div>
 
     <div class="form-group">
@@ -994,7 +1252,10 @@ button{
 
 </div>
 
-<!-- SUCCESS MODAL -->
+
+<!-- =====================================================
+     SUCCESS MODAL
+===================================================== -->
 
 <div
   id="successModal"
@@ -1013,9 +1274,7 @@ button{
         Porosia u krye!
       </h2>
 
-      <p
-        style="color:#999;margin-top:10px;"
-      >
+      <p style="color:#999;margin-top:10px;">
         Porosia jote u regjistrua në SABI.
       </p>
 
@@ -1053,7 +1312,10 @@ button{
 
 </div>
 
-<!-- SELLER MODAL -->
+
+<!-- =====================================================
+     SELLER MODAL
+===================================================== -->
 
 <div
   id="sellerModal"
@@ -1078,8 +1340,10 @@ button{
     </div>
 
     <div class="notice">
+
       Produkti do të ruhet direkt në SABI Marketplace
       dhe do të shfaqet te produktet pasi të dërgohet.
+
     </div>
 
     <div class="form-group">
@@ -1244,6 +1508,7 @@ button{
   </div>
 
 </div>
+
 
 <script>
 
@@ -1426,11 +1691,6 @@ function setLoggedInUI(user){
 
   }
 
-
-  /*
-    POROSITË E MIA
-    Vetëm customer.
-  */
 
   if(myOrdersBtn){
 
@@ -1868,28 +2128,22 @@ function renderProducts(){
               <div class="product-body">
 
                 <div class="product-category">
-
                   ${escapeHtml(
                     getDisplayCategory(
                       product.category
                     )
                   )}
-
                 </div>
 
                 <div class="product-title">
-
                   ${escapeHtml(name)}
-
                 </div>
 
                 <div class="product-description">
-
                   ${escapeHtml(
                     product.description ||
                     "Pa përshkrim"
                   )}
-
                 </div>
 
                 <div class="stock">
@@ -1908,9 +2162,7 @@ function renderProducts(){
                 <div class="product-bottom">
 
                   <div class="price">
-
                     ${price.toFixed(2)} €
-
                   </div>
 
                   <button
@@ -2125,10 +2377,15 @@ function updateCart(){
     );
 
 
-  document.getElementById(
-    "cartCount"
-  ).textContent =
-    count;
+  const countElement =
+    document.getElementById(
+      "cartCount"
+    );
+
+  if(countElement){
+    countElement.textContent =
+      count;
+  }
 
 
   const box =
@@ -2222,19 +2479,15 @@ function updateCart(){
               <div class="cart-info">
 
                 <h3>
-
                   ${escapeHtml(
                     product.name ||
                     product.title ||
                     "Produkt"
                   )}
-
                 </h3>
 
                 <div class="cart-price">
-
                   ${(price * qty).toFixed(2)} €
-
                 </div>
 
                 <div class="qty">
