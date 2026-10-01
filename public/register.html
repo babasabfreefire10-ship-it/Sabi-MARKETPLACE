@@ -1,1069 +1,553 @@
 <!DOCTYPE html>
 <html lang="sq">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#111111" />
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
   <title>Regjistrohu • SHIT.BLEJ</title>
 
   <style>
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
 
-    :root {
-      --black: #111111;
-      --black2: #181818;
-      --white: #ffffff;
-      --gray: #777;
-      --light: #f4f4f4;
-      --border: #dedede;
-      --green: #20a83a;
-      --green-dark: #16832b;
-      --red: #e53935;
-    }
-
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f6f6f6;
-      color: #111;
       min-height: 100vh;
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
     }
 
-    /* TOP BAR */
-    .topbar {
-      height: 64px;
-      background: var(--black);
-      color: white;
+    header {
+      height: 65px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 25px;
-      box-shadow: 0 2px 10px rgba(0,0,0,.12);
+      padding: 0 20px;
+      border-bottom: 1px solid #292929;
+      background: #151515;
     }
 
     .logo {
-      color: white;
-      text-decoration: none;
-      font-size: 27px;
+      font-size: 25px;
       font-weight: 900;
-      letter-spacing: -1.5px;
     }
 
     .logo span {
-      color: #28b842;
+      color: #20a83a;
     }
 
     .back {
+      background: #292929;
       color: white;
-      text-decoration: none;
-      border: 1px solid #444;
-      padding: 9px 15px;
-      border-radius: 5px;
-      font-size: 14px;
-      transition: .2s;
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-weight: 700;
     }
 
-    .back:hover {
-      background: #252525;
+    .container {
+      width: 92%;
+      max-width: 450px;
+      margin: 45px auto;
     }
 
-    /* MAIN */
-    .page {
-      min-height: calc(100vh - 64px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 35px 15px;
+    .card {
+      background: #181818;
+      border: 1px solid #292929;
+      border-radius: 15px;
+      padding: 25px;
     }
 
-    .register-card {
-      width: 100%;
-      max-width: 480px;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      box-shadow: 0 8px 30px rgba(0,0,0,.08);
-      overflow: hidden;
-    }
-
-    .card-header {
-      padding: 27px 30px 22px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .card-header h1 {
-      font-size: 27px;
+    h1 {
+      font-size: 30px;
       margin-bottom: 8px;
     }
 
-    .card-header p {
-      color: #777;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .card-body {
-      padding: 28px 30px 30px;
-    }
-
-    /* FORM */
-    .field {
-      margin-bottom: 17px;
-    }
-
-    .field label {
-      display: block;
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 7px;
-    }
-
-    .field input,
-    .field select {
-      width: 100%;
-      height: 46px;
-      border: 1px solid #cfcfcf;
-      border-radius: 5px;
-      padding: 0 13px;
-      font-size: 15px;
-      outline: none;
-      background: white;
-      color: #111;
-      transition: .2s;
-    }
-
-    .field input:focus,
-    .field select:focus {
-      border-color: #222;
-      box-shadow: 0 0 0 2px rgba(0,0,0,.05);
-    }
-
-    .field small {
-      display: block;
-      margin-top: 6px;
+    .subtitle {
       color: #888;
-      font-size: 12px;
+      margin-bottom: 25px;
     }
 
-    .password-wrap {
-      position: relative;
-    }
-
-    .password-wrap input {
-      padding-right: 48px;
-    }
-
-    .show-password {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      border: 0;
-      background: transparent;
-      cursor: pointer;
-      font-size: 18px;
-      color: #666;
-    }
-
-    /* ROLE */
-    .role-title {
+    label {
+      display: block;
+      color: #bbb;
       font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 9px;
+      margin-bottom: 7px;
+      margin-top: 16px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 9px;
+      border: 1px solid #333;
+      background: #101010;
+      color: white;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #20a83a;
     }
 
     .roles {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .role-option {
-      position: relative;
-    }
-
-    .role-option input {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .role-box {
-      display: block;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      padding: 13px;
-      cursor: pointer;
-      background: white;
-      transition: .2s;
-    }
-
-    .role-box strong {
-      display: block;
-      font-size: 14px;
-      margin-bottom: 4px;
-    }
-
-    .role-box span {
-      color: #777;
-      font-size: 12px;
-      line-height: 1.3;
-    }
-
-    .role-option input:checked + .role-box {
-      border-color: var(--green);
-      box-shadow: 0 0 0 1px var(--green);
-      background: #f5fff7;
-    }
-
-    /* TERMS */
-    .terms {
       display: flex;
-      gap: 9px;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .role {
+      flex: 1;
+      border: 1px solid #333;
+      border-radius: 9px;
+      padding: 13px;
+      background: #101010;
+      cursor: pointer;
+      text-align: center;
+      color: #aaa;
+    }
+
+    .role.active {
+      border-color: #20a83a;
+      color: white;
+      background: #142116;
+    }
+
+    .role input {
+      display: none;
+    }
+
+    .terms {
+      margin-top: 18px;
+      display: flex;
+      gap: 8px;
+      color: #888;
+      font-size: 13px;
       align-items: flex-start;
-      margin: 5px 0 20px;
-      font-size: 12px;
-      color: #666;
-      line-height: 1.5;
     }
 
     .terms input {
-      margin-top: 3px;
-      width: 15px;
-      height: 15px;
-      flex-shrink: 0;
-      accent-color: var(--green);
+      width: auto;
+      margin-top: 2px;
     }
 
-    /* BUTTON */
-    .register-btn {
+    .submit {
       width: 100%;
-      height: 48px;
-      border: 0;
-      border-radius: 5px;
-      background: var(--green);
-      color: white;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    .register-btn:hover {
-      background: var(--green-dark);
-    }
-
-    .register-btn:disabled {
-      opacity: .65;
-      cursor: not-allowed;
-    }
-
-    /* MESSAGE */
-    .message {
-      display: none;
-      border-radius: 5px;
-      padding: 12px 13px;
-      margin-bottom: 17px;
-      font-size: 13px;
-      line-height: 1.4;
-    }
-
-    .message.error {
-      display: block;
-      background: #fff1f1;
-      color: #c62828;
-      border: 1px solid #ffcaca;
-    }
-
-    .message.success {
-      display: block;
-      background: #effff2;
-      color: #18852d;
-      border: 1px solid #bdeac5;
-    }
-
-    /* LOGIN */
-    .login-line {
-      text-align: center;
       margin-top: 22px;
-      padding-top: 20px;
-      border-top: 1px solid #eee;
-      font-size: 14px;
-      color: #777;
-    }
-
-    .login-line a {
-      color: #111;
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .login-line a:hover {
-      text-decoration: underline;
-    }
-
-    /* COUNTDOWN */
-    .countdown {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.88);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
+      padding: 15px;
+      border: 0;
+      border-radius: 9px;
+      background: #20a83a;
       color: white;
-      text-align: center;
-    }
-
-    .countdown.show {
-      display: flex;
-    }
-
-    .countdown-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .count-number {
-      width: 120px;
-      height: 120px;
-      border: 3px solid #28b842;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 55px;
       font-weight: 900;
-      animation: pulse .8s ease;
+      font-size: 16px;
+      cursor: pointer;
     }
 
-    .count-text {
-      font-size: 17px;
+    .submit:disabled {
+      opacity: .5;
+    }
+
+    .message {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+      font-size: 14px;
+    }
+
+    .error {
+      background: #321515;
+      color: #ff8b8b;
+    }
+
+    .success {
+      background: #12351b;
+      color: #79df91;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #888;
+    }
+
+    .login-link a {
+      color: #20a83a;
+      text-decoration: none;
       font-weight: 700;
     }
 
-    @keyframes pulse {
-      0% {
-        transform: scale(.6);
-        opacity: .2;
-      }
-      100% {
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-
-    /* MOBILE */
-    @media (max-width: 600px) {
-      .topbar {
-        padding: 0 15px;
-      }
-
-      .logo {
-        font-size: 24px;
-      }
-
-      .back {
-        font-size: 13px;
-        padding: 8px 11px;
-      }
-
-      .page {
-        padding: 20px 10px;
-        align-items: flex-start;
-      }
-
-      .register-card {
-        margin-top: 10px;
-      }
-
-      .card-header {
-        padding: 23px 20px 19px;
-      }
-
-      .card-body {
-        padding: 22px 20px 25px;
-      }
-
-      .card-header h1 {
-        font-size: 24px;
-      }
-
-      .roles {
-        grid-template-columns: 1fr;
-      }
-    }
   </style>
+
 </head>
 
 <body>
 
-  <!-- TOP BAR -->
-  <header class="topbar">
-    <a href="index.html" class="logo">
-      SHIT<span>.</span>BLEJ
-    </a>
+  <header>
 
-    <a href="login.html" class="back">
-      ← Hyr
-    </a>
+    <div class="logo">
+      SHIT<span>.</span>BLEJ
+    </div>
+
+    <button
+      class="back"
+      onclick="location.href='index.html'">
+      ← Kthehu
+    </button>
+
   </header>
 
-  <!-- REGISTER -->
-  <main class="page">
 
-    <section class="register-card">
+  <main class="container">
 
-      <div class="card-header">
-        <h1>Krijo llogari</h1>
-        <p>
-          Regjistrohu falas në SHIT.BLEJ për të blerë,
-          shitur dhe menaxhuar njoftimet e tua.
-        </p>
-      </div>
+    <div class="card">
 
-      <div class="card-body">
+      <h1>Regjistrohu</h1>
 
-        <div id="message" class="message"></div>
+      <p class="subtitle">
+        Krijo llogarinë tënde në SHIT.BLEJ.
+      </p>
 
-        <form id="registerForm">
 
-          <!-- NAME -->
-          <div class="field">
-            <label for="name">Emri</label>
+      <form id="registerForm">
+
+        <label>
+          Emri
+        </label>
+
+        <input
+          id="name"
+          type="text"
+          placeholder="Emri dhe mbiemri"
+          required>
+
+
+        <label>
+          Email
+        </label>
+
+        <input
+          id="email"
+          type="email"
+          placeholder="email@example.com"
+          required>
+
+
+        <label>
+          Telefoni
+        </label>
+
+        <input
+          id="phone"
+          type="tel"
+          placeholder="+355 6x xxx xxxx">
+
+
+        <label>
+          Zgjidh llogarinë
+        </label>
+
+        <div class="roles">
+
+          <label
+            class="role active"
+            id="customerRole">
+
             <input
-              id="name"
-              type="text"
-              placeholder="Shkruaj emrin"
-              autocomplete="name"
-              required
-            />
-          </div>
+              type="radio"
+              name="role"
+              value="customer"
+              checked>
 
-          <!-- EMAIL -->
-          <div class="field">
-            <label for="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              placeholder="shembull@email.com"
-              autocomplete="email"
-              required
-            />
-          </div>
+            Blerës
 
-          <!-- PHONE -->
-          <div class="field">
-            <label for="phone">Numri i telefonit <span style="font-weight:400;color:#888;">(opsionale)</span></label>
-            <input
-              id="phone"
-              type="tel"
-              placeholder="06xxxxxxxx"
-              autocomplete="tel"
-            />
-          </div>
-
-          <!-- ROLE -->
-          <div class="role-title">Si dëshiron ta përdorësh SHIT.BLEJ?</div>
-
-          <div class="roles">
-
-            <div class="role-option">
-              <input
-                type="radio"
-                id="customer"
-                name="role"
-                value="customer"
-                checked
-              />
-
-              <label class="role-box" for="customer">
-                <strong>👤 Blerës</strong>
-                <span>
-                  Shfleto dhe blej produkte nga shitësit.
-                </span>
-              </label>
-            </div>
-
-            <div class="role-option">
-              <input
-                type="radio"
-                id="seller"
-                name="role"
-                value="seller"
-              />
-
-              <label class="role-box" for="seller">
-                <strong>🏷️ Shitës</strong>
-                <span>
-                  Publiko produktet e tua dhe merr porosi.
-                </span>
-              </label>
-            </div>
-
-          </div>
-
-          <!-- PASSWORD -->
-          <div class="field">
-            <label for="password">Fjalëkalimi</label>
-
-            <div class="password-wrap">
-              <input
-                id="password"
-                type="password"
-                placeholder="Minimumi 6 karaktere"
-                autocomplete="new-password"
-                minlength="6"
-                required
-              />
-
-              <button
-                type="button"
-                class="show-password"
-                onclick="togglePassword('password', this)"
-                aria-label="Shfaq fjalëkalimin"
-              >
-                👁
-              </button>
-            </div>
-
-            <small>
-              Përdor të paktën 6 karaktere.
-            </small>
-          </div>
-
-          <!-- CONFIRM PASSWORD -->
-          <div class="field">
-            <label for="confirmPassword">Konfirmo fjalëkalimin</label>
-
-            <div class="password-wrap">
-              <input
-                id="confirmPassword"
-                type="password"
-                placeholder="Përsërite fjalëkalimin"
-                autocomplete="new-password"
-                minlength="6"
-                required
-              />
-
-              <button
-                type="button"
-                class="show-password"
-                onclick="togglePassword('confirmPassword', this)"
-                aria-label="Shfaq fjalëkalimin"
-              >
-                👁
-              </button>
-            </div>
-          </div>
-
-          <!-- TERMS -->
-          <label class="terms">
-            <input type="checkbox" id="terms" required />
-
-            <span>
-              Pranoj kushtet e përdorimit të SHIT.BLEJ dhe
-              konfirmoj që të dhënat e dhëna janë të sakta.
-            </span>
           </label>
 
-          <!-- REGISTER -->
-          <button
-            type="submit"
-            class="register-btn"
-            id="registerBtn"
-          >
-            REGJISTROHU
-          </button>
 
-        </form>
+          <label
+            class="role"
+            id="sellerRole">
 
-        <div class="login-line">
-          Ke tashmë një llogari?
-          <a href="login.html">Hyr këtu</a>
+            <input
+              type="radio"
+              name="role"
+              value="seller">
+
+            Shitës
+
+          </label>
+
         </div>
 
-      </div>
-    </section>
 
-  </main>
+        <label>
+          Fjalëkalimi
+        </label>
 
-  <!-- COUNTDOWN -->
-  <div id="countdown" class="countdown">
+        <input
+          id="password"
+          type="password"
+          placeholder="Minimumi 6 karaktere"
+          minlength="6"
+          required>
 
-    <div class="countdown-box">
 
-      <div id="countNumber" class="count-number">
-        3
-      </div>
+        <label>
+          Konfirmo fjalëkalimin
+        </label>
 
-      <div class="count-text">
-        Llogaria u krijua me sukses...
+        <input
+          id="confirmPassword"
+          type="password"
+          placeholder="Përsërite fjalëkalimin"
+          required>
+
+
+        <label class="terms">
+
+          <input
+            id="terms"
+            type="checkbox"
+            required>
+
+          <span>
+            Pranoj kushtet e përdorimit të SHIT.BLEJ.
+          </span>
+
+        </label>
+
+
+        <div
+          id="message"
+          class="message">
+        </div>
+
+
+        <button
+          id="submitButton"
+          class="submit"
+          type="submit">
+
+          Krijo llogarinë
+
+        </button>
+
+      </form>
+
+
+      <div class="login-link">
+
+        Ke tashmë llogari?
+
+        <a href="login.html">
+          Hyr këtu
+        </a>
+
       </div>
 
     </div>
 
-  </div>
+  </main>
 
 
   <script>
 
-    /*
-      =====================================================
-      SHIT.BLEJ API
-      =====================================================
-    */
-
-    const API =
-      location.hostname.includes("github.io")
-        ? "https://sabi-marketplace.babasabfreefire2.workers.dev/api"
-        : "/api";
+    const API = "/api";
 
 
-    /*
-      =====================================================
-      ELEMENTS
-      =====================================================
-    */
+    const form =
+      document.getElementById("registerForm");
 
-    const form = document.getElementById("registerForm");
-    const message = document.getElementById("message");
-    const registerBtn = document.getElementById("registerBtn");
+    const message =
+      document.getElementById("message");
+
+    const submitButton =
+      document.getElementById("submitButton");
 
 
-    /*
-      =====================================================
-      MESSAGE
-      =====================================================
-    */
+    const customerRole =
+      document.getElementById("customerRole");
 
-    function showMessage(text, type = "error") {
+    const sellerRole =
+      document.getElementById("sellerRole");
 
-      message.className = "message " + type;
+
+    customerRole.onclick = () => {
+
+      customerRole.classList.add("active");
+      sellerRole.classList.remove("active");
+
+      customerRole.querySelector("input").checked = true;
+
+    };
+
+
+    sellerRole.onclick = () => {
+
+      sellerRole.classList.add("active");
+      customerRole.classList.remove("active");
+
+      sellerRole.querySelector("input").checked = true;
+
+    };
+
+
+    function showMessage(text, type) {
+
       message.textContent = text;
 
-      message.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest"
-      });
-    }
+      message.className =
+        "message " + type;
 
-
-    function clearMessage() {
-
-      message.className = "message";
-      message.textContent = "";
+      message.style.display =
+        "block";
 
     }
 
 
-    /*
-      =====================================================
-      PASSWORD SHOW / HIDE
-      =====================================================
-    */
+    form.addEventListener(
+      "submit",
+      async function(event) {
 
-    function togglePassword(id, button) {
+        event.preventDefault();
 
-      const input = document.getElementById(id);
+        const name =
+          document.getElementById("name")
+            .value
+            .trim();
 
-      if (input.type === "password") {
+        const email =
+          document.getElementById("email")
+            .value
+            .trim();
 
-        input.type = "text";
-        button.textContent = "🙈";
+        const phone =
+          document.getElementById("phone")
+            .value
+            .trim();
 
-      } else {
+        const password =
+          document.getElementById("password")
+            .value;
 
-        input.type = "password";
-        button.textContent = "👁";
+        const confirmPassword =
+          document.getElementById("confirmPassword")
+            .value;
 
-      }
+        const role =
+          document.querySelector(
+            'input[name="role"]:checked'
+          ).value;
 
-    }
 
+        if (password.length < 6) {
 
-    /*
-      =====================================================
-      COUNTDOWN
-      =====================================================
-    */
+          showMessage(
+            "Fjalëkalimi duhet të ketë të paktën 6 karaktere.",
+            "error"
+          );
 
-    function startCountdown() {
-
-      const overlay = document.getElementById("countdown");
-      const number = document.getElementById("countNumber");
-
-      overlay.classList.add("show");
-
-      let count = 3;
-
-      number.textContent = count;
-
-      function next() {
-
-        count--;
-
-        if (count > 0) {
-
-          number.style.animation = "none";
-
-          void number.offsetWidth;
-
-          number.style.animation = "pulse .8s ease";
-
-          number.textContent = count;
-
-          setTimeout(next, 900);
-
-        } else {
-
-          number.textContent = "✓";
-
-          setTimeout(() => {
-
-            window.location.href = "login.html?registered=1";
-
-          }, 900);
+          return;
 
         }
 
-      }
 
-      setTimeout(next, 900);
-    }
+        if (password !== confirmPassword) {
 
+          showMessage(
+            "Fjalëkalimet nuk përputhen.",
+            "error"
+          );
 
-    /*
-      =====================================================
-      REGISTER
-      =====================================================
-    */
+          return;
 
-    form.addEventListener("submit", async function(event) {
+        }
 
-      event.preventDefault();
 
-      clearMessage();
+        submitButton.disabled = true;
 
-      const name =
-        document.getElementById("name")
-          .value
-          .trim();
+        submitButton.textContent =
+          "Duke krijuar...";
 
-      const email =
-        document.getElementById("email")
-          .value
-          .trim();
-
-      const phone =
-        document.getElementById("phone")
-          .value
-          .trim();
-
-      const password =
-        document.getElementById("password")
-          .value;
-
-      const confirmPassword =
-        document.getElementById("confirmPassword")
-          .value;
-
-      const role =
-        document.querySelector(
-          'input[name="role"]:checked'
-        )?.value || "customer";
-
-      const terms =
-        document.getElementById("terms").checked;
-
-
-      /*
-        VALIDATION
-      */
-
-      if (!name) {
-
-        showMessage("Shkruaj emrin.");
-
-        document.getElementById("name").focus();
-
-        return;
-      }
-
-
-      if (!email) {
-
-        showMessage("Shkruaj email-in.");
-
-        document.getElementById("email").focus();
-
-        return;
-      }
-
-
-      if (!email.includes("@")) {
-
-        showMessage("Shkruaj një email të vlefshëm.");
-
-        document.getElementById("email").focus();
-
-        return;
-      }
-
-
-      if (password.length < 6) {
-
-        showMessage(
-          "Fjalëkalimi duhet të ketë të paktën 6 karaktere."
-        );
-
-        document.getElementById("password").focus();
-
-        return;
-      }
-
-
-      if (password !== confirmPassword) {
-
-        showMessage(
-          "Dy fjalëkalimet nuk përputhen."
-        );
-
-        document.getElementById("confirmPassword").focus();
-
-        return;
-      }
-
-
-      if (!terms) {
-
-        showMessage(
-          "Duhet të pranosh kushtet e përdorimit."
-        );
-
-        return;
-      }
-
-
-      /*
-        DISABLE BUTTON
-      */
-
-      registerBtn.disabled = true;
-
-      registerBtn.textContent =
-        "DUKE U REGJISTRUAR...";
-
-
-      /*
-        API REQUEST
-      */
-
-      try {
-
-        const response = await fetch(
-          API + "/auth/register",
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-
-              /*
-                We send both email and identifier
-                for compatibility with the current API.
-              */
-
-              name: name,
-
-              email: email,
-
-              identifier: email,
-
-              password: password,
-
-              role: role,
-
-              phone: phone
-
-            })
-          }
-        );
-
-
-        /*
-          READ RESPONSE
-        */
-
-        let data = {};
 
         try {
 
-          data = await response.json();
+          const response =
+            await fetch(
+              API + "/auth/register",
+              {
+                method: "POST",
 
-        } catch (e) {
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
 
-          data = {};
-
-        }
-
-
-        /*
-          ERROR
-        */
-
-        if (!response.ok) {
-
-          const errorText =
-            data.error ||
-            data.message ||
-            "Regjistrimi dështoi. Provo përsëri.";
-
-          throw new Error(errorText);
-        }
-
-
-        /*
-          SUCCESS
-        */
-
-        showMessage(
-          "Llogaria u krijua me sukses!",
-          "success"
-        );
+                body: JSON.stringify({
+                  name,
+                  email,
+                  identifier: email,
+                  phone,
+                  password,
+                  role
+                })
+              }
+            );
 
 
-        /*
-          If API returns a token,
-          save it so login can use the account immediately.
-        */
+          const data =
+            await response.json();
 
-        if (data.token) {
 
-          localStorage.setItem(
-            "sabiAuthToken",
-            data.token
+          if (!response.ok || !data.success) {
+
+            throw new Error(
+              data.error ||
+              "Regjistrimi dështoi."
+            );
+
+          }
+
+
+          showMessage(
+            "Llogaria u krijua me sukses! Po të çojmë te hyrja...",
+            "success"
           );
 
-          localStorage.setItem(
-            "shitblej_token",
-            data.token
+
+          setTimeout(() => {
+
+            location.href =
+              "login.html?registered=1";
+
+          }, 1500);
+
+
+        } catch (error) {
+
+          showMessage(
+            error.message,
+            "error"
           );
-        }
 
+          submitButton.disabled =
+            false;
 
-        if (data.user) {
-
-          if (data.user.id != null) {
-
-            localStorage.setItem(
-              "sabiUserId",
-              String(data.user.id)
-            );
-
-          }
-
-          if (data.user.name) {
-
-            localStorage.setItem(
-              "sabiUserName",
-              data.user.name
-            );
-
-          }
-
-          if (data.user.role) {
-
-            localStorage.setItem(
-              "sabiUserRole",
-              data.user.role
-            );
-
-          }
-
-          if (data.user.email) {
-
-            localStorage.setItem(
-              "sabiUserContact",
-              data.user.email
-            );
-
-          }
+          submitButton.textContent =
+            "Krijo llogarinë";
 
         }
-
-
-        /*
-          START 3-2-1
-        */
-
-        setTimeout(() => {
-
-          startCountdown();
-
-        }, 500);
-
-
-      } catch (error) {
-
-        console.error(
-          "REGISTER ERROR:",
-          error
-        );
-
-        showMessage(
-          error.message ||
-          "Nuk u lidh dot me serverin."
-        );
-
-
-        registerBtn.disabled = false;
-
-        registerBtn.textContent =
-          "REGJISTROHU";
-
-      }
-
-    });
-
-
-    /*
-      =====================================================
-      LOGIN SUCCESS MESSAGE
-      =====================================================
-    */
-
-    const params =
-      new URLSearchParams(
-        window.location.search
-      );
-
-    /*
-      If someone comes back to this page
-      after registration, nothing special is needed.
-    */
-
-
-    /*
-      =====================================================
-      PREVENT DOUBLE SUBMIT
-      =====================================================
-    */
-
-    window.addEventListener(
-      "beforeunload",
-      function() {
-
-        registerBtn.disabled = false;
 
       }
     );
@@ -1071,4 +555,5 @@
   </script>
 
 </body>
+
 </html>
