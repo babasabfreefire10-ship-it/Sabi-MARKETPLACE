@@ -1,461 +1,482 @@
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Max-Age": "86400"
+};
+
+const CATEGORY_MAP = {
+  "Makina": "Makina",
+  "Prona": "Prona",
+  "Elektronikë": "Elektronikë",
+  "Telefona": "Telefona",
+  "Kompjuterë": "Kompjuterë",
+  "Rroba": "Rroba",
+  "Këpucë": "Këpucë",
+  "Shtëpi & Mobilje": "Shtëpi & Mobilje",
+  "Punë": "Punë",
+  "Shërbime": "Shërbime",
+  "Sport": "Sport",
+  "Vegla & Makineri": "Vegla & Makineri",
+  "Të tjera": "Të tjera"
+};
+
+function json(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      ...CORS_HEADERS,
+      "Content-Type": "application/json; charset=utf-8"
+    }
+  });
+}
+
+function text(data, status = 200) {
+  return new Response(data, {
+    status,
+    headers: {
+      ...CORS_HEADERS,
+      "Content-Type": "text/plain; charset=utf-8"
+    }
+  });
+}
+
+function unauthorized(message = "Nuk jeni i autorizuar") {
+  return json({ success: false, error: message }, 401);
+}
+
+function forbidden(message = "Nuk keni të drejtë") {
+  return json({ success: false, error: message }, 403);
+}
+
+function badRequest(message = "Kërkesë e pavlefshme") {
+  return json({ success: false, error: message }, 400);
+}
+
+function serverError(message = "Gabim serveri") {
+  return json({ success: false, error: message }, 500);
+}
+
+function randomString(length = 48) {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const bytes = new Uint8Array(length);
+  crypto.getRandomValues(bytes);
+
+  let result = "";
+
+  for (let i = 0; i < length; i++) {
+    result += chars[bytes[i] % chars.length];
+  }
+
+  return result;
+}
+
+function getBearerToken(request) {
+  const header = request.headers.get("Authorization") || "";
+
+  if (!header.startsWith("Bearer ")) {
+    return null;
+  }
+
+  return header.slice(7).trim();
+}
+
+async function hashPassword(password, saltHex = null) {
+  const salt = saltHex
+    ? hexToBytes(saltHex)
+    : crypto.getRandomValues(new Uint8Array(16));
+
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(password),
+    { name: "PBKDF2" },
+    false,
+    ["deriveBits"]
+  );
+
+  const bits = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      salt,
+      iterations: 100000,
+      hash: "SHA-256"
+    },
+    key,
+    256
+  );
+
+  return {
+    hash: bytesToHex(new Uint8Array(bits)),
+    salt: bytesToHex(salt)
+  };
+}
+
+function bytesToHex(bytes) {
+  return Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function hexToBytes(hex) {
+  const bytes = new Uint8Array(hex.length / 2);
+
+  for (let i = 0; i < bytes.length; i++) {
+    bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+  }
+
+  return bytes;
+}
+
+function normalizeUser(user) {
+  if (!user) return null;
+
+  return {
+    id: user.id,
+    name: user.name || "",
+    email: user.email || "",
+    phone: user.phone || "",
+    role: user.role || "customer"
+  };
+}
+
+async function ensureDatabase(env) {
+  /*
+    Këto janë CREATE IF NOT EXISTS.
+    Nuk fshijnë tabelat ose të dhënat ekzistuese.
+  */
+
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS auth_accounts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT DEFAULT '',
+      email TEXT,
+      phone TEXT DEFAULT '',
+      identifier TEXT,
+      password_hash TEXT NOT NULL,
+      password_salt TEXT NOT NULL,
+      role TEXT DEFAULT 'customer',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `).run();
+
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS sessions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      token TEXT NOT NULL UNIQUE,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `).run();
+
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS saved_listings (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      product_id INTEGER NOT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(user_id, product_id)
+    )
+  `).run();
+
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS blocked_users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      blocked_by INTEGER NOT NULL,
+      reason TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `).run();
+
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS blocked_listings (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_id INTEGER NOT NULL,
+      blocked_by INTEGER NOT NULL,
+      reason TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `).run();
+
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS marketplace_settings (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      setting_key TEXT NOT NULL UNIQUE,
+      setting_value TEXT
+    )
+  `).run();
+
+  /*
+    Shtojmë kolonat vetëm nëse nuk ekzistojnë.
+    SQLite/D1 nuk ka IF NOT EXISTS për ALTER COLUMN,
+    prandaj përdorim try/catch.
+  */
+
+  try {
+    await env.DB.prepare(
+      `ALTER TABLE products ADD COLUMN city TEXT DEFAULT ''`
+    ).run();
+  } catch {}
+
+  try {
+    await env.DB.prepare(
+      `ALTER TABLE products ADD COLUMN condition TEXT DEFAULT ''`
+    ).run();
+  } catch {}
+
+  try {
+    await env.DB.prepare(
+      `ALTER TABLE products ADD COLUMN phone TEXT DEFAULT ''`
+    ).run();
+  } catch {}
+
+  try {
+    await env.DB.prepare(
+      `ALTER TABLE products ADD COLUMN negotiable INTEGER DEFAULT 0`
+    ).run();
+  } catch {}
+}
+
+async function getAuthUser(request, env) {
+  const token = getBearerToken(request);
+
+  if (!token) {
+    return null;
+  }
+
+  const result = await env.DB.prepare(`
+    SELECT
+      a.id,
+      a.name,
+      a.email,
+      a.phone,
+      a.role
+    FROM sessions s
+    JOIN auth_accounts a ON a.id = s.user_id
+    WHERE s.token = ?
+    LIMIT 1
+  `)
+    .bind(token)
+    .first();
+
+  return normalizeUser(result);
+}
+
+async function requireAuth(request, env) {
+  const user = await getAuthUser(request, env);
+
+  if (!user) {
+    throw new Error("UNAUTHORIZED");
+  }
+
+  return user;
+}
+
+async function requireAdmin(request, env) {
+  const user = await requireAuth(request, env);
+
+  if (user.role !== "admin") {
+    throw new Error("FORBIDDEN");
+  }
+
+  return user;
+}
+
+function productResponse(product) {
+  if (!product) return null;
+
+  return {
+    ...product,
+
+    id: Number(product.id),
+
+    price:
+      product.price === null || product.price === undefined
+        ? 0
+        : Number(product.price),
+
+    stock:
+      product.stock === null || product.stock === undefined
+        ? 0
+        : Number(product.stock),
+
+    seller_id:
+      product.seller_id === null || product.seller_id === undefined
+        ? null
+        : Number(product.seller_id),
+
+    negotiable: Number(product.negotiable || 0),
+
+    image: product.image || product.image_url || "",
+    image_url: product.image_url || product.image || "",
+
+    category:
+      CATEGORY_MAP[product.category] ||
+      product.category ||
+      "Të tjera"
+  };
+}
+
+async function getProduct(env, id) {
+  const product = await env.DB.prepare(`
+    SELECT
+      p.*,
+      COALESCE(
+        p.seller,
+        a.name
+      ) AS seller_name,
+      a.email AS seller_email,
+      a.phone AS seller_account_phone
+    FROM products p
+    LEFT JOIN auth_accounts a
+      ON a.id = p.seller_id
+    WHERE p.id = ?
+    LIMIT 1
+  `)
+    .bind(id)
+    .first();
+
+  if (!product) {
+    return null;
+  }
+
+  return productResponse({
+    ...product,
+    sellerName:
+      product.sellerName ||
+      product.seller_name ||
+      product.seller ||
+      "",
+    sellerPhone:
+      product.sellerPhone ||
+      product.seller_account_phone ||
+      product.phone ||
+      "",
+    sellerEmail:
+      product.sellerEmail ||
+      product.seller_email ||
+      ""
+  });
+}
+
+async function createOrderCode() {
+  const now = Date.now().toString(36).toUpperCase();
+  const random = randomString(5).toUpperCase();
+
+  return `SB-${now}-${random}`;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-
-    const corsHeaders = {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization"
-    };
+    const path = url.pathname;
 
     if (request.method === "OPTIONS") {
       return new Response(null, {
         status: 204,
-        headers: corsHeaders
+        headers: CORS_HEADERS
       });
     }
-
-    const json = (data, status = 200) =>
-      new Response(JSON.stringify(data), {
-        status,
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          ...corsHeaders
-        }
-      });
-
-    /* =========================================================
-       HELPERS
-    ========================================================= */
-
-    const text = v => String(v ?? "").trim();
-
-    function categoryToUI(category) {
-      const map = {
-        Electronics: "Elektronikë",
-        Accessories: "Aksesorë",
-        Fashion: "Rroba",
-        Shoes: "Këpucë",
-        Home: "Shtëpi & Mobilje",
-        Other: "Të tjera",
-        Cars: "Makina",
-        Property: "Prona",
-        Phones: "Telefona",
-        Computers: "Kompjuterë",
-        Jobs: "Punë",
-        Services: "Shërbime",
-        Sports: "Sport",
-        Tools: "Vegla & Makineri"
-      };
-
-      return map[category] || category || "Të tjera";
-    }
-
-    function categoryToDB(category) {
-      const map = {
-        "Elektronikë": "Electronics",
-        "Aksesorë": "Accessories",
-        "Rroba": "Fashion",
-        "Fashion": "Fashion",
-        "Këpucë": "Shoes",
-        "Shtëpi & Mobilje": "Home",
-        "Të tjera": "Other",
-        "Makina": "Cars",
-        "Prona": "Property",
-        "Telefona": "Phones",
-        "Kompjuterë": "Computers",
-        "Punë": "Jobs",
-        "Shërbime": "Services",
-        "Sport": "Sports",
-        "Vegla & Makineri": "Tools"
-      };
-
-      return map[category] || category || "Other";
-    }
-
-    function createToken() {
-      const bytes = crypto.getRandomValues(new Uint8Array(32));
-
-      return [...bytes]
-        .map(b => b.toString(16).padStart(2, "0"))
-        .join("");
-    }
-
-    function getBearer(request) {
-      const auth = request.headers.get("Authorization") || "";
-
-      if (!auth.startsWith("Bearer ")) {
-        return "";
-      }
-
-      return auth.slice(7).trim();
-    }
-
-    /* =========================================================
-       DATABASE SETUP
-       Nuk fshin asnjë të dhënë ekzistuese.
-    ========================================================= */
 
     try {
-      await env.DB.prepare(`
-        CREATE TABLE IF NOT EXISTS auth_accounts (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          user_id INTEGER NOT NULL,
-          identifier TEXT NOT NULL UNIQUE,
-          password_hash TEXT NOT NULL,
-          role TEXT NOT NULL DEFAULT 'customer',
-          created_at TEXT DEFAULT CURRENT_TIMESTAMP
-        )
-      `).run();
+      await ensureDatabase(env);
 
-      await env.DB.prepare(`
-        CREATE TABLE IF NOT EXISTS sessions (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          user_id INTEGER NOT NULL,
-          token TEXT NOT NULL UNIQUE,
-          expires_at TEXT NOT NULL,
-          created_at TEXT DEFAULT CURRENT_TIMESTAMP
-        )
-      `).run();
+      /*
+      ============================================================
+      HEALTH
+      ============================================================
+      */
 
-      await env.DB.prepare(`
-        CREATE TABLE IF NOT EXISTS saved_listings (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          user_id INTEGER NOT NULL,
-          product_id INTEGER NOT NULL,
-          created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-          UNIQUE(user_id, product_id)
-        )
-      `).run();
-
-      await env.DB.prepare(`
-        CREATE TABLE IF NOT EXISTS blocked_users (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          user_id INTEGER NOT NULL,
-          blocked_by INTEGER NOT NULL,
-          reason TEXT,
-          created_at TEXT DEFAULT CURRENT_TIMESTAMP
-        )
-      `).run();
-
-      await env.DB.prepare(`
-        CREATE TABLE IF NOT EXISTS blocked_listings (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          product_id INTEGER NOT NULL,
-          blocked_by INTEGER NOT NULL,
-          reason TEXT,
-          created_at TEXT DEFAULT CURRENT_TIMESTAMP
-        )
-      `).run();
-
-      await env.DB.prepare(`
-        CREATE TABLE IF NOT EXISTS marketplace_settings (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          setting_key TEXT NOT NULL UNIQUE,
-          setting_value TEXT
-        )
-      `).run();
-
-    } catch (error) {
-      return json({
-        success: false,
-        error: "Gabim me D1: " + error.message
-      }, 500);
-    }
-
-    /* =========================================================
-       ADD COLUMNS TO EXISTING PRODUCTS
-       ========================================================= */
-
-    const alterColumns = [
-      `ALTER TABLE products ADD COLUMN city TEXT DEFAULT ''`,
-      `ALTER TABLE products ADD COLUMN condition TEXT DEFAULT ''`,
-      `ALTER TABLE products ADD COLUMN phone TEXT DEFAULT ''`,
-      `ALTER TABLE products ADD COLUMN negotiable INTEGER DEFAULT 0`
-    ];
-
-    for (const sql of alterColumns) {
-      try {
-        await env.DB.prepare(sql).run();
-      } catch {
-        // Kolona ekziston.
+      if (path === "/api" || path === "/api/") {
+        return json({
+          success: true,
+          app: "SHIT.BLEJ",
+          message: "API OK"
+        });
       }
-    }
 
-    /* =========================================================
-       PASSWORD HASH
-    ========================================================= */
-
-    async function hashPassword(password) {
-      const encoder = new TextEncoder();
-
-      const salt = crypto.getRandomValues(
-        new Uint8Array(16)
-      );
-
-      const key = await crypto.subtle.importKey(
-        "raw",
-        encoder.encode(password),
-        "PBKDF2",
-        false,
-        ["deriveBits"]
-      );
-
-      const bits = await crypto.subtle.deriveBits(
-        {
-          name: "PBKDF2",
-          salt,
-          iterations: 100000,
-          hash: "SHA-256"
-        },
-        key,
-        256
-      );
-
-      const saltHex = [...salt]
-        .map(b => b.toString(16).padStart(2, "0"))
-        .join("");
-
-      const hashHex = [...new Uint8Array(bits)]
-        .map(b => b.toString(16).padStart(2, "0"))
-        .join("");
-
-      return `pbkdf2$100000$${saltHex}$${hashHex}`;
-    }
-
-    async function verifyPassword(password, stored) {
-      try {
-        const parts = stored.split("$");
-
-        if (
-          parts.length !== 4 ||
-          parts[0] !== "pbkdf2"
-        ) {
-          return false;
-        }
-
-        const iterations = Number(parts[1]);
-
-        const salt = new Uint8Array(
-          parts[2]
-            .match(/.{1,2}/g)
-            .map(x => parseInt(x, 16))
-        );
-
-        const key = await crypto.subtle.importKey(
-          "raw",
-          new TextEncoder().encode(password),
-          "PBKDF2",
-          false,
-          ["deriveBits"]
-        );
-
-        const bits = await crypto.subtle.deriveBits(
-          {
-            name: "PBKDF2",
-            salt,
-            iterations,
-            hash: "SHA-256"
-          },
-          key,
-          256
-        );
-
-        const actual = [...new Uint8Array(bits)]
-          .map(b => b.toString(16).padStart(2, "0"))
-          .join("");
-
-        return actual === parts[3];
-
-      } catch {
-        return false;
-      }
-    }
-
-    /* =========================================================
-       AUTH
-    ========================================================= */
-
-    async function getAuthUser(request) {
-      const token = getBearer(request);
-
-      if (!token) return null;
-
-      const session = await env.DB.prepare(`
-        SELECT
-          s.user_id,
-          s.expires_at,
-          u.id,
-          u.name,
-          u.email,
-          a.identifier,
-          a.role
-        FROM sessions s
-        JOIN users u
-          ON u.id = s.user_id
-        LEFT JOIN auth_accounts a
-          ON a.user_id = s.user_id
-        WHERE s.token = ?
-        LIMIT 1
-      `)
-        .bind(token)
-        .first();
-
-      if (!session) return null;
+      /*
+      ============================================================
+      AUTH - REGISTER
+      ============================================================
+      */
 
       if (
-        new Date(session.expires_at).getTime() < Date.now()
+        path === "/api/auth/register" &&
+        request.method === "POST"
       ) {
-        await env.DB.prepare(`
-          DELETE FROM sessions
-          WHERE token = ?
-        `)
-          .bind(token)
-          .run();
-
-        return null;
-      }
-
-      return session;
-    }
-
-    async function requireAuth(request) {
-      const user = await getAuthUser(request);
-
-      if (!user) {
-        return json({
-          success: false,
-          error: "Duhet të identifikohesh."
-        }, 401);
-      }
-
-      return user;
-    }
-
-    async function requireAdmin(request) {
-      const user = await requireAuth(request);
-
-      if (user instanceof Response) {
-        return user;
-      }
-
-      if (user.role !== "admin") {
-        return json({
-          success: false,
-          error: "Vetëm administratori ka akses."
-        }, 403);
-      }
-
-      return user;
-    }
-
-    /* =========================================================
-       REGISTER
-    ========================================================= */
-
-    if (
-      url.pathname === "/api/auth/register" &&
-      request.method === "POST"
-    ) {
-      try {
         const body = await request.json();
 
-        const name = text(body.name);
-
-        const identifier = text(
-          body.identifier ||
-          body.email ||
-          body.phone
-        ).toLowerCase();
+        const name = String(body.name || "").trim();
+        const email = String(body.email || "").trim().toLowerCase();
+        const phone = String(body.phone || "").trim();
+        const identifier = String(
+          body.identifier || email
+        ).trim().toLowerCase();
 
         const password = String(body.password || "");
-
         const role =
           body.role === "seller"
             ? "seller"
             : "customer";
 
         if (!name) {
-          return json({
-            success: false,
-            error: "Emri është i detyrueshëm."
-          }, 400);
+          return badRequest("Vendosni emrin.");
         }
 
-        if (!identifier) {
-          return json({
-            success: false,
-            error: "Email ose telefoni është i detyrueshëm."
-          }, 400);
+        if (!email) {
+          return badRequest("Vendosni email-in.");
         }
 
-        if (password.length < 6) {
-          return json({
-            success: false,
-            error: "Fjalëkalimi duhet të ketë të paktën 6 karaktere."
-          }, 400);
+        if (!password || password.length < 4) {
+          return badRequest(
+            "Fjalëkalimi duhet të ketë të paktën 4 karaktere."
+          );
         }
 
-        const exists = await env.DB.prepare(`
+        const existing = await env.DB.prepare(`
           SELECT id
           FROM auth_accounts
-          WHERE identifier = ?
-          LIMIT 1
-        `)
-          .bind(identifier)
-          .first();
-
-        if (exists) {
-          return json({
-            success: false,
-            error: "Kjo llogari ekziston."
-          }, 409);
-        }
-
-        const email =
-          identifier.includes("@")
-            ? identifier
-            : `${identifier}@phone.sabi.local`;
-
-        let user = await env.DB.prepare(`
-          SELECT id, name, email
-          FROM users
           WHERE LOWER(email) = ?
+             OR LOWER(identifier) = ?
           LIMIT 1
         `)
-          .bind(email)
+          .bind(email, identifier)
           .first();
 
-        if (!user) {
-          const result = await env.DB.prepare(`
-            INSERT INTO users
-              (name, email)
-            VALUES (?, ?)
-          `)
-            .bind(name, email)
-            .run();
-
-          user = await env.DB.prepare(`
-            SELECT id, name, email
-            FROM users
-            WHERE id = ?
-          `)
-            .bind(result.meta.last_row_id)
-            .first();
+        if (existing) {
+          return json(
+            {
+              success: false,
+              error: "Ky email/username ekziston."
+            },
+            409
+          );
         }
 
-        const passwordHash =
-          await hashPassword(password);
+        const { hash, salt } = await hashPassword(password);
 
-        await env.DB.prepare(`
+        const result = await env.DB.prepare(`
           INSERT INTO auth_accounts
-            (user_id, identifier, password_hash, role)
-          VALUES (?, ?, ?, ?)
+          (
+            name,
+            email,
+            phone,
+            identifier,
+            password_hash,
+            password_salt,
+            role
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?)
         `)
           .bind(
-            user.id,
+            name,
+            email,
+            phone,
             identifier,
-            passwordHash,
+            hash,
+            salt,
             role
           )
           .run();
@@ -464,591 +485,411 @@ export default {
           success: true,
           message: "Llogaria u krijua.",
           user: {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            identifier,
+            id: result.meta.last_row_id,
+            name,
+            email,
+            phone,
             role
           }
         }, 201);
-
-      } catch (error) {
-        return json({
-          success: false,
-          error: error.message
-        }, 500);
       }
-    }
 
-    /* =========================================================
-       LOGIN
-    ========================================================= */
+      /*
+      ============================================================
+      AUTH - LOGIN
+      ============================================================
+      */
 
-    if (
-      url.pathname === "/api/auth/login" &&
-      request.method === "POST"
-    ) {
-      try {
+      if (
+        path === "/api/auth/login" &&
+        request.method === "POST"
+      ) {
         const body = await request.json();
 
-        const identifier = text(
+        const identifier = String(
           body.identifier ||
           body.email ||
-          body.username
-        ).toLowerCase();
+          body.username ||
+          ""
+        )
+          .trim()
+          .toLowerCase();
 
-        const password = String(
-          body.password || ""
-        );
+        const password = String(body.password || "");
 
         if (!identifier || !password) {
-          return json({
-            success: false,
-            error: "Plotëso emailin dhe fjalëkalimin."
-          }, 400);
+          return badRequest(
+            "Vendosni username/email dhe password."
+          );
         }
 
         const account = await env.DB.prepare(`
-          SELECT
-            a.id,
-            a.user_id,
-            a.identifier,
-            a.password_hash,
-            a.role,
-            u.name,
-            u.email
-          FROM auth_accounts a
-          JOIN users u
-            ON u.id = a.user_id
-          WHERE a.identifier = ?
+          SELECT *
+          FROM auth_accounts
+          WHERE LOWER(email) = ?
+             OR LOWER(identifier) = ?
           LIMIT 1
         `)
-          .bind(identifier)
+          .bind(identifier, identifier)
           .first();
 
         if (!account) {
-          return json({
-            success: false,
-            error: "Emaili/telefoni ose fjalëkalimi është i gabuar."
-          }, 401);
+          return unauthorized(
+            "Email/username ose password i gabuar."
+          );
         }
 
-        const valid = await verifyPassword(
+        const { hash } = await hashPassword(
           password,
-          account.password_hash
+          account.password_salt
         );
 
-        if (!valid) {
-          return json({
-            success: false,
-            error: "Emaili/telefoni ose fjalëkalimi është i gabuar."
-          }, 401);
+        if (hash !== account.password_hash) {
+          return unauthorized(
+            "Email/username ose password i gabuar."
+          );
         }
 
         /*
-          Admini mund të hyjë edhe kur login.html
-          dërgon role=admin.
+          Nëse frontend dërgon role,
+          kontrollojmë që të përputhet.
         */
 
-        const requestedRole = text(body.role);
-
         if (
-          requestedRole &&
-          requestedRole !== "admin" &&
-          requestedRole !== account.role
+          body.role &&
+          body.role !== account.role
         ) {
-          return json({
-            success: false,
-            error: "Roli i zgjedhur nuk përputhet me llogarinë."
-          }, 403);
+          return unauthorized(
+            "Roli i zgjedhur nuk përputhet me llogarinë."
+          );
         }
 
-        const token = createToken();
-
-        const expires = new Date(
-          Date.now() +
-          1000 * 60 * 60 * 24 * 30
-        ).toISOString();
+        const token = randomString(64);
 
         await env.DB.prepare(`
           INSERT INTO sessions
-            (user_id, token, expires_at)
-          VALUES (?, ?, ?)
-        `)
-          .bind(
-            account.user_id,
-            token,
-            expires
+          (
+            user_id,
+            token
           )
+          VALUES (?, ?)
+        `)
+          .bind(account.id, token)
           .run();
+
+        const user = normalizeUser(account);
 
         return json({
           success: true,
           token,
-          user: {
-            id: account.user_id,
-            name: account.name,
-            email: account.email,
-            identifier: account.identifier,
-            role: account.role
-          }
+          user
         });
-
-      } catch (error) {
-        return json({
-          success: false,
-          error: error.message
-        }, 500);
-      }
-    }
-
-    /* =========================================================
-       ME
-    ========================================================= */
-
-    if (
-      url.pathname === "/api/auth/me" &&
-      request.method === "GET"
-    ) {
-      const user = await getAuthUser(request);
-
-      if (!user) {
-        return json({
-          success: false,
-          authenticated: false
-        }, 401);
       }
 
-      return json({
-        success: true,
-        authenticated: true,
-        user: {
-          id: user.user_id,
-          name: user.name,
-          email: user.email,
-          identifier: user.identifier || "",
-          role: user.role
+      /*
+      ============================================================
+      AUTH - ME
+      ============================================================
+      */
+
+      if (
+        path === "/api/auth/me" &&
+        request.method === "GET"
+      ) {
+        const user = await getAuthUser(request, env);
+
+        if (!user) {
+          return unauthorized();
         }
-      });
-    }
 
-    /* =========================================================
-       LOGOUT
-    ========================================================= */
-
-    if (
-      url.pathname === "/api/auth/logout" &&
-      request.method === "POST"
-    ) {
-      const token = getBearer(request);
-
-      if (token) {
-        await env.DB.prepare(`
-          DELETE FROM sessions
-          WHERE token = ?
-        `)
-          .bind(token)
-          .run();
-      }
-
-      return json({
-        success: true
-      });
-    }
-
-    /* =========================================================
-       PRODUCTS - GET
-    ========================================================= */
-
-    if (
-      url.pathname === "/api/products" &&
-      request.method === "GET"
-    ) {
-      try {
-        const { results } = await env.DB.prepare(`
-          SELECT
-            p.*,
-            u.name AS seller_name,
-            u.email AS seller_email
-          FROM products p
-          LEFT JOIN users u
-            ON u.id = p.seller_id
-          ORDER BY p.id DESC
-        `).all();
-
-        const products = results.map(p => ({
-          id: p.id,
-          name: p.title || p.name || "",
-          title: p.title || p.name || "",
-          description: p.description || "",
-          price: Number(p.price || 0),
-
-          image: p.image_url || p.image || "",
-          image_url: p.image_url || p.image || "",
-
-          seller_id: p.seller_id,
-
-          seller: p.seller_name || "SHIT.BLEJ",
-          sellerName: p.seller_name || "SHIT.BLEJ",
-          sellerEmail: p.seller_email || "",
-
-          category: categoryToUI(p.category),
-
-          stock: Number(p.stock ?? 1),
-
-          city: p.city || "",
-          condition: p.condition || "",
-          phone: p.phone || "",
-          negotiable: Boolean(p.negotiable),
-
-          created_at: p.created_at
-        }));
-
-        return json(products);
-
-      } catch (error) {
         return json({
-          success: false,
-          error: error.message
-        }, 500);
+          success: true,
+          user
+        });
       }
-    }
 
-    /* =========================================================
-       PRODUCTS - SEARCH
-    ========================================================= */
+      /*
+      ============================================================
+      AUTH - LOGOUT
+      ============================================================
+      */
 
-    if (
-      url.pathname === "/api/products/search" &&
-      request.method === "GET"
-    ) {
-      try {
-        const q = text(
-          url.searchParams.get("q")
-        );
+      if (
+        path === "/api/auth/logout" &&
+        request.method === "POST"
+      ) {
+        const token = getBearerToken(request);
 
-        const category = text(
-          url.searchParams.get("category")
-        );
+        if (token) {
+          await env.DB.prepare(`
+            DELETE FROM sessions
+            WHERE token = ?
+          `)
+            .bind(token)
+            .run();
+        }
 
-        const city = text(
-          url.searchParams.get("city")
-        );
+        return json({
+          success: true,
+          message: "U çkyçët."
+        });
+      }
 
-        const min = Number(
-          url.searchParams.get("min")
-        );
+      /*
+      ============================================================
+      PRODUCTS - SEARCH
+      ============================================================
+      */
 
-        const max = Number(
-          url.searchParams.get("max")
-        );
+      if (
+        path === "/api/products/search" &&
+        request.method === "GET"
+      ) {
+        const q =
+          url.searchParams.get("q")?.trim() || "";
 
-        let query = `
-          SELECT
-            p.*,
-            u.name AS seller_name,
-            u.email AS seller_email
-          FROM products p
-          LEFT JOIN users u
-            ON u.id = p.seller_id
-          WHERE NOT EXISTS (
-            SELECT 1
-            FROM blocked_listings bl
-            WHERE bl.product_id = p.id
-          )
+        const category =
+          url.searchParams.get("category")?.trim() || "";
+
+        const city =
+          url.searchParams.get("city")?.trim() || "";
+
+        const condition =
+          url.searchParams.get("condition")?.trim() || "";
+
+        const minRaw =
+          url.searchParams.get("min");
+
+        const maxRaw =
+          url.searchParams.get("max");
+
+        const sort =
+          url.searchParams.get("sort") || "newest";
+
+        let sql = `
+          SELECT *
+          FROM products
+          WHERE 1 = 1
         `;
 
         const params = [];
 
         if (q) {
-          query += `
+          sql += `
             AND (
-              LOWER(p.title) LIKE ?
-              OR LOWER(p.description) LIKE ?
+              LOWER(COALESCE(name, '')) LIKE ?
+              OR LOWER(COALESCE(title, '')) LIKE ?
+              OR LOWER(COALESCE(description, '')) LIKE ?
             )
           `;
 
           const search = `%${q.toLowerCase()}%`;
 
-          params.push(search, search);
+          params.push(search, search, search);
         }
 
         if (category) {
-          query += ` AND p.category = ?`;
-          params.push(categoryToDB(category));
+          sql += `
+            AND LOWER(COALESCE(category, '')) = LOWER(?)
+          `;
+
+          params.push(category);
         }
 
         if (city) {
-          query += ` AND LOWER(p.city) LIKE ?`;
-          params.push(`%${city.toLowerCase()}%`);
+          sql += `
+            AND LOWER(COALESCE(city, '')) LIKE LOWER(?)
+          `;
+
+          params.push(`%${city}%`);
         }
 
-        if (Number.isFinite(min)) {
-          query += ` AND p.price >= ?`;
-          params.push(min);
+        if (condition) {
+          sql += `
+            AND LOWER(COALESCE(condition, '')) = LOWER(?)
+          `;
+
+          params.push(condition);
         }
 
-        if (Number.isFinite(max)) {
-          query += ` AND p.price <= ?`;
-          params.push(max);
+        if (
+          minRaw !== null &&
+          minRaw !== "" &&
+          !Number.isNaN(Number(minRaw))
+        ) {
+          sql += ` AND CAST(price AS REAL) >= ?`;
+          params.push(Number(minRaw));
         }
 
-        query += ` ORDER BY p.id DESC`;
+        if (
+          maxRaw !== null &&
+          maxRaw !== "" &&
+          !Number.isNaN(Number(maxRaw))
+        ) {
+          sql += ` AND CAST(price AS REAL) <= ?`;
+          params.push(Number(maxRaw));
+        }
 
-        const statement = env.DB.prepare(query);
+        if (sort === "price_asc") {
+          sql += ` ORDER BY CAST(price AS REAL) ASC`;
+        } else if (sort === "price_desc") {
+          sql += ` ORDER BY CAST(price AS REAL) DESC`;
+        } else {
+          sql += `
+            ORDER BY
+              datetime(created_at) DESC,
+              id DESC
+          `;
+        }
 
-        const { results } = params.length
-          ? await statement.bind(...params).all()
-          : await statement.all();
+        sql += ` LIMIT 200`;
 
-        return json(results.map(p => ({
-          id: p.id,
-          name: p.title || "",
-          title: p.title || "",
-          description: p.description || "",
-          price: Number(p.price || 0),
-          image: p.image_url || "",
-          image_url: p.image_url || "",
-          seller_id: p.seller_id,
-          seller: p.seller_name || "SHIT.BLEJ",
-          sellerName: p.seller_name || "SHIT.BLEJ",
-          sellerEmail: p.seller_email || "",
-          category: categoryToUI(p.category),
-          stock: Number(p.stock ?? 1),
-          city: p.city || "",
-          condition: p.condition || "",
-          phone: p.phone || "",
-          negotiable: Boolean(p.negotiable),
-          created_at: p.created_at
-        })));
+        const result = await env.DB
+          .prepare(sql)
+          .bind(...params)
+          .all();
 
-      } catch (error) {
         return json({
-          success: false,
-          error: error.message
-        }, 500);
-      }
-    }
-
-    /* =========================================================
-       SINGLE PRODUCT
-    ========================================================= */
-
-    if (
-      url.pathname.startsWith("/api/products/") &&
-      request.method === "GET"
-    ) {
-      const id = Number(
-        url.pathname.split("/").pop()
-      );
-
-      if (!Number.isInteger(id)) {
-        return json({
-          success: false,
-          error: "ID i pavlefshëm."
-        }, 400);
+          success: true,
+          products: (result.results || []).map(productResponse)
+        });
       }
 
-      try {
-        const p = await env.DB.prepare(`
+      /*
+      ============================================================
+      PRODUCTS - SAVED
+      IMPORTANT: before /api/products/:id
+      ============================================================
+      */
+
+      if (
+        path === "/api/products/saved" &&
+        request.method === "GET"
+      ) {
+        let user;
+
+        try {
+          user = await requireAuth(request, env);
+        } catch (error) {
+          if (error.message === "UNAUTHORIZED") {
+            return unauthorized();
+          }
+
+          throw error;
+        }
+
+        const result = await env.DB.prepare(`
           SELECT
-            p.*,
-            u.name AS seller_name,
-            u.email AS seller_email
-          FROM products p
-          LEFT JOIN users u
-            ON u.id = p.seller_id
-          WHERE p.id = ?
+            p.*
+          FROM saved_listings s
+          JOIN products p
+            ON p.id = s.product_id
+          WHERE s.user_id = ?
+          ORDER BY s.id DESC
+        `)
+          .bind(user.id)
+          .all();
+
+        return json({
+          success: true,
+          products: (result.results || []).map(productResponse)
+        });
+      }
+
+      /*
+      ============================================================
+      PRODUCTS - LIST
+      ============================================================
+      */
+
+      if (
+        path === "/api/products" &&
+        request.method === "GET"
+      ) {
+        const category =
+          url.searchParams.get("category")?.trim() || "";
+
+        const sellerId =
+          url.searchParams.get("seller_id");
+
+        let sql = `
+          SELECT *
+          FROM products
+          WHERE 1 = 1
+        `;
+
+        const params = [];
+
+        if (category) {
+          sql += `
+            AND LOWER(COALESCE(category, '')) = LOWER(?)
+          `;
+
+          params.push(category);
+        }
+
+        if (
+          sellerId !== null &&
+          sellerId !== "" &&
+          !Number.isNaN(Number(sellerId))
+        ) {
+          sql += ` AND seller_id = ?`;
+          params.push(Number(sellerId));
+        }
+
+        sql += `
+          ORDER BY
+            datetime(created_at) DESC,
+            id DESC
+          LIMIT 500
+        `;
+
+        const result = await env.DB
+          .prepare(sql)
+          .bind(...params)
+          .all();
+
+        return json({
+          success: true,
+          products: (result.results || []).map(productResponse)
+        });
+      }
+
+      /*
+      ============================================================
+      PRODUCTS - SAVE / UNSAVE
+      ============================================================
+      */
+
+      if (
+        /^\/api\/products\/\d+\/save$/.test(path) &&
+        request.method === "POST"
+      ) {
+        const user = await requireAuth(request, env);
+
+        const id = Number(
+          path.split("/")[3]
+        );
+
+        const product = await env.DB.prepare(`
+          SELECT id
+          FROM products
+          WHERE id = ?
           LIMIT 1
         `)
           .bind(id)
           .first();
 
-        if (!p) {
-          return json({
-            success: false,
-            error: "Produkti nuk ekziston."
-          }, 404);
+        if (!product) {
+          return json(
+            {
+              success: false,
+              error: "Produkti nuk ekziston."
+            },
+            404
+          );
         }
 
-        return json({
-          success: true,
-          product: {
-            id: p.id,
-            name: p.title || "",
-            title: p.title || "",
-            description: p.description || "",
-            price: Number(p.price || 0),
-            image: p.image_url || "",
-            image_url: p.image_url || "",
-            seller_id: p.seller_id,
-            seller: p.seller_name || "SHIT.BLEJ",
-            sellerName: p.seller_name || "SHIT.BLEJ",
-            sellerEmail: p.seller_email || "",
-            category: categoryToUI(p.category),
-            stock: Number(p.stock ?? 1),
-            city: p.city || "",
-            condition: p.condition || "",
-            phone: p.phone || "",
-            negotiable: Boolean(p.negotiable),
-            created_at: p.created_at
-          }
-        });
-
-      } catch (error) {
-        return json({
-          success: false,
-          error: error.message
-        }, 500);
-      }
-    }
-
-    /* =========================================================
-       CREATE PRODUCT
-    ========================================================= */
-
-    if (
-      url.pathname === "/api/products" &&
-      request.method === "POST"
-    ) {
-      const auth = await requireAuth(request);
-
-      if (auth instanceof Response) {
-        return auth;
-      }
-
-      if (
-        auth.role !== "seller" &&
-        auth.role !== "admin"
-      ) {
-        return json({
-          success: false,
-          error: "Duhet të jesh shitës për të publikuar."
-        }, 403);
-      }
-
-      try {
-        const body = await request.json();
-
-        const title = text(
-          body.title || body.name
-        );
-
-        const description = text(
-          body.description
-        );
-
-        const price = Number(
-          body.price
-        );
-
-        const imageUrl = text(
-          body.image_url || body.image
-        );
-
-        const category = categoryToDB(
-          body.category
-        );
-
-        const stock = Math.max(
-          0,
-          Number.isFinite(Number(body.stock))
-            ? Number(body.stock)
-            : 1
-        );
-
-        const city = text(body.city);
-
-        const condition = text(
-          body.condition
-        );
-
-        const phone = text(body.phone);
-
-        const negotiable =
-          body.negotiable ? 1 : 0;
-
-        if (!title) {
-          return json({
-            success: false,
-            error: "Titulli mungon."
-          }, 400);
-        }
-
-        if (
-          !Number.isFinite(price) ||
-          price <= 0
-        ) {
-          return json({
-            success: false,
-            error: "Çmimi nuk është i vlefshëm."
-          }, 400);
-        }
-
-        const result = await env.DB.prepare(`
-          INSERT INTO products
-          (
-            title,
-            description,
-            price,
-            image_url,
-            seller_id,
-            category,
-            stock,
-            city,
-            condition,
-            phone,
-            negotiable
-          )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `)
-          .bind(
-            title,
-            description,
-            price,
-            imageUrl,
-            Number(auth.user_id),
-            category,
-            stock,
-            city,
-            condition,
-            phone,
-            negotiable
-          )
-          .run();
-
-        return json({
-          success: true,
-          id: result.meta.last_row_id
-        });
-
-      } catch (error) {
-        return json({
-          success: false,
-          error: error.message
-        }, 500);
-      }
-    }
-
-    /* =========================================================
-       SAVE / UNSAVE PRODUCT
-       POST /api/products/:id/save
-    ========================================================= */
-
-    if (
-      url.pathname.match(/^\/api\/products\/\d+\/save$/) &&
-      request.method === "POST"
-    ) {
-      const auth = await requireAuth(request);
-
-      if (auth instanceof Response) {
-        return auth;
-      }
-
-      const parts = url.pathname.split("/");
-      const id = Number(parts[3]);
-
-      try {
         const existing = await env.DB.prepare(`
           SELECT id
           FROM saved_listings
@@ -1056,10 +897,7 @@ export default {
             AND product_id = ?
           LIMIT 1
         `)
-          .bind(
-            Number(auth.user_id),
-            id
-          )
+          .bind(user.id, id)
           .first();
 
         if (existing) {
@@ -1068,10 +906,7 @@ export default {
             WHERE user_id = ?
               AND product_id = ?
           `)
-            .bind(
-              Number(auth.user_id),
-              id
-            )
+            .bind(user.id, id)
             .run();
 
           return json({
@@ -1082,167 +917,388 @@ export default {
 
         await env.DB.prepare(`
           INSERT OR IGNORE INTO saved_listings
-            (user_id, product_id)
+          (
+            user_id,
+            product_id
+          )
           VALUES (?, ?)
         `)
-          .bind(
-            Number(auth.user_id),
-            id
-          )
+          .bind(user.id, id)
           .run();
 
         return json({
           success: true,
           saved: true
         });
-
-      } catch (error) {
-        return json({
-          success: false,
-          error: error.message
-        }, 500);
-      }
-    }
-
-    /* =========================================================
-       SAVED PRODUCTS
-    ========================================================= */
-
-    if (
-      url.pathname === "/api/products/saved" &&
-      request.method === "GET"
-    ) {
-      const auth = await requireAuth(request);
-
-      if (auth instanceof Response) {
-        return auth;
       }
 
-      try {
-        const { results } = await env.DB.prepare(`
-          SELECT
-            p.*,
-            u.name AS seller_name,
-            u.email AS seller_email
-          FROM saved_listings s
-          JOIN products p
-            ON p.id = s.product_id
-          LEFT JOIN users u
-            ON u.id = p.seller_id
-          WHERE s.user_id = ?
-          ORDER BY s.id DESC
-        `)
-          .bind(Number(auth.user_id))
-          .all();
+      /*
+      ============================================================
+      PRODUCTS - SINGLE PRODUCT
+      ============================================================
+      */
 
-        return json(results);
+      if (
+        /^\/api\/products\/\d+$/.test(path) &&
+        request.method === "GET"
+      ) {
+        const id = Number(
+          path.split("/").pop()
+        );
 
-      } catch (error) {
-        return json({
-          success: false,
-          error: error.message
-        }, 500);
-      }
-    }
-
-    /* =========================================================
-       UPDATE PRODUCT
-    ========================================================= */
-
-    if (
-      url.pathname.startsWith("/api/products/") &&
-      request.method === "PUT" &&
-      !url.pathname.endsWith("/save") &&
-      !url.pathname.endsWith("/block")
-    ) {
-      const auth = await requireAuth(request);
-
-      if (auth instanceof Response) {
-        return auth;
-      }
-
-      const id = Number(
-        url.pathname.split("/").pop()
-      );
-
-      if (!Number.isInteger(id)) {
-        return json({
-          success: false,
-          error: "ID i pavlefshëm."
-        }, 400);
-      }
-
-      try {
-        const product = await env.DB.prepare(`
-          SELECT seller_id
-          FROM products
-          WHERE id = ?
-        `)
-          .bind(id)
-          .first();
+        const product = await getProduct(env, id);
 
         if (!product) {
+          return json(
+            {
+              success: false,
+              error: "Produkti nuk u gjet."
+            },
+            404
+          );
+        }
+
+        return json({
+          success: true,
+          product
+        });
+      }
+
+      /*
+      ============================================================
+      PRODUCTS - CREATE
+      ============================================================
+      */
+
+      if (
+        path === "/api/products" &&
+        request.method === "POST"
+      ) {
+        const user = await requireAuth(request, env);
+
+        const body = await request.json();
+
+        const title = String(
+          body.title ||
+          body.name ||
+          ""
+        ).trim();
+
+        const description = String(
+          body.description || ""
+        ).trim();
+
+        const price = Number(body.price || 0);
+
+        const image =
+          String(
+            body.image_url ||
+            body.image ||
+            ""
+          ).trim();
+
+        const category =
+          String(
+            body.category ||
+            "Të tjera"
+          ).trim();
+
+        const stock = Number(
+          body.stock ?? 1
+        );
+
+        const city =
+          String(
+            body.city || ""
+          ).trim();
+
+        const condition =
+          String(
+            body.condition || ""
+          ).trim();
+
+        const phone =
+          String(
+            body.phone ||
+            user.phone ||
+            ""
+          ).trim();
+
+        const negotiable =
+          body.negotiable ? 1 : 0;
+
+        if (!title) {
+          return badRequest(
+            "Vendosni titullin e produktit."
+          );
+        }
+
+        if (!Number.isFinite(price) || price < 0) {
+          return badRequest(
+            "Çmimi nuk është i vlefshëm."
+          );
+        }
+
+        const result = await env.DB.prepare(`
+          INSERT INTO products
+          (
+            name,
+            title,
+            description,
+            price,
+            image,
+            image_url,
+            seller_id,
+            seller,
+            sellerName,
+            sellerPhone,
+            sellerEmail,
+            category,
+            stock,
+            city,
+            condition,
+            phone,
+            negotiable,
+            created_at
+          )
+          VALUES
+          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+        `)
+          .bind(
+            title,
+            title,
+            description,
+            price,
+            image,
+            image,
+            user.id,
+            user.name,
+            user.name,
+            phone,
+            user.email,
+            category,
+            stock,
+            city,
+            condition,
+            phone,
+            negotiable
+          )
+          .run();
+
+        const product = await getProduct(
+          env,
+          result.meta.last_row_id
+        );
+
+        return json({
+          success: true,
+          message: "Produkti u publikua.",
+          product
+        }, 201);
+      }
+
+      /*
+      ============================================================
+      PRODUCTS - ADMIN BLOCK
+      ============================================================
+      */
+
+      if (
+        /^\/api\/products\/\d+\/block$/.test(path) &&
+        request.method === "PUT"
+      ) {
+        const admin = await requireAdmin(
+          request,
+          env
+        );
+
+        const id = Number(
+          path.split("/")[3]
+        );
+
+        const body = await request.json();
+
+        const reason =
+          String(
+            body.reason || ""
+          ).trim();
+
+        const existing =
+          await env.DB.prepare(`
+            SELECT id
+            FROM products
+            WHERE id = ?
+            LIMIT 1
+          `)
+            .bind(id)
+            .first();
+
+        if (!existing) {
+          return json(
+            {
+              success: false,
+              error: "Produkti nuk ekziston."
+            },
+            404
+          );
+        }
+
+        const blocked =
+          await env.DB.prepare(`
+            SELECT id
+            FROM blocked_listings
+            WHERE product_id = ?
+            LIMIT 1
+          `)
+            .bind(id)
+            .first();
+
+        if (blocked) {
+          await env.DB.prepare(`
+            DELETE FROM blocked_listings
+            WHERE product_id = ?
+          `)
+            .bind(id)
+            .run();
+
           return json({
-            success: false,
-            error: "Produkti nuk ekziston."
-          }, 404);
+            success: true,
+            blocked: false
+          });
+        }
+
+        await env.DB.prepare(`
+          INSERT INTO blocked_listings
+          (
+            product_id,
+            blocked_by,
+            reason
+          )
+          VALUES (?, ?, ?)
+        `)
+          .bind(
+            id,
+            admin.id,
+            reason
+          )
+          .run();
+
+        return json({
+          success: true,
+          blocked: true
+        });
+      }
+
+      /*
+      ============================================================
+      PRODUCTS - UPDATE
+      ============================================================
+      */
+
+      if (
+        /^\/api\/products\/\d+$/.test(path) &&
+        request.method === "PUT"
+      ) {
+        const user = await requireAuth(
+          request,
+          env
+        );
+
+        const id = Number(
+          path.split("/").pop()
+        );
+
+        const existing =
+          await env.DB.prepare(`
+            SELECT *
+            FROM products
+            WHERE id = ?
+            LIMIT 1
+          `)
+            .bind(id)
+            .first();
+
+        if (!existing) {
+          return json(
+            {
+              success: false,
+              error: "Produkti nuk ekziston."
+            },
+            404
+          );
         }
 
         if (
-          auth.role !== "admin" &&
-          Number(product.seller_id) !==
-          Number(auth.user_id)
+          user.role !== "admin" &&
+          Number(existing.seller_id) !== Number(user.id)
         ) {
-          return json({
-            success: false,
-            error: "Nuk ke leje."
-          }, 403);
+          return forbidden();
         }
 
         const body = await request.json();
 
-        const title = text(
-          body.title || body.name
-        );
+        const title =
+          body.title !== undefined
+            ? String(body.title)
+            : existing.title || existing.name || "";
 
-        const description = text(
-          body.description
-        );
+        const description =
+          body.description !== undefined
+            ? String(body.description)
+            : existing.description || "";
 
-        const price = Number(body.price);
+        const price =
+          body.price !== undefined
+            ? Number(body.price)
+            : Number(existing.price || 0);
 
-        const imageUrl = text(
-          body.image_url || body.image
-        );
+        const image =
+          body.image_url !== undefined
+            ? String(body.image_url)
+            : body.image !== undefined
+              ? String(body.image)
+              : existing.image_url ||
+                existing.image ||
+                "";
 
-        const category = categoryToDB(
-          body.category
-        );
+        const category =
+          body.category !== undefined
+            ? String(body.category)
+            : existing.category || "Të tjera";
 
-        const stock = Math.max(
-          0,
-          Number(body.stock ?? 0)
-        );
+        const stock =
+          body.stock !== undefined
+            ? Number(body.stock)
+            : Number(existing.stock || 0);
 
-        const city = text(body.city);
-        const condition = text(body.condition);
-        const phone = text(body.phone);
+        const city =
+          body.city !== undefined
+            ? String(body.city)
+            : existing.city || "";
+
+        const condition =
+          body.condition !== undefined
+            ? String(body.condition)
+            : existing.condition || "";
+
+        const phone =
+          body.phone !== undefined
+            ? String(body.phone)
+            : existing.phone || "";
+
         const negotiable =
-          body.negotiable ? 1 : 0;
-
-        if (!title || !Number.isFinite(price) || price <= 0) {
-          return json({
-            success: false,
-            error: "Të dhënat e produktit nuk janë të vlefshme."
-          }, 400);
-        }
+          body.negotiable !== undefined
+            ? (body.negotiable ? 1 : 0)
+            : Number(existing.negotiable || 0);
 
         await env.DB.prepare(`
           UPDATE products
           SET
+            name = ?,
             title = ?,
             description = ?,
             price = ?,
+            image = ?,
             image_url = ?,
             category = ?,
             stock = ?,
@@ -1254,9 +1310,11 @@ export default {
         `)
           .bind(
             title,
+            title,
             description,
             price,
-            imageUrl,
+            image,
+            image,
             category,
             stock,
             city,
@@ -1268,64 +1326,66 @@ export default {
           .run();
 
         return json({
-          success: true
+          success: true,
+          product: await getProduct(env, id)
         });
-
-      } catch (error) {
-        return json({
-          success: false,
-          error: error.message
-        }, 500);
-      }
-    }
-
-    /* =========================================================
-       DELETE PRODUCT
-    ========================================================= */
-
-    if (
-      url.pathname.startsWith("/api/products/") &&
-      request.method === "DELETE"
-    ) {
-      const auth = await requireAuth(request);
-
-      if (auth instanceof Response) {
-        return auth;
       }
 
-      const id = Number(
-        url.pathname.split("/").pop()
-      );
+      /*
+      ============================================================
+      PRODUCTS - DELETE
+      ============================================================
+      */
 
-      try {
-        const product = await env.DB.prepare(`
-          SELECT seller_id
-          FROM products
-          WHERE id = ?
-        `)
-          .bind(id)
-          .first();
+      if (
+        /^\/api\/products\/\d+$/.test(path) &&
+        request.method === "DELETE"
+      ) {
+        const user = await requireAuth(
+          request,
+          env
+        );
 
-        if (!product) {
-          return json({
-            success: false,
-            error: "Produkti nuk ekziston."
-          }, 404);
+        const id = Number(
+          path.split("/").pop()
+        );
+
+        const existing =
+          await env.DB.prepare(`
+            SELECT *
+            FROM products
+            WHERE id = ?
+            LIMIT 1
+          `)
+            .bind(id)
+            .first();
+
+        if (!existing) {
+          return json(
+            {
+              success: false,
+              error: "Produkti nuk ekziston."
+            },
+            404
+          );
         }
 
         if (
-          auth.role !== "admin" &&
-          Number(product.seller_id) !==
-          Number(auth.user_id)
+          user.role !== "admin" &&
+          Number(existing.seller_id) !== Number(user.id)
         ) {
-          return json({
-            success: false,
-            error: "Nuk ke leje."
-          }, 403);
+          return forbidden();
         }
 
         await env.DB.prepare(`
           DELETE FROM saved_listings
+          WHERE product_id = ?
+        `)
+          .bind(id)
+          .run();
+
+        await env.DB.prepare(`
+          DELETE FROM blocked_listings
           WHERE product_id = ?
         `)
           .bind(id)
@@ -1339,201 +1399,260 @@ export default {
           .run();
 
         return json({
-          success: true
+          success: true,
+          message: "Produkti u fshi."
         });
-
-      } catch (error) {
-        return json({
-          success: false,
-          error: error.message
-        }, 500);
       }
-    }
 
-    /* =========================================================
-       USERS - LEGACY
-    ========================================================= */
+      /*
+      ============================================================
+      USERS - CREATE/UPSERT
+      ============================================================
+      */
 
-    if (
-      url.pathname === "/api/users" &&
-      request.method === "POST"
-    ) {
-      try {
+      if (
+        path === "/api/users" &&
+        request.method === "POST"
+      ) {
         const body = await request.json();
 
-        const name = text(body.name);
-        const email = text(body.email).toLowerCase();
+        const name =
+          String(body.name || "").trim();
+
+        const email =
+          String(body.email || "")
+            .trim()
+            .toLowerCase();
+
+        const phone =
+          String(body.phone || "").trim();
 
         if (!name || !email) {
-          return json({
-            success: false,
-            error: "Emri dhe email janë të detyrueshëm."
-          }, 400);
+          return badRequest(
+            "Emri dhe email janë të detyrueshme."
+          );
         }
 
-        const existing = await env.DB.prepare(`
-          SELECT id, name, email
-          FROM users
-          WHERE LOWER(email) = ?
-          LIMIT 1
-        `)
-          .bind(email)
-          .first();
+        const existing =
+          await env.DB.prepare(`
+            SELECT *
+            FROM auth_accounts
+            WHERE LOWER(email) = ?
+            LIMIT 1
+          `)
+            .bind(email)
+            .first();
 
         if (existing) {
           return json({
             success: true,
-            user: existing,
+            user: normalizeUser(existing),
             existing: true
           });
         }
 
-        const result = await env.DB.prepare(`
-          INSERT INTO users
-            (name, email)
-          VALUES (?, ?)
-        `)
-          .bind(name, email)
-          .run();
+        /*
+          Ky endpoint është kompatibilitet për frontend-et
+          e vjetra. Për regjistrim normal përdoret /auth/register.
+        */
 
-        const user = await env.DB.prepare(`
-          SELECT id, name, email
-          FROM users
-          WHERE id = ?
-        `)
-          .bind(result.meta.last_row_id)
-          .first();
+        const tempPassword =
+          randomString(24);
+
+        const { hash, salt } =
+          await hashPassword(tempPassword);
+
+        const result =
+          await env.DB.prepare(`
+            INSERT INTO auth_accounts
+            (
+              name,
+              email,
+              phone,
+              identifier,
+              password_hash,
+              password_salt,
+              role
+            )
+            VALUES (?, ?, ?, ?, ?, ?, 'customer')
+          `)
+            .bind(
+              name,
+              email,
+              phone,
+              email,
+              hash,
+              salt
+            )
+            .run();
 
         return json({
           success: true,
-          user
+          user: {
+            id: result.meta.last_row_id,
+            name,
+            email,
+            phone,
+            role: "customer"
+          }
+        }, 201);
+      }
+
+      /*
+      ============================================================
+      USERS - FIND
+      ============================================================
+      */
+
+      if (
+        path === "/api/users/find" &&
+        request.method === "GET"
+      ) {
+        const q =
+          url.searchParams.get("q")?.trim() || "";
+
+        if (!q) {
+          return badRequest(
+            "Vendosni kërkimin."
+          );
+        }
+
+        const result =
+          await env.DB.prepare(`
+            SELECT
+              id,
+              name,
+              email,
+              phone,
+              role
+            FROM auth_accounts
+            WHERE
+              LOWER(name) LIKE LOWER(?)
+              OR LOWER(email) LIKE LOWER(?)
+              OR LOWER(identifier) LIKE LOWER(?)
+            ORDER BY id DESC
+            LIMIT 20
+          `)
+            .bind(
+              `%${q}%`,
+              `%${q}%`,
+              `%${q}%`
+            )
+            .all();
+
+        return json({
+          success: true,
+          users: result.results || []
         });
+      }
 
-      } catch (error) {
+      /*
+      ============================================================
+      ADMIN - USERS ALL
+      ============================================================
+      */
+
+      if (
+        path === "/api/users/all" &&
+        request.method === "GET"
+      ) {
+        await requireAdmin(
+          request,
+          env
+        );
+
+        const result =
+          await env.DB.prepare(`
+            SELECT
+              id,
+              name,
+              email,
+              phone,
+              identifier,
+              role,
+              created_at
+            FROM auth_accounts
+            ORDER BY id DESC
+          `)
+            .all();
+
         return json({
-          success: false,
-          error: error.message
-        }, 500);
-      }
-    }
-
-    /* =========================================================
-       FIND USER
-    ========================================================= */
-
-    if (
-      url.pathname === "/api/users/find" &&
-      request.method === "GET"
-    ) {
-      const email = text(
-        url.searchParams.get("email")
-      ).toLowerCase();
-
-      if (!email) {
-        return json({
-          success: false,
-          error: "Email mungon."
-        }, 400);
+          success: true,
+          users: result.results || []
+        });
       }
 
-      const user = await env.DB.prepare(`
-        SELECT id, name, email
-        FROM users
-        WHERE LOWER(email) = ?
-        LIMIT 1
-      `)
-        .bind(email)
-        .first();
+      /*
+      ============================================================
+      ADMIN - BLOCK USER
+      ============================================================
+      */
 
-      return json({
-        success: true,
-        user: user || null
-      });
-    }
+      if (
+        /^\/api\/users\/\d+\/block$/.test(path) &&
+        request.method === "PUT"
+      ) {
+        const admin =
+          await requireAdmin(
+            request,
+            env
+          );
 
-    /* =========================================================
-       ADMIN - ALL USERS
-    ========================================================= */
+        const userId =
+          Number(path.split("/")[3]);
 
-    if (
-      url.pathname === "/api/users/all" &&
-      request.method === "GET"
-    ) {
-      const admin = await requireAdmin(request);
+        const body =
+          await request.json();
 
-      if (admin instanceof Response) {
-        return admin;
-      }
+        const reason =
+          String(
+            body.reason || ""
+          ).trim();
 
-      try {
-        const { results } = await env.DB.prepare(`
-          SELECT
-            u.id,
-            u.name,
-            u.email,
-            a.identifier,
-            a.role,
-            a.created_at
-          FROM users u
-          LEFT JOIN auth_accounts a
-            ON a.user_id = u.id
-          ORDER BY u.id DESC
-        `).all();
+        if (
+          Number(userId) === Number(admin.id)
+        ) {
+          return badRequest(
+            "Admini nuk mund të bllokojë veten."
+          );
+        }
 
-        return json(results);
+        const existing =
+          await env.DB.prepare(`
+            SELECT id
+            FROM auth_accounts
+            WHERE id = ?
+            LIMIT 1
+          `)
+            .bind(userId)
+            .first();
 
-      } catch (error) {
-        return json({
-          success: false,
-          error: error.message
-        }, 500);
-      }
-    }
+        if (!existing) {
+          return json(
+            {
+              success: false,
+              error: "Përdoruesi nuk ekziston."
+            },
+            404
+          );
+        }
 
-    /* =========================================================
-       ADMIN - BLOCK USER
-    ========================================================= */
+        const blocked =
+          await env.DB.prepare(`
+            SELECT id
+            FROM blocked_users
+            WHERE user_id = ?
+            LIMIT 1
+          `)
+            .bind(userId)
+            .first();
 
-    if (
-      url.pathname.match(/^\/api\/users\/\d+\/block$/) &&
-      request.method === "PUT"
-    ) {
-      const admin = await requireAdmin(request);
-
-      if (admin instanceof Response) {
-        return admin;
-      }
-
-      const id = Number(
-        url.pathname.split("/")[3]
-      );
-
-      try {
-        const body = await request.json().catch(() => ({}));
-
-        const existing = await env.DB.prepare(`
-          SELECT id
-          FROM blocked_users
-          WHERE user_id = ?
-            AND blocked_by = ?
-          LIMIT 1
-        `)
-          .bind(
-            id,
-            Number(admin.user_id)
-          )
-          .first();
-
-        if (existing) {
+        if (blocked) {
           await env.DB.prepare(`
             DELETE FROM blocked_users
             WHERE user_id = ?
-              AND blocked_by = ?
           `)
-            .bind(
-              id,
-              Number(admin.user_id)
-            )
+            .bind(userId)
             .run();
 
           return json({
@@ -1544,155 +1663,103 @@ export default {
 
         await env.DB.prepare(`
           INSERT INTO blocked_users
-            (user_id, blocked_by, reason)
+          (
+            user_id,
+            blocked_by,
+            reason
+          )
           VALUES (?, ?, ?)
         `)
           .bind(
-            id,
-            Number(admin.user_id),
-            text(body.reason)
+            userId,
+            admin.id,
+            reason
           )
           .run();
 
-        return json({
-          success: true,
-          blocked: true
-        });
-
-      } catch (error) {
-        return json({
-          success: false,
-          error: error.message
-        }, 500);
-      }
-    }
-
-    /* =========================================================
-       ADMIN - BLOCK LISTING
-    ========================================================= */
-
-    if (
-      url.pathname.match(/^\/api\/products\/\d+\/block$/) &&
-      request.method === "PUT"
-    ) {
-      const admin = await requireAdmin(request);
-
-      if (admin instanceof Response) {
-        return admin;
-      }
-
-      const id = Number(
-        url.pathname.split("/")[3]
-      );
-
-      try {
-        const body = await request.json().catch(() => ({}));
-
-        const existing = await env.DB.prepare(`
-          SELECT id
-          FROM blocked_listings
-          WHERE product_id = ?
-            AND blocked_by = ?
-          LIMIT 1
-        `)
-          .bind(
-            id,
-            Number(admin.user_id)
-          )
-          .first();
-
-        if (existing) {
-          await env.DB.prepare(`
-            DELETE FROM blocked_listings
-            WHERE product_id = ?
-              AND blocked_by = ?
-          `)
-            .bind(
-              id,
-              Number(admin.user_id)
-            )
-            .run();
-
-          return json({
-            success: true,
-            blocked: false
-          });
-        }
+        /*
+          I mbyllim edhe session-et ekzistuese.
+        */
 
         await env.DB.prepare(`
-          INSERT INTO blocked_listings
-            (product_id, blocked_by, reason)
-          VALUES (?, ?, ?)
+          DELETE FROM sessions
+          WHERE user_id = ?
         `)
-          .bind(
-            id,
-            Number(admin.user_id),
-            text(body.reason)
-          )
+          .bind(userId)
           .run();
 
         return json({
           success: true,
           blocked: true
         });
+      }
 
-      } catch (error) {
+      /*
+      ============================================================
+      ADMIN - SETTINGS GET
+      ============================================================
+      */
+
+      if (
+        path === "/api/admin/settings" &&
+        request.method === "GET"
+      ) {
+        await requireAdmin(
+          request,
+          env
+        );
+
+        const result =
+          await env.DB.prepare(`
+            SELECT
+              setting_key,
+              setting_value
+            FROM marketplace_settings
+            ORDER BY setting_key
+          `)
+            .all();
+
+        const settings = {};
+
+        for (const row of result.results || []) {
+          settings[row.setting_key] =
+            row.setting_value;
+        }
+
         return json({
-          success: false,
-          error: error.message
-        }, 500);
-      }
-    }
-
-    /* =========================================================
-       ADMIN - SETTINGS
-    ========================================================= */
-
-    if (
-      url.pathname === "/api/admin/settings" &&
-      request.method === "GET"
-    ) {
-      const admin = await requireAdmin(request);
-
-      if (admin instanceof Response) {
-        return admin;
+          success: true,
+          settings
+        });
       }
 
-      const { results } = await env.DB.prepare(`
-        SELECT setting_key, setting_value
-        FROM marketplace_settings
-        ORDER BY setting_key
-      `).all();
+      /*
+      ============================================================
+      ADMIN - SETTINGS PUT
+      ============================================================
+      */
 
-      const settings = {};
+      if (
+        path === "/api/admin/settings" &&
+        request.method === "PUT"
+      ) {
+        await requireAdmin(
+          request,
+          env
+        );
 
-      for (const row of results) {
-        settings[row.setting_key] = row.setting_value;
-      }
+        const body =
+          await request.json();
 
-      return json({
-        success: true,
-        settings
-      });
-    }
+        const settings =
+          body.settings || body;
 
-    if (
-      url.pathname === "/api/admin/settings" &&
-      request.method === "PUT"
-    ) {
-      const admin = await requireAdmin(request);
-
-      if (admin instanceof Response) {
-        return admin;
-      }
-
-      try {
-        const body = await request.json();
-
-        for (const [key, value] of Object.entries(body)) {
+        for (const [key, value] of Object.entries(settings)) {
           await env.DB.prepare(`
             INSERT INTO marketplace_settings
-              (setting_key, setting_value)
+            (
+              setting_key,
+              setting_value
+            )
             VALUES (?, ?)
             ON CONFLICT(setting_key)
             DO UPDATE SET
@@ -1700,58 +1767,74 @@ export default {
           `)
             .bind(
               String(key),
-              String(value ?? "")
+              value === null ||
+              value === undefined
+                ? ""
+                : String(value)
             )
             .run();
         }
 
         return json({
-          success: true
+          success: true,
+          settings
         });
-
-      } catch (error) {
-        return json({
-          success: false,
-          error: error.message
-        }, 500);
-      }
-    }
-
-    /* =========================================================
-       ADMIN - STATS
-    ========================================================= */
-
-    if (
-      url.pathname === "/api/admin/stats" &&
-      request.method === "GET"
-    ) {
-      const admin = await requireAdmin(request);
-
-      if (admin instanceof Response) {
-        return admin;
       }
 
-      try {
-        const users = await env.DB.prepare(`
-          SELECT COUNT(*) AS count
-          FROM users
-        `).first();
+      /*
+      ============================================================
+      ADMIN - STATS
+      ============================================================
+      */
 
-        const products = await env.DB.prepare(`
-          SELECT COUNT(*) AS count
-          FROM products
-        `).first();
+      if (
+        path === "/api/admin/stats" &&
+        request.method === "GET"
+      ) {
+        await requireAdmin(
+          request,
+          env
+        );
 
-        const orders = await env.DB.prepare(`
-          SELECT COUNT(*) AS count
-          FROM orders
-        `).first();
+        const [
+          users,
+          products,
+          orders,
+          sellers,
+          blockedUsers,
+          blockedProducts
+        ] = await Promise.all([
+          env.DB.prepare(`
+            SELECT COUNT(*) AS count
+            FROM auth_accounts
+          `).first(),
 
-        const sellers = await env.DB.prepare(`
-          SELECT COUNT(*) AS count
-          FROM auth_accounts
-          WHERE role = 'seller'
-        `).first();
+          env.DB.prepare(`
+            SELECT COUNT(*) AS count
+            FROM products
+          `).first(),
+
+          env.DB.prepare(`
+            SELECT COUNT(*) AS count
+            FROM orders
+          `).first(),
+
+          env.DB.prepare(`
+            SELECT COUNT(*) AS count
+            FROM auth_accounts
+            WHERE role = 'seller'
+          `).first(),
+
+          env.DB.prepare(`
+            SELECT COUNT(*) AS count
+            FROM blocked_users
+          `).first(),
+
+          env.DB.prepare(`
+            SELECT COUNT(*) AS count
+            FROM blocked_listings
+          `).first()
+        ]);
 
         return json({
           success: true,
@@ -1759,135 +1842,68 @@ export default {
             users: Number(users?.count || 0),
             products: Number(products?.count || 0),
             orders: Number(orders?.count || 0),
-            sellers: Number(sellers?.count || 0)
+            sellers: Number(sellers?.count || 0),
+            blockedUsers: Number(
+              blockedUsers?.count || 0
+            ),
+            blockedProducts: Number(
+              blockedProducts?.count || 0
+            )
           }
         });
-
-      } catch (error) {
-        return json({
-          success: false,
-          error: error.message
-        }, 500);
-      }
-    }
-
-    /* =========================================================
-       ORDERS - CREATE
-    ========================================================= */
-
-    if (
-      url.pathname === "/api/orders" &&
-      request.method === "POST"
-    ) {
-      const auth = await requireAuth(request);
-
-      if (auth instanceof Response) {
-        return auth;
       }
 
-      try {
-        const body = await request.json();
+      /*
+      ============================================================
+      ORDERS - CREATE
+      ============================================================
+      */
 
-        const customerName =
-          text(body.customer_name);
-
-        const customerPhone =
-          text(body.customer_phone);
-
-        const customerCity =
-          text(body.customer_city);
-
-        const customerAddress =
-          text(body.customer_address);
-
-        const items =
-          Array.isArray(body.items)
-            ? body.items
-            : [];
-
-        if (!customerName) {
-          return json({
-            success: false,
-            error: "Emri është i detyrueshëm."
-          }, 400);
-        }
-
-        if (!customerPhone) {
-          return json({
-            success: false,
-            error: "Telefoni është i detyrueshëm."
-          }, 400);
-        }
-
-        if (!customerCity) {
-          return json({
-            success: false,
-            error: "Qyteti është i detyrueshëm."
-          }, 400);
-        }
-
-        if (!customerAddress) {
-          return json({
-            success: false,
-            error: "Adresa është e detyrueshme."
-          }, 400);
-        }
-
-        if (!items.length) {
-          return json({
-            success: false,
-            error: "Shporta është bosh."
-          }, 400);
-        }
-
-        const quantities = new Map();
-
-        for (const item of items) {
-          const id = Number(item.id);
-          const qty = Math.floor(
-            Number(item.qty || 1)
+      if (
+        path === "/api/orders" &&
+        request.method === "POST"
+      ) {
+        const user =
+          await requireAuth(
+            request,
+            env
           );
 
-          if (
-            Number.isInteger(id) &&
-            Number.isInteger(qty) &&
-            qty > 0
-          ) {
-            quantities.set(
-              id,
-              (quantities.get(id) || 0) + qty
-            );
-          }
+        const body =
+          await request.json();
+
+        const productId =
+          Number(
+            body.product_id ||
+            body.productId
+          );
+
+        const quantity =
+          Number(
+            body.quantity || 1
+          );
+
+        if (
+          !Number.isInteger(productId) ||
+          productId <= 0
+        ) {
+          return badRequest(
+            "Produkti nuk është i vlefshëm."
+          );
         }
 
-        if (!quantities.size) {
-          return json({
-            success: false,
-            error: "Produktet nuk janë të vlefshme."
-          }, 400);
+        if (
+          !Number.isInteger(quantity) ||
+          quantity <= 0
+        ) {
+          return badRequest(
+            "Sasia nuk është e vlefshme."
+          );
         }
 
-        const orderCode =
-          "SABI-" +
-          Date.now().toString(36).toUpperCase() +
-          "-" +
-          crypto
-            .getRandomValues(new Uint8Array(3))
-            .map(x => x.toString(16).padStart(2, "0"))
-            .join("")
-            .toUpperCase();
-
-        const statements = [];
-
-        let grandTotal = 0;
-
-        for (const [productId, quantity] of quantities) {
-          const product = await env.DB.prepare(`
-            SELECT
-              id,
-              title,
-              price,
-              stock
+        const product =
+          await env.DB.prepare(`
+            SELECT *
             FROM products
             WHERE id = ?
             LIMIT 1
@@ -1895,250 +1911,315 @@ export default {
             .bind(productId)
             .first();
 
-          if (!product) {
-            return json({
+        if (!product) {
+          return json(
+            {
               success: false,
-              error: `Produkti ${productId} nuk ekziston.`
-            }, 404);
-          }
-
-          const stock = Number(
-            product.stock ?? 0
-          );
-
-          if (stock < quantity) {
-            return json({
-              success: false,
-              error:
-                `Nuk ka stok të mjaftueshëm për "${product.title}".`
-            }, 400);
-          }
-
-          const total =
-            Number(product.price || 0) *
-            quantity;
-
-          grandTotal += total;
-
-          statements.push(
-            env.DB.prepare(`
-              UPDATE products
-              SET stock = stock - ?
-              WHERE id = ?
-                AND stock >= ?
-            `)
-              .bind(
-                quantity,
-                productId,
-                quantity
-              )
-          );
-
-          statements.push(
-            env.DB.prepare(`
-              INSERT INTO orders
-              (
-                product_id,
-                buyer_id,
-                quantity,
-                total_price,
-                status,
-                customer_name,
-                customer_phone,
-                customer_city,
-                customer_address,
-                payment_method,
-                order_code
-              )
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            `)
-              .bind(
-                productId,
-                Number(auth.user_id),
-                quantity,
-                total,
-                "pending",
-                customerName,
-                customerPhone,
-                customerCity,
-                customerAddress,
-                "cash_on_delivery",
-                orderCode
-              )
+              error: "Produkti nuk ekziston."
+            },
+            404
           );
         }
 
-        await env.DB.batch(statements);
+        const stock =
+          Number(product.stock || 0);
 
-        const { results } = await env.DB.prepare(`
-          SELECT *
-          FROM orders
-          WHERE order_code = ?
-          ORDER BY id ASC
-        `)
-          .bind(orderCode)
-          .all();
+        if (
+          stock > 0 &&
+          quantity > stock
+        ) {
+          return badRequest(
+            "Nuk ka stok të mjaftueshëm."
+          );
+        }
+
+        const totalPrice =
+          Number(product.price || 0) *
+          quantity;
+
+        const customerName =
+          String(
+            body.customer_name ||
+            body.customerName ||
+            user.name ||
+            ""
+          ).trim();
+
+        const customerPhone =
+          String(
+            body.customer_phone ||
+            body.customerPhone ||
+            user.phone ||
+            ""
+          ).trim();
+
+        const customerCity =
+          String(
+            body.customer_city ||
+            body.customerCity ||
+            ""
+          ).trim();
+
+        const customerAddress =
+          String(
+            body.customer_address ||
+            body.customerAddress ||
+            ""
+          ).trim();
+
+        const paymentMethod =
+          String(
+            body.payment_method ||
+            body.paymentMethod ||
+            "cash"
+          ).trim();
+
+        const orderCode =
+          await createOrderCode();
+
+        const result =
+          await env.DB.prepare(`
+            INSERT INTO orders
+            (
+              product_id,
+              buyer_id,
+              quantity,
+              total_price,
+              status,
+              customer_name,
+              customer_phone,
+              customer_city,
+              customer_address,
+              payment_method,
+              order_code
+            )
+            VALUES
+            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `)
+            .bind(
+              productId,
+              user.id,
+              quantity,
+              totalPrice,
+              "pending",
+              customerName,
+              customerPhone,
+              customerCity,
+              customerAddress,
+              paymentMethod,
+              orderCode
+            )
+            .run();
+
+        /*
+          Përditësojmë stokun vetëm nëse produkti
+          ka stok pozitiv.
+        */
+
+        if (stock > 0) {
+          await env.DB.prepare(`
+            UPDATE products
+            SET stock = stock - ?
+            WHERE id = ?
+              AND stock >= ?
+          `)
+            .bind(
+              quantity,
+              productId,
+              quantity
+            )
+            .run();
+        }
 
         return json({
           success: true,
-          message: "Porosia u regjistrua me sukses.",
-          order_code: orderCode,
-          payment_method: "cash_on_delivery",
-          status: "pending",
-          total: grandTotal,
-          orders: results
-        });
+          message: "Porosia u krijua.",
+          order: {
+            id: result.meta.last_row_id,
+            order_code: orderCode,
+            product_id: productId,
+            quantity,
+            total_price: totalPrice,
+            status: "pending"
+          }
+        }, 201);
+      }
 
-      } catch (error) {
+      /*
+      ============================================================
+      ORDERS - GET
+      ============================================================
+      */
+
+      if (
+        path === "/api/orders" &&
+        request.method === "GET"
+      ) {
+        const user =
+          await requireAuth(
+            request,
+            env
+          );
+
+        let result;
+
+        if (user.role === "admin") {
+          result =
+            await env.DB.prepare(`
+              SELECT
+                o.*,
+                p.title AS product_title,
+                p.name AS product_name,
+                p.image_url AS product_image,
+                p.seller_id,
+                p.seller
+              FROM orders o
+              LEFT JOIN products p
+                ON p.id = o.product_id
+              ORDER BY o.id DESC
+            `)
+              .all();
+        } else {
+          result =
+            await env.DB.prepare(`
+              SELECT
+                o.*,
+                p.title AS product_title,
+                p.name AS product_name,
+                p.image_url AS product_image,
+                p.seller_id,
+                p.seller
+              FROM orders o
+              LEFT JOIN products p
+                ON p.id = o.product_id
+              WHERE
+                o.buyer_id = ?
+                OR p.seller_id = ?
+              ORDER BY o.id DESC
+            `)
+              .bind(
+                user.id,
+                user.id
+              )
+              .all();
+        }
+
         return json({
-          success: false,
-          error: error.message
-        }, 500);
-      }
-    }
-
-    /* =========================================================
-       ORDERS - GET
-    ========================================================= */
-
-    if (
-      url.pathname === "/api/orders" &&
-      request.method === "GET"
-    ) {
-      const auth = await requireAuth(request);
-
-      if (auth instanceof Response) {
-        return auth;
+          success: true,
+          orders: result.results || []
+        });
       }
 
-      try {
-        let query = `
-          SELECT
-            o.*,
-            p.title AS product_name,
-            p.image_url AS product_image,
-            p.seller_id,
-            u.name AS buyer_name,
-            u.email AS buyer_email
-          FROM orders o
-          LEFT JOIN products p
-            ON p.id = o.product_id
-          LEFT JOIN users u
-            ON u.id = o.buyer_id
-        `;
+      /*
+      ============================================================
+      ORDERS - UPDATE
+      ============================================================
+      */
 
-        const params = [];
+      if (
+        /^\/api\/orders\/\d+$/.test(path) &&
+        request.method === "PUT"
+      ) {
+        const user =
+          await requireAuth(
+            request,
+            env
+          );
 
-        if (auth.role !== "admin") {
-          query += `
-            WHERE
-              o.buyer_id = ?
-              OR p.seller_id = ?
-          `;
+        const id =
+          Number(
+            path.split("/").pop()
+          );
 
-          params.push(
-            Number(auth.user_id),
-            Number(auth.user_id)
+        const order =
+          await env.DB.prepare(`
+            SELECT
+              o.*,
+              p.seller_id
+            FROM orders o
+            LEFT JOIN products p
+              ON p.id = o.product_id
+            WHERE o.id = ?
+            LIMIT 1
+          `)
+            .bind(id)
+            .first();
+
+        if (!order) {
+          return json(
+            {
+              success: false,
+              error: "Porosia nuk ekziston."
+            },
+            404
           );
         }
 
-        query += `
-          ORDER BY o.id DESC
-        `;
+        const body =
+          await request.json();
 
-        const statement = env.DB.prepare(query);
+        const status =
+          String(
+            body.status || ""
+          ).trim();
 
-        const { results } =
-          params.length
-            ? await statement.bind(...params).all()
-            : await statement.all();
-
-        return json(results);
-
-      } catch (error) {
-        return json({
-          success: false,
-          error: error.message
-        }, 500);
-      }
-    }
-
-    /* =========================================================
-       UPDATE ORDER
-    ========================================================= */
-
-    if (
-      url.pathname.startsWith("/api/orders/") &&
-      request.method === "PUT"
-    ) {
-      const auth = await requireAuth(request);
-
-      if (auth instanceof Response) {
-        return auth;
-      }
-
-      const id = Number(
-        url.pathname.split("/").pop()
-      );
-
-      if (!Number.isInteger(id)) {
-        return json({
-          success: false,
-          error: "ID i pavlefshëm."
-        }, 400);
-      }
-
-      try {
-        const order = await env.DB.prepare(`
-          SELECT
-            o.id,
-            o.buyer_id,
-            p.seller_id
-          FROM orders o
-          LEFT JOIN products p
-            ON p.id = o.product_id
-          WHERE o.id = ?
-        `)
-          .bind(id)
-          .first();
-
-        if (!order) {
-          return json({
-            success: false,
-            error: "Porosia nuk ekziston."
-          }, 404);
+        if (!status) {
+          return badRequest(
+            "Statusi mungon."
+          );
         }
 
-        const allowed =
-          auth.role === "admin" ||
-          Number(order.seller_id) === Number(auth.user_id);
-
-        if (!allowed) {
-          return json({
-            success: false,
-            error: "Nuk ke leje."
-          }, 403);
-        }
-
-        const body = await request.json();
-
-        const statuses = [
+        const allowedStatuses = [
           "pending",
           "confirmed",
+          "processing",
           "shipped",
-          "delivered",
-          "cancelled"
+          "completed",
+          "cancelled",
+          "rejected"
         ];
 
-        const status = text(
-          body.status
-        ).toLowerCase();
+        if (
+          !allowedStatuses.includes(status)
+        ) {
+          return badRequest(
+            "Status i pavlefshëm."
+          );
+        }
 
-        if (!statuses.includes(status)) {
-          return json({
-            success: false,
-            error: "Statusi nuk është i vlefshëm."
-          }, 400);
+        const isAdmin =
+          user.role === "admin";
+
+        const isSeller =
+          Number(order.seller_id) ===
+          Number(user.id);
+
+        const isBuyer =
+          Number(order.buyer_id) ===
+          Number(user.id);
+
+        if (
+          !isAdmin &&
+          !isSeller &&
+          !isBuyer
+        ) {
+          return forbidden();
+        }
+
+        /*
+          Buyer nuk mund të ndryshojë statusin
+          në statuset e shitësit/adminit.
+        */
+
+        if (
+          !isAdmin &&
+          !isSeller &&
+          isBuyer &&
+          !["cancelled"].includes(status)
+        ) {
+          return forbidden(
+            "Blerësi mund të anulojë vetëm porosinë."
+          );
         }
 
         await env.DB.prepare(`
@@ -2146,151 +2227,201 @@ export default {
           SET status = ?
           WHERE id = ?
         `)
-          .bind(status, id)
+          .bind(
+            status,
+            id
+          )
           .run();
 
         return json({
           success: true,
-          status
+          order: {
+            ...order,
+            status
+          }
         });
-
-      } catch (error) {
-        return json({
-          success: false,
-          error: error.message
-        }, 500);
       }
-    }
 
-    /* =========================================================
-       LEGACY ADMIN SETUP
-       Përdoret vetëm nëse vendos ADMIN_SETUP_KEY si
-       Cloudflare Worker Secret.
-    ========================================================= */
+      /*
+      ============================================================
+      ADMIN SETUP
+      ============================================================
+      */
 
-    if (
-      url.pathname === "/api/admin/setup" &&
-      request.method === "POST"
-    ) {
-      try {
+      if (
+        path === "/api/admin/setup" &&
+        request.method === "POST"
+      ) {
         const setupKey =
-          request.headers.get("X-Admin-Setup-Key") || "";
+          env.ADMIN_SETUP_KEY;
+
+        if (!setupKey) {
+          return serverError(
+            "ADMIN_SETUP_KEY nuk është vendosur në Worker Secrets."
+          );
+        }
+
+        const body =
+          await request.json();
+
+        const providedKey =
+          String(
+            body.setupKey ||
+            body.key ||
+            ""
+          );
 
         if (
-          !env.ADMIN_SETUP_KEY ||
-          setupKey !== env.ADMIN_SETUP_KEY
+          providedKey !== setupKey
         ) {
-          return json({
-            success: false,
-            error: "Setup key e pavlefshme."
-          }, 403);
+          return unauthorized(
+            "Setup key i gabuar."
+          );
         }
-
-        const body = await request.json();
 
         const name =
-          text(body.name || "Administrator");
+          String(
+            body.name ||
+            "SHIT.BLEJ Admin"
+          ).trim();
 
         const email =
-          text(
-            body.email || "admin@sabi.com"
-          ).toLowerCase();
+          String(
+            body.email ||
+            "admin@sabi.com"
+          )
+            .trim()
+            .toLowerCase();
 
         const password =
-          String(body.password || "");
+          String(
+            body.password || ""
+          );
 
-        if (password.length < 6) {
-          return json({
-            success: false,
-            error:
-              "Fjalëkalimi duhet të ketë të paktën 6 karaktere."
-          }, 400);
+        if (
+          !password ||
+          password.length < 4
+        ) {
+          return badRequest(
+            "Admin password duhet të ketë të paktën 4 karaktere."
+          );
         }
 
-        let user = await env.DB.prepare(`
-          SELECT id, name, email
-          FROM users
-          WHERE LOWER(email) = ?
-          LIMIT 1
-        `)
-          .bind(email)
-          .first();
-
-        if (!user) {
-          const result = await env.DB.prepare(`
-            INSERT INTO users
-              (name, email)
-            VALUES (?, ?)
+        const existing =
+          await env.DB.prepare(`
+            SELECT *
+            FROM auth_accounts
+            WHERE LOWER(email) = ?
+            LIMIT 1
           `)
-            .bind(name, email)
-            .run();
-
-          user = await env.DB.prepare(`
-            SELECT id, name, email
-            FROM users
-            WHERE id = ?
-          `)
-            .bind(result.meta.last_row_id)
+            .bind(email)
             .first();
-        }
 
-        const passwordHash =
+        const { hash, salt } =
           await hashPassword(password);
-
-        const existing = await env.DB.prepare(`
-          SELECT id
-          FROM auth_accounts
-          WHERE identifier = ?
-          LIMIT 1
-        `)
-          .bind(email)
-          .first();
 
         if (existing) {
           await env.DB.prepare(`
             UPDATE auth_accounts
             SET
+              name = ?,
               password_hash = ?,
+              password_salt = ?,
               role = 'admin'
-            WHERE identifier = ?
+            WHERE id = ?
           `)
             .bind(
-              passwordHash,
-              email
+              name,
+              hash,
+              salt,
+              existing.id
             )
             .run();
-        } else {
+
+          await env.DB.prepare(`
+            DELETE FROM sessions
+            WHERE user_id = ?
+          `)
+            .bind(existing.id)
+            .run();
+
+          return json({
+            success: true,
+            message: "Admini u përditësua.",
+            user: {
+              id: existing.id,
+              name,
+              email,
+              role: "admin"
+            }
+          });
+        }
+
+        const result =
           await env.DB.prepare(`
             INSERT INTO auth_accounts
-              (user_id, identifier, password_hash, role)
-            VALUES (?, ?, ?, 'admin')
+            (
+              name,
+              email,
+              phone,
+              identifier,
+              password_hash,
+              password_salt,
+              role
+            )
+            VALUES (?, ?, '', ?, ?, ?, 'admin')
           `)
             .bind(
-              user.id,
+              name,
               email,
-              passwordHash
+              email,
+              hash,
+              salt
             )
             .run();
-        }
 
         return json({
           success: true,
-          message: "Admin u krijua/përditësua.",
-          email
-        });
-
-      } catch (error) {
-        return json({
-          success: false,
-          error: error.message
-        }, 500);
+          message: "Admini u krijua.",
+          user: {
+            id: result.meta.last_row_id,
+            name,
+            email,
+            role: "admin"
+          }
+        }, 201);
       }
+
+      /*
+      ============================================================
+      FALLBACK
+      ============================================================
+      */
+
+      if (env.ASSETS) {
+        return env.ASSETS.fetch(request);
+      }
+
+      return text(
+        "SHIT.BLEJ API is running, but ASSETS binding is missing.",
+        404
+      );
+
+    } catch (error) {
+      console.error(error);
+
+      if (error?.message === "UNAUTHORIZED") {
+        return unauthorized();
+      }
+
+      if (error?.message === "FORBIDDEN") {
+        return forbidden();
+      }
+
+      return serverError(
+        error?.message ||
+        "Gabim i panjohur."
+      );
     }
-
-    /* =========================================================
-       ASSETS
-    ========================================================= */
-
-    return env.ASSETS.fetch(request);
   }
 };
