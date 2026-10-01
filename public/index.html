@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SHIT.BLEJ</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      min-height: 100vh;
+    }
+
+    /* WELCOME SCREEN */
+
+    #welcomeScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .welcome {
+      width: 90%;
+      max-width: 430px;
+    }
+
+    .logo {
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      margin-bottom: 25px;
+    }
+
+    .logo span {
+      color: #20a83a;
+    }
+
+    .welcome h1 {
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .welcome p {
+      color: #888;
+      margin-bottom: 30px;
+    }
+
+    .loading {
+      width: 100%;
+      height: 6px;
+      background: #292929;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    #loadingBar {
+      width: 0%;
+      height: 100%;
+      background: #20a83a;
+      transition: width .05s linear;
+      box-shadow: 0 0 15px rgba(32,168,58,.7);
+    }
+
+    #percent {
+      margin-top: 12px;
+      color: #777;
+      font-size: 13px;
+    }
+
+    /* APP */
+
+    #app {
+      display: none;
+    }
+
+    header {
+      height: 65px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #292929;
+      background: #151515;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      font-size: 25px;
+      font-weight: 900;
+    }
+
+    .brand span {
+      color: #20a83a;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      border-radius: 8px;
+      padding: 10px 15px;
+      font-weight: 700;
+    }
+
+    .login {
+      background: #20a83a;
+      color: white;
+    }
+
+    .register {
+      background: #292929;
+      color: white;
+    }
+
+    .hero {
+      padding: 70px 20px 40px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(38px, 10vw, 70px);
+      font-weight: 900;
+    }
+
+    .hero h1 span {
+      color: #20a83a;
+    }
+
+    .hero p {
+      margin-top: 15px;
+      color: #999;
+      font-size: 17px;
+    }
+
+    .search-box {
+      max-width: 700px;
+      margin: 30px auto 0;
+      display: flex;
+      gap: 8px;
+    }
+
+    .search-box input {
+      flex: 1;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      background: #1c1c1c;
+      color: white;
+      outline: none;
+    }
+
+    .search-box button {
+      background: #20a83a;
+      color: white;
+    }
+
+    .categories {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .category {
+      white-space: nowrap;
+      background: #1c1c1c;
+      border: 1px solid #292929;
+      color: #ddd;
+    }
+
+    .category:hover {
+      background: #20a83a;
+      color: white;
+    }
+
+    .content {
+      max-width: 1100px;
+      margin: auto;
+      padding: 10px 20px 60px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      margin: 20px 0;
+    }
+
+    #products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    .product {
+      background: #181818;
+      border: 1px solid #292929;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .product-image {
+      height: 180px;
+      background: #222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 15px;
+    }
+
+    .product-title {
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .price {
+      color: #20a83a;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .empty {
+      text-align: center;
+      color: #777;
+      padding: 50px 20px;
+      grid-column: 1 / -1;
+    }
+
+    footer {
+      border-top: 1px solid #292929;
+      text-align: center;
+      padding: 30px;
+      color: #666;
+    }
+
+    @media(max-width:600px) {
+      header {
+        padding: 0 12px;
+      }
+
+      .brand {
+        font-size: 21px;
+      }
+
+      .header-buttons button {
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+
+      .search-box {
+        flex-direction: column;
+      }
+
+      .hero {
+        padding-top: 50px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- WELCOME -->
+
+  <div id="welcomeScreen">
+    <div class="welcome">
+
+      <div class="logo">
+        SHIT<span>.</span>BLEJ
+      </div>
+
+      <h1>Mirësevini</h1>
+
+      <p>Marketplace-i juaj</p>
+
+      <div class="loading">
+        <div id="loadingBar"></div>
+      </div>
+
+      <div id="percent">0%</div>
+
+    </div>
+  </div>
+
+
+  <!-- APP -->
+
+  <div id="app">
+
+    <header>
+
+      <div class="brand">
+        SHIT<span>.</span>BLEJ
+      </div>
+
+      <div class="header-buttons">
+
+        <button
+          class="register"
+          onclick="location.href='register.html'">
+          Regjistrohu
+        </button>
+
+        <button
+          class="login"
+          onclick="location.href='login.html'">
+          Hyr
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <section class="hero">
+
+      <h1>
+        Gjej. <span>Bli.</span> Shit.
+      </h1>
+
+      <p>
+        Marketplace-i shqiptar për të blerë dhe shitur online.
+      </p>
+
+      <div class="search-box">
+
+        <input
+          id="search"
+          type="text"
+          placeholder="Çfarë po kërkon?">
+
+        <button onclick="searchProducts()">
+          Kërko
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <div class="categories">
+
+      <button class="category" onclick="loadProducts()">
+        Të gjitha
+      </button>
+
+      <button class="category" onclick="filterCategory('Makina')">
+        🚗 Makina
+      </button>
+
+      <button class="category" onclick="filterCategory('Prona')">
+        🏠 Prona
+      </button>
+
+      <button class="category" onclick="filterCategory('Elektronikë')">
+        📱 Elektronikë
+      </button>
+
+      <button class="category" onclick="filterCategory('Telefona')">
+        📱 Telefona
+      </button>
+
+      <button class="category" onclick="filterCategory('Kompjuterë')">
+        💻 Kompjuterë
+      </button>
+
+      <button class="category" onclick="filterCategory('Rroba')">
+        👕 Rroba
+      </button>
+
+      <button class="category" onclick="filterCategory('Këpucë')">
+        👟 Këpucë
+      </button>
+
+      <button class="category" onclick="filterCategory('Punë')">
+        💼 Punë
+      </button>
+
+      <button class="category" onclick="filterCategory('Shërbime')">
+        🔧 Shërbime
+      </button>
+
+    </div>
+
+
+    <main class="content">
+
+      <h2 class="section-title">
+        Produktet e fundit
+      </h2>
+
+      <div id="products">
+
+        <div class="empty">
+          Duke ngarkuar produktet...
+        </div>
+
+      </div>
+
+    </main>
+
+
+    <footer>
+      © 2026 SHIT.BLEJ
+    </footer>
+
+  </div>
+
+
+  <script>
+
+    const API = "/api";
+
+
+    /* WELCOME */
+
+    let progress = 0;
+
+    const loadingBar =
+      document.getElementById("loadingBar");
+
+    const percent =
+      document.getElementById("percent");
+
+    const welcomeScreen =
+      document.getElementById("welcomeScreen");
+
+    const app =
+      document.getElementById("app");
+
+
+    const loader = setInterval(() => {
+
+      progress += 2;
+
+      if (progress > 100) {
+        progress = 100;
+      }
+
+      loadingBar.style.width =
+        progress + "%";
+
+      percent.textContent =
+        progress + "%";
+
+
+      if (progress >= 100) {
+
+        clearInterval(loader);
+
+        setTimeout(() => {
+
+          welcomeScreen.style.display =
+            "none";
+
+          app.style.display =
+            "block";
+
+          loadProducts();
+
+        }, 400);
+
+      }
+
+    }, 25);
+
+
+    /* PRODUCTS */
+
+    async function loadProducts() {
+
+      const box =
+        document.getElementById("products");
+
+      box.innerHTML =
+        '<div class="empty">Duke ngarkuar...</div>';
+
+      try {
+
+        const response =
+          await fetch(API + "/products");
+
+        if (!response.ok) {
+          throw new Error("API error");
+        }
+
+        const data =
+          await response.json();
+
+        renderProducts(
+          Array.isArray(data)
+            ? data
+            : []
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        box.innerHTML = `
+          <div class="empty">
+            Nuk u ngarkuan produktet.
+            <br><br>
+            App-i është online.
+          </div>
+        `;
+
+      }
+
+    }
+
+
+    function renderProducts(products) {
+
+      const box =
+        document.getElementById("products");
+
+      if (!products.length) {
+
+        box.innerHTML = `
+          <div class="empty">
+            Nuk ka produkte akoma.
+          </div>
+        `;
+
+        return;
+      }
+
+
+      box.innerHTML =
+        products.map(product => {
+
+          const image =
+            product.image_url ||
+            product.image ||
+            "";
+
+          return `
+
+            <div class="product">
+
+              <div class="product-image">
+
+                ${
+                  image
+                    ? `<img
+                         src="${escapeHtml(image)}"
+                         alt="${escapeHtml(product.title || product.name || "")}"
+                       >`
+                    : "Pa foto"
+                }
+
+              </div>
+
+              <div class="product-info">
+
+                <div class="product-title">
+                  ${escapeHtml(
+                    product.title ||
+                    product.name ||
+                    "Produkt"
+                  )}
+                </div>
+
+                <div class="price">
+                  ${Number(
+                    product.price || 0
+                  ).toLocaleString("sq-AL")}
+                  €
+                </div>
+
+                <div style="
+                  color:#777;
+                  font-size:13px;
+                  margin-top:7px;
+                ">
+                  ${escapeHtml(
+                    product.category || ""
+                  )}
+                </div>
+
+              </div>
+
+            </div>
+
+          `;
+
+        }).join("");
+
+    }
+
+
+    async function searchProducts() {
+
+      const q =
+        document
+          .getElementById("search")
+          .value
+          .trim();
+
+      if (!q) {
+
+        loadProducts();
+
+        return;
+      }
+
+      const box =
+        document.getElementById("products");
+
+      box.innerHTML =
+        '<div class="empty">Duke kërkuar...</div>';
+
+      try {
+
+        const response =
+          await fetch(
+            API +
+            "/products/search?q=" +
+            encodeURIComponent(q)
+          );
+
+        const data =
+          await response.json();
+
+        renderProducts(
+          Array.isArray(data)
+            ? data
+            : []
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        box.innerHTML =
+          '<div class="empty">Gabim gjatë kërkimit.</div>';
+
+      }
+
+    }
+
+
+    async function filterCategory(category) {
+
+      const box =
+        document.getElementById("products");
+
+      box.innerHTML =
+        '<div class="empty">Duke kërkuar...</div>';
+
+      try {
+
+        const response =
+          await fetch(
+            API +
+            "/products/search?category=" +
+            encodeURIComponent(category)
+          );
+
+        const data =
+          await response.json();
+
+        renderProducts(
+          Array.isArray(data)
+            ? data
+            : []
+        );
+
+      } catch {
+
+        box.innerHTML =
+          '<div class="empty">Gabim.</div>';
+
+      }
+
+    }
+
+
+    function escapeHtml(value) {
+
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+    }
+
+
+    document
+      .getElementById("search")
+      .addEventListener(
+        "keydown",
+        function(event) {
+
+          if (event.key === "Enter") {
+            searchProducts();
+          }
+
+        }
+      );
+
+  </script>
+
+</body>
+</html>
