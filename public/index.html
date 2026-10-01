@@ -1,738 +1,2399 @@
 <!DOCTYPE html>
 <html lang="sq">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080808">
+<title>SHIT.BLEJ — Marketplace</title>
 
-  <title>SHIT.BLEJ</title>
+<style>
+:root{
+  --bg:#080808;
+  --card:#111;
+  --card2:#151515;
+  --line:#242424;
+  --green:#21d45a;
+  --green2:#16a944;
+  --white:#fff;
+  --muted:#8d8d8d;
+  --danger:#ff4545;
+  --shadow:0 18px 50px rgba(0,0,0,.4);
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-      min-height: 100vh;
-    }
+html{
+  scroll-behavior:smooth;
+}
 
-    /* WELCOME SCREEN */
+body{
+  font-family:Inter,Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--white);
+  min-height:100vh;
+}
 
-    #welcomeScreen {
-      position: fixed;
-      inset: 0;
-      z-index: 99999;
-      background: #111;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
+button,input,select,textarea{
+  font:inherit;
+}
 
-    .welcome {
-      width: 90%;
-      max-width: 430px;
-    }
+button{
+  cursor:pointer;
+}
 
-    .logo {
-      font-size: 42px;
-      font-weight: 900;
-      letter-spacing: -2px;
-      margin-bottom: 25px;
-    }
+a{
+  color:inherit;
+  text-decoration:none;
+}
 
-    .logo span {
-      color: #20a83a;
-    }
+/* ================= WELCOME ================= */
 
-    .welcome h1 {
-      font-size: 30px;
-      margin-bottom: 8px;
-    }
+#welcomeScreen{
+  position:fixed;
+  inset:0;
+  z-index:999999;
+  background:#050505;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.7s ease;
+}
 
-    .welcome p {
-      color: #888;
-      margin-bottom: 30px;
-    }
+#welcomeScreen.hide{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
 
-    .loading {
-      width: 100%;
-      height: 6px;
-      background: #292929;
-      border-radius: 20px;
-      overflow: hidden;
-    }
+.welcome{
+  width:min(90%,430px);
+  text-align:center;
+}
 
-    #loadingBar {
-      width: 0%;
-      height: 100%;
-      background: #20a83a;
-      transition: width .05s linear;
-      box-shadow: 0 0 15px rgba(32,168,58,.7);
-    }
+.welcomeLogo{
+  font-size:44px;
+  font-weight:1000;
+  letter-spacing:-3px;
+  margin-bottom:25px;
+}
 
-    #percent {
-      margin-top: 12px;
-      color: #777;
-      font-size: 13px;
-    }
+.welcomeLogo span{
+  color:var(--green);
+}
 
-    /* APP */
+.welcomeTitle{
+  font-size:30px;
+  font-weight:850;
+  margin-bottom:8px;
+}
 
-    #app {
-      display: none;
-    }
+.welcomeSub{
+  color:#777;
+  font-size:14px;
+  margin-bottom:34px;
+}
 
-    header {
-      height: 65px;
-      padding: 0 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #292929;
-      background: #151515;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+.loading{
+  height:5px;
+  width:100%;
+  background:#202020;
+  border-radius:20px;
+  overflow:hidden;
+}
 
-    .brand {
-      font-size: 25px;
-      font-weight: 900;
-    }
+#loadingBar{
+  width:0%;
+  height:100%;
+  background:linear-gradient(90deg,var(--green2),var(--green));
+  box-shadow:0 0 18px rgba(33,212,90,.7);
+  transition:width .06s linear;
+}
 
-    .brand span {
-      color: #20a83a;
-    }
+#loadingPercent{
+  color:#777;
+  font-size:12px;
+  margin-top:12px;
+}
 
-    .header-buttons {
-      display: flex;
-      gap: 8px;
-    }
+/* ================= HEADER ================= */
 
-    button {
-      border: 0;
-      cursor: pointer;
-      border-radius: 8px;
-      padding: 10px 15px;
-      font-weight: 700;
-    }
+.header{
+  position:sticky;
+  top:0;
+  z-index:500;
+  background:rgba(8,8,8,.88);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid #191919;
+}
 
-    .login {
-      background: #20a83a;
-      color: white;
-    }
+.nav{
+  max-width:1250px;
+  margin:auto;
+  height:76px;
+  padding:0 20px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
 
-    .register {
-      background: #292929;
-      color: white;
-    }
+.logo{
+  font-size:27px;
+  font-weight:1000;
+  letter-spacing:-1.7px;
+  white-space:nowrap;
+}
 
-    .hero {
-      padding: 70px 20px 40px;
-      text-align: center;
-    }
+.logo span{
+  color:var(--green);
+}
 
-    .hero h1 {
-      font-size: clamp(38px, 10vw, 70px);
-      font-weight: 900;
-    }
+.searchWrap{
+  flex:1;
+  max-width:600px;
+  margin:auto;
+  position:relative;
+}
 
-    .hero h1 span {
-      color: #20a83a;
-    }
+.searchWrap input{
+  width:100%;
+  height:45px;
+  border:1px solid #292929;
+  background:#121212;
+  color:#fff;
+  border-radius:14px;
+  outline:none;
+  padding:0 48px 0 17px;
+  transition:.2s;
+}
 
-    .hero p {
-      margin-top: 15px;
-      color: #999;
-      font-size: 17px;
-    }
+.searchWrap input:focus{
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(33,212,90,.08);
+}
 
-    .search-box {
-      max-width: 700px;
-      margin: 30px auto 0;
-      display: flex;
-      gap: 8px;
-    }
+.searchIcon{
+  position:absolute;
+  right:15px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#777;
+}
 
-    .search-box input {
-      flex: 1;
-      padding: 15px;
-      border-radius: 10px;
-      border: 1px solid #333;
-      background: #1c1c1c;
-      color: white;
-      outline: none;
-    }
+.navButtons{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
 
-    .search-box button {
-      background: #20a83a;
-      color: white;
-    }
+.btn{
+  border:1px solid #292929;
+  background:#131313;
+  color:#fff;
+  border-radius:12px;
+  padding:11px 14px;
+  font-weight:700;
+  transition:.2s;
+}
 
-    .categories {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding: 20px;
-      max-width: 1100px;
-      margin: auto;
-    }
+.btn:hover{
+  transform:translateY(-1px);
+  border-color:#3b3b3b;
+}
 
-    .category {
-      white-space: nowrap;
-      background: #1c1c1c;
-      border: 1px solid #292929;
-      color: #ddd;
-    }
+.btnGreen{
+  background:var(--green);
+  color:#041008;
+  border-color:var(--green);
+}
 
-    .category:hover {
-      background: #20a83a;
-      color: white;
-    }
+.btnGreen:hover{
+  background:#39e66c;
+}
 
-    .content {
-      max-width: 1100px;
-      margin: auto;
-      padding: 10px 20px 60px;
-    }
+.iconBtn{
+  width:43px;
+  height:43px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+}
 
-    .section-title {
-      font-size: 24px;
-      margin: 20px 0;
-    }
+/* ================= HERO ================= */
 
-    #products {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 15px;
-    }
+main{
+  max-width:1250px;
+  margin:auto;
+  padding:20px;
+}
 
-    .product {
-      background: #181818;
-      border: 1px solid #292929;
-      border-radius: 12px;
-      overflow: hidden;
-    }
+.hero{
+  position:relative;
+  overflow:hidden;
+  min-height:330px;
+  border:1px solid #202020;
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 80% 20%,rgba(33,212,90,.18),transparent 30%),
+    radial-gradient(circle at 10% 90%,rgba(33,212,90,.08),transparent 30%),
+    linear-gradient(135deg,#101010,#080808);
+  padding:55px;
+  display:flex;
+  align-items:center;
+  margin-bottom:30px;
+}
 
-    .product-image {
-      height: 180px;
-      background: #222;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #666;
-    }
+.hero:after{
+  content:"";
+  position:absolute;
+  width:320px;
+  height:320px;
+  right:-110px;
+  bottom:-150px;
+  border:1px solid rgba(33,212,90,.2);
+  border-radius:50%;
+  box-shadow:0 0 0 40px rgba(33,212,90,.025),
+             0 0 0 80px rgba(33,212,90,.02);
+}
 
-    .product-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+.heroText{
+  position:relative;
+  z-index:2;
+  max-width:650px;
+}
 
-    .product-info {
-      padding: 15px;
-    }
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 11px;
+  background:rgba(33,212,90,.09);
+  color:var(--green);
+  border:1px solid rgba(33,212,90,.2);
+  border-radius:100px;
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:17px;
+}
 
-    .product-title {
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
+.hero h1{
+  font-size:clamp(40px,6vw,70px);
+  line-height:.95;
+  letter-spacing:-4px;
+  margin-bottom:20px;
+}
 
-    .price {
-      color: #20a83a;
-      font-size: 20px;
-      font-weight: 900;
-    }
+.hero h1 span{
+  color:var(--green);
+}
 
-    .empty {
-      text-align: center;
-      color: #777;
-      padding: 50px 20px;
-      grid-column: 1 / -1;
-    }
+.hero p{
+  color:#999;
+  font-size:16px;
+  line-height:1.6;
+  max-width:580px;
+  margin-bottom:25px;
+}
 
-    footer {
-      border-top: 1px solid #292929;
-      text-align: center;
-      padding: 30px;
-      color: #666;
-    }
+.heroActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
 
-    @media(max-width:600px) {
-      header {
-        padding: 0 12px;
-      }
+/* ================= SECTION ================= */
 
-      .brand {
-        font-size: 21px;
-      }
+.sectionHead{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  margin:35px 0 17px;
+}
 
-      .header-buttons button {
-        padding: 8px 10px;
-        font-size: 12px;
-      }
+.sectionHead h2{
+  font-size:23px;
+  letter-spacing:-.7px;
+}
 
-      .search-box {
-        flex-direction: column;
-      }
+.sectionHead p{
+  color:#777;
+  font-size:13px;
+  margin-top:5px;
+}
 
-      .hero {
-        padding-top: 50px;
-      }
-    }
-  </style>
+/* ================= CATEGORIES ================= */
+
+.categories{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding:3px 0 8px;
+  scrollbar-width:none;
+}
+
+.categories::-webkit-scrollbar{
+  display:none;
+}
+
+.category{
+  flex:0 0 auto;
+  border:1px solid #242424;
+  background:#101010;
+  color:#aaa;
+  border-radius:13px;
+  padding:12px 16px;
+  font-size:13px;
+  font-weight:750;
+  transition:.2s;
+}
+
+.category:hover,
+.category.active{
+  background:var(--green);
+  color:#061008;
+  border-color:var(--green);
+}
+
+/* ================= FILTER ================= */
+
+.filters{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:15px 0 20px;
+}
+
+.filter{
+  background:#111;
+  color:#aaa;
+  border:1px solid #242424;
+  border-radius:11px;
+  padding:9px 12px;
+  outline:none;
+}
+
+/* ================= PRODUCTS ================= */
+
+.products{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+
+.product{
+  background:linear-gradient(180deg,#121212,#0d0d0d);
+  border:1px solid #202020;
+  border-radius:18px;
+  overflow:hidden;
+  transition:.25s;
+  cursor:pointer;
+  position:relative;
+}
+
+.product:hover{
+  transform:translateY(-4px);
+  border-color:#343434;
+  box-shadow:var(--shadow);
+}
+
+.productImage{
+  height:225px;
+  background:#181818;
+  position:relative;
+  overflow:hidden;
+}
+
+.productImage img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition:.35s;
+}
+
+.product:hover .productImage img{
+  transform:scale(1.04);
+}
+
+.noImage{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#444;
+  font-size:42px;
+}
+
+.save{
+  position:absolute;
+  right:10px;
+  top:10px;
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(8px);
+  border:1px solid #333;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:3;
+}
+
+.save.saved{
+  color:#ff4c6a;
+}
+
+.productInfo{
+  padding:15px;
+}
+
+.productCategory{
+  color:var(--green);
+  font-size:11px;
+  font-weight:800;
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+
+.productTitle{
+  font-size:15px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  margin-bottom:8px;
+}
+
+.productBottom{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.price{
+  font-size:19px;
+  font-weight:950;
+}
+
+.city{
+  color:#777;
+  font-size:11px;
+}
+
+/* ================= EMPTY / LOADING ================= */
+
+.center{
+  text-align:center;
+  padding:70px 20px;
+  color:#777;
+}
+
+.spinner{
+  width:32px;
+  height:32px;
+  border:3px solid #292929;
+  border-top-color:var(--green);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  margin:0 auto 15px;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+/* ================= MODALS ================= */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(8px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+
+.overlay.show{
+  display:flex;
+}
+
+.modal{
+  width:min(100%,720px);
+  max-height:92vh;
+  overflow:auto;
+  background:#111;
+  border:1px solid #292929;
+  border-radius:22px;
+  box-shadow:0 30px 100px rgba(0,0,0,.7);
+}
+
+.modalHead{
+  padding:18px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid #222;
+  position:sticky;
+  top:0;
+  background:#111;
+  z-index:2;
+}
+
+.modalHead h3{
+  font-size:19px;
+}
+
+.close{
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  border:1px solid #292929;
+  background:#171717;
+  color:#fff;
+}
+
+.modalBody{
+  padding:20px;
+}
+
+/* ================= PRODUCT DETAIL ================= */
+
+.detailGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.detailImage{
+  min-height:350px;
+  border-radius:17px;
+  overflow:hidden;
+  background:#181818;
+}
+
+.detailImage img{
+  width:100%;
+  height:100%;
+  min-height:350px;
+  object-fit:cover;
+}
+
+.detailInfo h1{
+  font-size:30px;
+  line-height:1.05;
+  margin-bottom:12px;
+}
+
+.detailPrice{
+  font-size:30px;
+  font-weight:950;
+  color:var(--green);
+  margin:15px 0;
+}
+
+.detailMeta{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+}
+
+.meta{
+  background:#181818;
+  border:1px solid #292929;
+  color:#aaa;
+  border-radius:9px;
+  padding:7px 9px;
+  font-size:12px;
+}
+
+.description{
+  color:#aaa;
+  line-height:1.6;
+  font-size:14px;
+  margin-bottom:20px;
+}
+
+/* ================= CART ================= */
+
+.cartDrawer{
+  position:fixed;
+  top:0;
+  right:-440px;
+  width:min(420px,100%);
+  height:100%;
+  z-index:2000;
+  background:#101010;
+  border-left:1px solid #292929;
+  box-shadow:-20px 0 70px rgba(0,0,0,.5);
+  transition:.3s;
+  display:flex;
+  flex-direction:column;
+}
+
+.cartDrawer.open{
+  right:0;
+}
+
+.cartHead{
+  padding:20px;
+  border-bottom:1px solid #242424;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.cartItems{
+  flex:1;
+  overflow:auto;
+  padding:15px;
+}
+
+.cartItem{
+  display:flex;
+  gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid #202020;
+}
+
+.cartItem img{
+  width:65px;
+  height:65px;
+  border-radius:10px;
+  object-fit:cover;
+  background:#181818;
+}
+
+.cartItemInfo{
+  flex:1;
+}
+
+.cartItemTitle{
+  font-weight:750;
+  font-size:13px;
+  margin-bottom:5px;
+}
+
+.cartItemPrice{
+  color:var(--green);
+  font-weight:900;
+  font-size:14px;
+}
+
+.qty{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  margin-top:8px;
+}
+
+.qty button{
+  width:27px;
+  height:27px;
+  background:#1b1b1b;
+  color:#fff;
+  border:1px solid #2b2b2b;
+  border-radius:7px;
+}
+
+.cartFoot{
+  padding:18px;
+  border-top:1px solid #242424;
+}
+
+.total{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:15px;
+  font-size:19px;
+  font-weight:900;
+}
+
+/* ================= FORMS ================= */
+
+.form{
+  display:grid;
+  gap:12px;
+}
+
+.field{
+  display:grid;
+  gap:6px;
+}
+
+.field label{
+  color:#aaa;
+  font-size:12px;
+  font-weight:700;
+}
+
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  background:#181818;
+  color:#fff;
+  border:1px solid #292929;
+  border-radius:11px;
+  padding:12px;
+  outline:none;
+}
+
+.field textarea{
+  min-height:100px;
+  resize:vertical;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus{
+  border-color:var(--green);
+}
+
+.two{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+/* ================= FOOTER ================= */
+
+footer{
+  border-top:1px solid #1c1c1c;
+  margin-top:60px;
+  padding:35px 20px;
+  color:#666;
+  text-align:center;
+  font-size:12px;
+}
+
+footer strong{
+  color:#aaa;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:1000px){
+  .products{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+
+@media(max-width:760px){
+  .nav{
+    height:auto;
+    min-height:70px;
+    padding:12px;
+    flex-wrap:wrap;
+  }
+
+  .logo{
+    font-size:24px;
+  }
+
+  .searchWrap{
+    order:3;
+    flex-basis:100%;
+  }
+
+  .navButtons .optional{
+    display:none;
+  }
+
+  main{
+    padding:12px;
+  }
+
+  .hero{
+    min-height:390px;
+    padding:30px 22px;
+    border-radius:22px;
+  }
+
+  .hero h1{
+    font-size:48px;
+    letter-spacing:-3px;
+  }
+
+  .hero p{
+    font-size:14px;
+  }
+
+  .products{
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+  }
+
+  .productImage{
+    height:180px;
+  }
+
+  .productInfo{
+    padding:12px;
+  }
+
+  .productTitle{
+    font-size:13px;
+  }
+
+  .price{
+    font-size:16px;
+  }
+
+  .detailGrid{
+    grid-template-columns:1fr;
+  }
+
+  .detailImage,
+  .detailImage img{
+    min-height:270px;
+    height:270px;
+  }
+
+  .two{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:420px){
+  .products{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .productImage{
+    height:155px;
+  }
+
+  .hero h1{
+    font-size:43px;
+  }
+
+  .hero{
+    min-height:360px;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <!-- WELCOME -->
+<!-- ================= WELCOME ================= -->
 
-  <div id="welcomeScreen">
-    <div class="welcome">
+<div id="welcomeScreen">
+  <div class="welcome">
+    <div class="welcomeLogo">SHIT<span>.</span>BLEJ</div>
+    <div class="welcomeTitle">Mirësevini</div>
+    <div class="welcomeSub">Marketplace-i juaj</div>
 
-      <div class="logo">
-        SHIT<span>.</span>BLEJ
-      </div>
+    <div class="loading">
+      <div id="loadingBar"></div>
+    </div>
 
-      <h1>Mirësevini</h1>
+    <div id="loadingPercent">0%</div>
+  </div>
+</div>
 
-      <p>Marketplace-i juaj</p>
+<!-- ================= HEADER ================= -->
 
-      <div class="loading">
-        <div id="loadingBar"></div>
-      </div>
+<header class="header">
+  <div class="nav">
 
-      <div id="percent">0%</div>
+    <a href="index.html" class="logo">
+      SHIT<span>.</span>BLEJ
+    </a>
+
+    <div class="searchWrap">
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Kërko makina, telefona, rroba..."
+        autocomplete="off"
+      >
+      <span class="searchIcon">⌕</span>
+    </div>
+
+    <div class="navButtons">
+
+      <button class="btn btnGreen optional" onclick="openSell()">
+        + Shit
+      </button>
+
+      <button
+        id="loginBtn"
+        class="btn optional"
+        onclick="goLogin()"
+      >
+        Hyr
+      </button>
+
+      <button
+        id="registerBtn"
+        class="btn optional"
+        onclick="goRegister()"
+      >
+        Regjistrohu
+      </button>
+
+      <button
+        id="accountBtn"
+        class="btn iconBtn"
+        style="display:none"
+        onclick="showAccount()"
+      >
+        👤
+      </button>
+
+      <button
+        class="btn iconBtn"
+        onclick="openCart()"
+      >
+        🛒
+        <span id="cartCount" style="margin-left:3px">0</span>
+      </button>
 
     </div>
   </div>
+</header>
 
+<!-- ================= MAIN ================= -->
 
-  <!-- APP -->
+<main>
 
-  <div id="app">
+  <section class="hero">
 
-    <header>
+    <div class="heroText">
 
-      <div class="brand">
-        SHIT<span>.</span>BLEJ
+      <div class="badge">
+        ● MARKETPLACE SHQIPTAR
       </div>
-
-      <div class="header-buttons">
-
-        <button
-          class="register"
-          onclick="location.href='register.html'">
-          Regjistrohu
-        </button>
-
-        <button
-          class="login"
-          onclick="location.href='login.html'">
-          Hyr
-        </button>
-
-      </div>
-
-    </header>
-
-
-    <section class="hero">
 
       <h1>
-        Gjej. <span>Bli.</span> Shit.
+        Gjej.<br>
+        Bli.<br>
+        <span>Shit.</span>
       </h1>
 
       <p>
-        Marketplace-i shqiptar për të blerë dhe shitur online.
+        Gjej atë që kërkon, bli direkt nga shitësit
+        dhe publiko produktet e tua në SHIT.BLEJ.
       </p>
 
-      <div class="search-box">
-
-        <input
-          id="search"
-          type="text"
-          placeholder="Çfarë po kërkon?">
-
-        <button onclick="searchProducts()">
-          Kërko
+      <div class="heroActions">
+        <button class="btn btnGreen" onclick="scrollProducts()">
+          Eksploro produktet →
         </button>
 
+        <button class="btn" onclick="openSell()">
+          + Shit një produkt
+        </button>
       </div>
 
-    </section>
+    </div>
 
+  </section>
 
-    <div class="categories">
+  <!-- CATEGORIES -->
 
-      <button class="category" onclick="loadProducts()">
+  <section>
+
+    <div class="sectionHead">
+      <div>
+        <h2>Kategoritë</h2>
+        <p>Gjej më shpejt atë që kërkon</p>
+      </div>
+    </div>
+
+    <div class="categories" id="categories">
+
+      <button class="category active" data-cat="">
         Të gjitha
       </button>
 
-      <button class="category" onclick="filterCategory('Makina')">
+      <button class="category" data-cat="Makina">
         🚗 Makina
       </button>
 
-      <button class="category" onclick="filterCategory('Prona')">
+      <button class="category" data-cat="Prona">
         🏠 Prona
       </button>
 
-      <button class="category" onclick="filterCategory('Elektronikë')">
+      <button class="category" data-cat="Elektronikë">
         📱 Elektronikë
       </button>
 
-      <button class="category" onclick="filterCategory('Telefona')">
+      <button class="category" data-cat="Telefona">
         📱 Telefona
       </button>
 
-      <button class="category" onclick="filterCategory('Kompjuterë')">
+      <button class="category" data-cat="Kompjuterë">
         💻 Kompjuterë
       </button>
 
-      <button class="category" onclick="filterCategory('Rroba')">
+      <button class="category" data-cat="Rroba">
         👕 Rroba
       </button>
 
-      <button class="category" onclick="filterCategory('Këpucë')">
+      <button class="category" data-cat="Këpucë">
         👟 Këpucë
       </button>
 
-      <button class="category" onclick="filterCategory('Punë')">
+      <button class="category" data-cat="Shtëpi & Mobilje">
+        🛋️ Shtëpi
+      </button>
+
+      <button class="category" data-cat="Punë">
         💼 Punë
       </button>
 
-      <button class="category" onclick="filterCategory('Shërbime')">
-        🔧 Shërbime
+      <button class="category" data-cat="Shërbime">
+        🛠️ Shërbime
+      </button>
+
+      <button class="category" data-cat="Sport">
+        ⚽ Sport
+      </button>
+
+      <button class="category" data-cat="Vegla & Makineri">
+        🔧 Vegla
+      </button>
+
+      <button class="category" data-cat="Të tjera">
+        • Të tjera
       </button>
 
     </div>
 
+  </section>
 
-    <main class="content">
+  <!-- PRODUCTS -->
 
-      <h2 class="section-title">
-        Produktet e fundit
-      </h2>
+  <section id="productsSection">
 
-      <div id="products">
+    <div class="sectionHead">
 
-        <div class="empty">
-          Duke ngarkuar produktet...
+      <div>
+        <h2>Produktet</h2>
+        <p id="resultText">Produktet më të fundit</p>
+      </div>
+
+    </div>
+
+    <div class="filters">
+
+      <select id="sortFilter" class="filter">
+        <option value="new">Më të rejat</option>
+        <option value="priceLow">Çmimi: i ulët → i lartë</option>
+        <option value="priceHigh">Çmimi: i lartë → i ulët</option>
+      </select>
+
+      <select id="conditionFilter" class="filter">
+        <option value="">Gjendja</option>
+        <option value="new">E re</option>
+        <option value="used">E përdorur</option>
+      </select>
+
+    </div>
+
+    <div id="products" class="products">
+      <div class="center" style="grid-column:1/-1">
+        <div class="spinner"></div>
+        Po ngarkohen produktet...
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  <strong>SHIT.BLEJ</strong> · Marketplace shqiptar<br>
+  Gjej. Bli. Shit.
+</footer>
+
+<!-- ================= PRODUCT MODAL ================= -->
+
+<div class="overlay" id="productOverlay">
+
+  <div class="modal">
+
+    <div class="modalHead">
+      <h3>Detajet e produktit</h3>
+      <button class="close" onclick="closeProduct()">×</button>
+    </div>
+
+    <div class="modalBody" id="productDetail"></div>
+
+  </div>
+
+</div>
+
+<!-- ================= SELL MODAL ================= -->
+
+<div class="overlay" id="sellOverlay">
+
+  <div class="modal">
+
+    <div class="modalHead">
+      <h3>Shit një produkt</h3>
+      <button class="close" onclick="closeSell()">×</button>
+    </div>
+
+    <div class="modalBody">
+
+      <form id="sellForm" class="form">
+
+        <div class="field">
+          <label>Titulli</label>
+          <input id="sellTitle" required placeholder="p.sh. iPhone 15 Pro Max">
+        </div>
+
+        <div class="two">
+
+          <div class="field">
+            <label>Çmimi (€)</label>
+            <input id="sellPrice" type="number" min="0" step="0.01" required>
+          </div>
+
+          <div class="field">
+            <label>Stoku</label>
+            <input id="sellStock" type="number" min="1" value="1">
+          </div>
+
+        </div>
+
+        <div class="two">
+
+          <div class="field">
+            <label>Kategoria</label>
+
+            <select id="sellCategory" required>
+              <option value="">Zgjidh kategorinë</option>
+              <option>Makina</option>
+              <option>Prona</option>
+              <option>Elektronikë</option>
+              <option>Telefona</option>
+              <option>Kompjuterë</option>
+              <option>Rroba</option>
+              <option>Këpucë</option>
+              <option>Shtëpi & Mobilje</option>
+              <option>Punë</option>
+              <option>Shërbime</option>
+              <option>Sport</option>
+              <option>Vegla & Makineri</option>
+              <option>Të tjera</option>
+            </select>
+
+          </div>
+
+          <div class="field">
+            <label>Gjendja</label>
+
+            <select id="sellCondition">
+              <option value="">Zgjidh</option>
+              <option value="new">E re</option>
+              <option value="used">E përdorur</option>
+            </select>
+
+          </div>
+
+        </div>
+
+        <div class="two">
+
+          <div class="field">
+            <label>Qyteti</label>
+            <input id="sellCity" placeholder="Tiranë">
+          </div>
+
+          <div class="field">
+            <label>Telefoni</label>
+            <input id="sellPhone" placeholder="06xxxxxxxx">
+          </div>
+
+        </div>
+
+        <div class="field">
+          <label>Foto — URL</label>
+          <input id="sellImage" placeholder="https://...">
+        </div>
+
+        <div class="field">
+          <label>Përshkrimi</label>
+          <textarea id="sellDescription"
+            placeholder="Përshkruaj produktin..."></textarea>
+        </div>
+
+        <button class="btn btnGreen" type="submit">
+          Publiko produktin
+        </button>
+
+        <div id="sellMessage"></div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ================= CART ================= -->
+
+<div id="cartDrawer" class="cartDrawer">
+
+  <div class="cartHead">
+    <h3>🛒 Shporta</h3>
+    <button class="close" onclick="closeCart()">×</button>
+  </div>
+
+  <div id="cartItems" class="cartItems"></div>
+
+  <div class="cartFoot">
+
+    <div class="total">
+      <span>Total</span>
+      <span id="cartTotal">0 €</span>
+    </div>
+
+    <button class="btn btnGreen" style="width:100%" onclick="checkout()">
+      Vazhdo me porosinë →
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+/* =========================================================
+   API
+========================================================= */
+
+const API =
+  location.hostname.includes("github.io")
+    ? "https://sabi-marketplace.babasabfreefire2.workers.dev/api"
+    : "/api";
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let products = [];
+let selectedCategory = "";
+let selectedProduct = null;
+
+let cart = JSON.parse(
+  localStorage.getItem("sabiCart") || "[]"
+);
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+function getToken(){
+  return (
+    localStorage.getItem("shitblej_token") ||
+    localStorage.getItem("sabiAuthToken") ||
+    ""
+  );
+}
+
+function getUser(){
+  return {
+    id:localStorage.getItem("sabiUserId"),
+    name:localStorage.getItem("sabiUserName"),
+    role:localStorage.getItem("sabiUserRole"),
+    contact:localStorage.getItem("sabiUserContact")
+  };
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function goLogin(){
+  location.href="login.html";
+}
+
+function goRegister(){
+  location.href="register.html";
+}
+
+function showAccount(){
+
+  const user=getUser();
+
+  if(!user.id){
+    goLogin();
+    return;
+  }
+
+  const message =
+`Llogaria: ${user.name || "Përdorues"}
+Roli: ${user.role || "customer"}`;
+
+  if(user.role==="admin"){
+    if(confirm(message+"\n\nHap panelin Admin?")){
+      location.href="admin.html";
+    }
+  }else{
+    alert(message);
+  }
+}
+
+
+/* =========================================================
+   WELCOME
+========================================================= */
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+  let p=0;
+
+  const bar=document.getElementById("loadingBar");
+  const percent=document.getElementById("loadingPercent");
+  const screen=document.getElementById("welcomeScreen");
+
+  const timer=setInterval(()=>{
+
+    p+=2;
+
+    if(p>100)p=100;
+
+    bar.style.width=p+"%";
+    percent.textContent=p+"%";
+
+    if(p>=100){
+
+      clearInterval(timer);
+
+      setTimeout(()=>{
+        screen.classList.add("hide");
+      },300);
+
+    }
+
+  },22);
+
+});
+
+
+/* =========================================================
+   LOAD PRODUCTS
+========================================================= */
+
+async function loadProducts(){
+
+  const container=document.getElementById("products");
+
+  container.innerHTML=`
+    <div class="center" style="grid-column:1/-1">
+      <div class="spinner"></div>
+      Po ngarkohen produktet...
+    </div>
+  `;
+
+  try{
+
+    const res=await fetch(API+"/products");
+
+    if(!res.ok){
+      throw new Error("API error");
+    }
+
+    const data=await res.json();
+
+    products=Array.isArray(data)
+      ? data
+      : (data.products || data.items || []);
+
+    renderProducts();
+
+  }catch(error){
+
+    console.error(error);
+
+    container.innerHTML=`
+      <div class="center" style="grid-column:1/-1">
+        <div style="font-size:35px;margin-bottom:10px">⚠️</div>
+        <div style="color:#fff;font-weight:800">
+          Nuk u ngarkuan produktet
+        </div>
+        <div style="margin-top:7px">
+          Kontrollo lidhjen me serverin.
+        </div>
+        <button
+          class="btn btnGreen"
+          style="margin-top:18px"
+          onclick="loadProducts()">
+          Provo përsëri
+        </button>
+      </div>
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   RENDER PRODUCTS
+========================================================= */
+
+function renderProducts(){
+
+  const container=document.getElementById("products");
+
+  let list=[...products];
+
+  const search=
+    document.getElementById("searchInput")
+      .value
+      .trim()
+      .toLowerCase();
+
+  if(search){
+
+    list=list.filter(p=>{
+
+      const text=[
+        p.title,
+        p.name,
+        p.description,
+        p.category,
+        p.city,
+        p.seller
+      ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+      return text.includes(search);
+
+    });
+
+  }
+
+  if(selectedCategory){
+
+    list=list.filter(p=>
+      normalizeCategory(p.category) ===
+      normalizeCategory(selectedCategory)
+    );
+
+  }
+
+  const condition=
+    document.getElementById("conditionFilter").value;
+
+  if(condition){
+    list=list.filter(p=>
+      String(p.condition || "").toLowerCase()===condition
+    );
+  }
+
+  const sort=
+    document.getElementById("sortFilter").value;
+
+  if(sort==="priceLow"){
+    list.sort((a,b)=>Number(a.price||0)-Number(b.price||0));
+  }
+
+  if(sort==="priceHigh"){
+    list.sort((a,b)=>Number(b.price||0)-Number(a.price||0));
+  }
+
+  if(sort==="new"){
+    list.sort((a,b)=>
+      new Date(b.created_at||0)-new Date(a.created_at||0)
+    );
+  }
+
+  document.getElementById("resultText").textContent =
+    `${list.length} produkt${list.length===1?"":"e"} të gjetura`;
+
+  if(!list.length){
+
+    container.innerHTML=`
+      <div class="center" style="grid-column:1/-1">
+        <div style="font-size:42px;margin-bottom:10px">🔎</div>
+        <div style="color:#fff;font-weight:800">
+          Nuk u gjet asnjë produkt
+        </div>
+        <div style="margin-top:7px">
+          Provo një kërkim ose kategori tjetër.
+        </div>
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML=list.map(productCard).join("");
+
+}
+
+
+/* =========================================================
+   PRODUCT CARD
+========================================================= */
+
+function productCard(p){
+
+  const id=p.id;
+
+  const title=
+    p.title ||
+    p.name ||
+    "Produkt";
+
+  const image=
+    p.image_url ||
+    p.image ||
+    "";
+
+  const price=
+    Number(p.price||0).toLocaleString("en-US",{
+      maximumFractionDigits:2
+    });
+
+  const category=
+    p.category ||
+    "Të tjera";
+
+  const city=
+    p.city ||
+    "Shqipëri";
+
+  return `
+    <article class="product" onclick="openProduct(${id})">
+
+      <div class="productImage">
+
+        ${
+          image
+          ? `<img
+              src="${escapeHtml(image)}"
+              alt="${escapeHtml(title)}"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+            >`
+          : ""
+        }
+
+        <div
+          class="noImage"
+          style="${image ? "display:none" : ""}">
+          📦
+        </div>
+
+        <button
+          class="save"
+          onclick="event.stopPropagation();saveProduct(${id},this)">
+          ♡
+        </button>
+
+      </div>
+
+      <div class="productInfo">
+
+        <div class="productCategory">
+          ${escapeHtml(category)}
+        </div>
+
+        <div class="productTitle">
+          ${escapeHtml(title)}
+        </div>
+
+        <div class="productBottom">
+
+          <div class="price">
+            ${price} €
+          </div>
+
+          <div class="city">
+            📍 ${escapeHtml(city)}
+          </div>
+
         </div>
 
       </div>
 
-    </main>
+    </article>
+  `;
+}
 
 
-    <footer>
-      © 2026 SHIT.BLEJ
-    </footer>
+/* =========================================================
+   PRODUCT DETAIL
+========================================================= */
 
-  </div>
+async function openProduct(id){
 
+  selectedProduct=
+    products.find(p=>Number(p.id)===Number(id));
 
-  <script>
+  if(!selectedProduct)return;
 
-    const API = "/api";
+  const p=selectedProduct;
 
+  const title=p.title||p.name||"Produkt";
+  const image=p.image_url||p.image||"";
 
-    /* WELCOME */
+  document.getElementById("productDetail").innerHTML=`
 
-    let progress = 0;
+    <div class="detailGrid">
 
-    const loadingBar =
-      document.getElementById("loadingBar");
+      <div class="detailImage">
 
-    const percent =
-      document.getElementById("percent");
-
-    const welcomeScreen =
-      document.getElementById("welcomeScreen");
-
-    const app =
-      document.getElementById("app");
-
-
-    const loader = setInterval(() => {
-
-      progress += 2;
-
-      if (progress > 100) {
-        progress = 100;
-      }
-
-      loadingBar.style.width =
-        progress + "%";
-
-      percent.textContent =
-        progress + "%";
-
-
-      if (progress >= 100) {
-
-        clearInterval(loader);
-
-        setTimeout(() => {
-
-          welcomeScreen.style.display =
-            "none";
-
-          app.style.display =
-            "block";
-
-          loadProducts();
-
-        }, 400);
-
-      }
-
-    }, 25);
-
-
-    /* PRODUCTS */
-
-    async function loadProducts() {
-
-      const box =
-        document.getElementById("products");
-
-      box.innerHTML =
-        '<div class="empty">Duke ngarkuar...</div>';
-
-      try {
-
-        const response =
-          await fetch(API + "/products");
-
-        if (!response.ok) {
-          throw new Error("API error");
+        ${
+          image
+          ? `<img
+              src="${escapeHtml(image)}"
+              alt="${escapeHtml(title)}"
+            >`
+          : `<div class="noImage">📦</div>`
         }
 
-        const data =
-          await response.json();
+      </div>
 
-        renderProducts(
-          Array.isArray(data)
-            ? data
-            : []
-        );
+      <div class="detailInfo">
 
-      } catch (error) {
+        <div class="productCategory">
+          ${escapeHtml(p.category||"Të tjera")}
+        </div>
 
-        console.error(error);
+        <h1>${escapeHtml(title)}</h1>
 
-        box.innerHTML = `
-          <div class="empty">
-            Nuk u ngarkuan produktet.
-            <br><br>
-            App-i është online.
-          </div>
-        `;
+        <div class="detailPrice">
+          ${Number(p.price||0).toLocaleString()} €
+        </div>
 
-      }
+        <div class="detailMeta">
 
-    }
-
-
-    function renderProducts(products) {
-
-      const box =
-        document.getElementById("products");
-
-      if (!products.length) {
-
-        box.innerHTML = `
-          <div class="empty">
-            Nuk ka produkte akoma.
-          </div>
-        `;
-
-        return;
-      }
-
-
-      box.innerHTML =
-        products.map(product => {
-
-          const image =
-            product.image_url ||
-            product.image ||
-            "";
-
-          return `
-
-            <div class="product">
-
-              <div class="product-image">
-
-                ${
-                  image
-                    ? `<img
-                         src="${escapeHtml(image)}"
-                         alt="${escapeHtml(product.title || product.name || "")}"
-                       >`
-                    : "Pa foto"
-                }
-
-              </div>
-
-              <div class="product-info">
-
-                <div class="product-title">
-                  ${escapeHtml(
-                    product.title ||
-                    product.name ||
-                    "Produkt"
-                  )}
-                </div>
-
-                <div class="price">
-                  ${Number(
-                    product.price || 0
-                  ).toLocaleString("sq-AL")}
-                  €
-                </div>
-
-                <div style="
-                  color:#777;
-                  font-size:13px;
-                  margin-top:7px;
-                ">
-                  ${escapeHtml(
-                    product.category || ""
-                  )}
-                </div>
-
-              </div>
-
-            </div>
-
-          `;
-
-        }).join("");
-
-    }
-
-
-    async function searchProducts() {
-
-      const q =
-        document
-          .getElementById("search")
-          .value
-          .trim();
-
-      if (!q) {
-
-        loadProducts();
-
-        return;
-      }
-
-      const box =
-        document.getElementById("products");
-
-      box.innerHTML =
-        '<div class="empty">Duke kërkuar...</div>';
-
-      try {
-
-        const response =
-          await fetch(
-            API +
-            "/products/search?q=" +
-            encodeURIComponent(q)
-          );
-
-        const data =
-          await response.json();
-
-        renderProducts(
-          Array.isArray(data)
-            ? data
-            : []
-        );
-
-      } catch (error) {
-
-        console.error(error);
-
-        box.innerHTML =
-          '<div class="empty">Gabim gjatë kërkimit.</div>';
-
-      }
-
-    }
-
-
-    async function filterCategory(category) {
-
-      const box =
-        document.getElementById("products");
-
-      box.innerHTML =
-        '<div class="empty">Duke kërkuar...</div>';
-
-      try {
-
-        const response =
-          await fetch(
-            API +
-            "/products/search?category=" +
-            encodeURIComponent(category)
-          );
-
-        const data =
-          await response.json();
-
-        renderProducts(
-          Array.isArray(data)
-            ? data
-            : []
-        );
-
-      } catch {
-
-        box.innerHTML =
-          '<div class="empty">Gabim.</div>';
-
-      }
-
-    }
-
-
-    function escapeHtml(value) {
-
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-
-    }
-
-
-    document
-      .getElementById("search")
-      .addEventListener(
-        "keydown",
-        function(event) {
-
-          if (event.key === "Enter") {
-            searchProducts();
+          ${
+            p.city
+            ? `<div class="meta">📍 ${escapeHtml(p.city)}</div>`
+            : ""
           }
 
+          ${
+            p.condition
+            ? `<div class="meta">
+                ${p.condition==="new"?"✨ E re":"♻️ E përdorur"}
+              </div>`
+            : ""
+          }
+
+          ${
+            p.stock
+            ? `<div class="meta">📦 ${p.stock} në stok</div>`
+            : ""
+          }
+
+          ${
+            p.seller
+            ? `<div class="meta">👤 ${escapeHtml(p.seller)}</div>`
+            : ""
+          }
+
+        </div>
+
+        <div class="description">
+          ${
+            escapeHtml(
+              p.description ||
+              "Nuk ka përshkrim për këtë produkt."
+            )
+          }
+        </div>
+
+        <button
+          class="btn btnGreen"
+          style="width:100%;margin-bottom:10px"
+          onclick="addToCart(${p.id})">
+          🛒 Shto në shportë
+        </button>
+
+        ${
+          p.phone
+          ? `<a
+              class="btn"
+              style="display:block;text-align:center"
+              href="tel:${escapeHtml(p.phone)}">
+              📞 Kontakto shitësin
+            </a>`
+          : ""
         }
+
+      </div>
+
+    </div>
+  `;
+
+  document.getElementById("productOverlay")
+    .classList.add("show");
+}
+
+function closeProduct(){
+  document.getElementById("productOverlay")
+    .classList.remove("show");
+}
+
+
+/* =========================================================
+   SAVE PRODUCT
+========================================================= */
+
+async function saveProduct(id,button){
+
+  const token=getToken();
+
+  if(!token){
+    alert("Duhet të hysh në llogari për të ruajtur produktet.");
+    goLogin();
+    return;
+  }
+
+  try{
+
+    const res=await fetch(
+      API+`/products/${id}/save`,
+      {
+        method:"POST",
+        headers:{
+          "Authorization":"Bearer "+token
+        }
+      }
+    );
+
+    const data=await res.json();
+
+    if(res.ok){
+
+      button.classList.toggle("saved");
+
+      button.textContent =
+        button.classList.contains("saved")
+        ? "♥"
+        : "♡";
+
+    }else{
+
+      alert(data.error||"Nuk u ruajt produkti.");
+
+    }
+
+  }catch(e){
+
+    alert("Gabim lidhjeje.");
+
+  }
+
+}
+
+
+/* =========================================================
+   CART
+========================================================= */
+
+function saveCart(){
+  localStorage.setItem(
+    "sabiCart",
+    JSON.stringify(cart)
+  );
+}
+
+function addToCart(id){
+
+  const p=products.find(x=>Number(x.id)===Number(id));
+
+  if(!p)return;
+
+  const existing=
+    cart.find(x=>Number(x.id)===Number(id));
+
+  if(existing){
+
+    existing.qty++;
+
+  }else{
+
+    cart.push({
+      id:p.id,
+      qty:1,
+      title:p.title||p.name||"Produkt",
+      price:Number(p.price||0),
+      image:p.image_url||p.image||""
+    });
+
+  }
+
+  saveCart();
+  renderCart();
+  updateCartCount();
+
+  alert("Produkti u shtua në shportë 🛒");
+
+}
+
+
+function renderCart(){
+
+  const box=document.getElementById("cartItems");
+
+  if(!cart.length){
+
+    box.innerHTML=`
+      <div class="center">
+        <div style="font-size:45px">🛒</div>
+        <div style="margin-top:10px">
+          Shporta është bosh
+        </div>
+      </div>
+    `;
+
+    document.getElementById("cartTotal")
+      .textContent="0 €";
+
+    return;
+  }
+
+  box.innerHTML=cart.map((item,index)=>`
+
+    <div class="cartItem">
+
+      ${
+        item.image
+        ? `<img src="${escapeHtml(item.image)}">`
+        : `<div style="
+            width:65px;
+            height:65px;
+            border-radius:10px;
+            background:#181818;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:25px">
+            📦
+          </div>`
+      }
+
+      <div class="cartItemInfo">
+
+        <div class="cartItemTitle">
+          ${escapeHtml(item.title)}
+        </div>
+
+        <div class="cartItemPrice">
+          ${item.price.toLocaleString()} €
+        </div>
+
+        <div class="qty">
+
+          <button onclick="changeQty(${index},-1)">
+            −
+          </button>
+
+          <span>${item.qty}</span>
+
+          <button onclick="changeQty(${index},1)">
+            +
+          </button>
+
+          <button
+            onclick="removeCart(${index})"
+            style="margin-left:6px;color:#ff5555">
+            ×
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `).join("");
+
+  const total=cart.reduce(
+    (sum,item)=>sum+(item.price*item.qty),
+    0
+  );
+
+  document.getElementById("cartTotal")
+    .textContent=
+    total.toLocaleString(undefined,{
+      maximumFractionDigits:2
+    })+" €";
+
+}
+
+
+function changeQty(index,amount){
+
+  cart[index].qty+=amount;
+
+  if(cart[index].qty<=0){
+    cart.splice(index,1);
+  }
+
+  saveCart();
+  renderCart();
+  updateCartCount();
+
+}
+
+
+function removeCart(index){
+
+  cart.splice(index,1);
+
+  saveCart();
+  renderCart();
+  updateCartCount();
+
+}
+
+
+function updateCartCount(){
+
+  const count=cart.reduce(
+    (sum,item)=>sum+item.qty,
+    0
+  );
+
+  document.getElementById("cartCount")
+    .textContent=count;
+
+}
+
+
+function openCart(){
+
+  document.getElementById("cartDrawer")
+    .classList.add("open");
+
+  renderCart();
+
+}
+
+function closeCart(){
+
+  document.getElementById("cartDrawer")
+    .classList.remove("open");
+
+}
+
+
+/* =========================================================
+   CHECKOUT
+========================================================= */
+
+function checkout(){
+
+  if(!cart.length){
+    alert("Shporta është bosh.");
+    return;
+  }
+
+  if(!getToken()){
+    alert("Duhet të hysh në llogari për të bërë porosi.");
+    goLogin();
+    return;
+  }
+
+  const name=
+    prompt("Emri dhe mbiemri:");
+
+  if(!name)return;
+
+  const phone=
+    prompt("Numri i telefonit:");
+
+  if(!phone)return;
+
+  const city=
+    prompt("Qyteti:","Tiranë");
+
+  if(!city)return;
+
+  const address=
+    prompt("Adresa:");
+
+  if(!address)return;
+
+  createOrder({
+    customer_name:name,
+    customer_phone:phone,
+    customer_city:city,
+    customer_address:address
+  });
+
+}
+
+
+async function createOrder(info){
+
+  try{
+
+    const res=await fetch(API+"/orders",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":"Bearer "+getToken()
+      },
+      body:JSON.stringify({
+        ...info,
+        payment_method:"cash",
+        items:cart.map(x=>({
+          id:x.id,
+          qty:x.qty
+        }))
+      })
+    });
+
+    const data=await res.json();
+
+    if(!res.ok){
+
+      alert(
+        data.error ||
+        "Porosia nuk u krijua."
       );
 
-  </script>
+      return;
+    }
+
+    cart=[];
+
+    saveCart();
+    renderCart();
+    updateCartCount();
+
+    closeCart();
+
+    alert(
+      "Porosia u krijua me sukses! 🎉\n"+
+      (data.order_code
+        ? "Kodi: "+data.order_code
+        : "")
+    );
+
+  }catch(e){
+
+    alert("Gabim gjatë krijimit të porosisë.");
+
+  }
+
+}
+
+
+/* =========================================================
+   SELL
+========================================================= */
+
+function openSell(){
+
+  if(!getToken()){
+
+    alert(
+      "Duhet të hysh në llogari për të shitur një produkt."
+    );
+
+    goLogin();
+    return;
+  }
+
+  document.getElementById("sellOverlay")
+    .classList.add("show");
+
+}
+
+function closeSell(){
+
+  document.getElementById("sellOverlay")
+    .classList.remove("show");
+
+}
+
+
+document.getElementById("sellForm")
+.addEventListener("submit",async e=>{
+
+  e.preventDefault();
+
+  const message=
+    document.getElementById("sellMessage");
+
+  message.textContent="Po publikohet...";
+  message.style.color="#999";
+
+  const body={
+
+    title:
+      document.getElementById("sellTitle").value.trim(),
+
+    description:
+      document.getElementById("sellDescription").value.trim(),
+
+    price:
+      Number(document.getElementById("sellPrice").value),
+
+    image_url:
+      document.getElementById("sellImage").value.trim(),
+
+    category:
+      document.getElementById("sellCategory").value,
+
+    stock:
+      Number(document.getElementById("sellStock").value||1),
+
+    city:
+      document.getElementById("sellCity").value.trim(),
+
+    condition:
+      document.getElementById("sellCondition").value,
+
+    phone:
+      document.getElementById("sellPhone").value.trim()
+
+  };
+
+  try{
+
+    const res=await fetch(API+"/products",{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":"Bearer "+getToken()
+      },
+
+      body:JSON.stringify(body)
+
+    });
+
+    const data=await res.json();
+
+    if(!res.ok){
+
+      message.textContent=
+        data.error ||
+        "Produkti nuk u publikua.";
+
+      message.style.color="#ff5555";
+
+      return;
+    }
+
+    message.textContent=
+      "✓ Produkti u publikua me sukses!";
+
+    message.style.color="var(--green)";
+
+    document.getElementById("sellForm").reset();
+
+    setTimeout(()=>{
+
+      closeSell();
+      loadProducts();
+
+    },900);
+
+  }catch(error){
+
+    message.textContent=
+      "Gabim lidhjeje me serverin.";
+
+    message.style.color="#ff5555";
+
+  }
+
+});
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+let searchTimer;
+
+document.getElementById("searchInput")
+.addEventListener("input",()=>{
+
+  clearTimeout(searchTimer);
+
+  searchTimer=setTimeout(()=>{
+    renderProducts();
+  },150);
+
+});
+
+
+/* =========================================================
+   CATEGORY
+========================================================= */
+
+document.querySelectorAll(".category")
+.forEach(button=>{
+
+  button.addEventListener("click",()=>{
+
+    document
+      .querySelectorAll(".category")
+      .forEach(x=>x.classList.remove("active"));
+
+    button.classList.add("active");
+
+    selectedCategory=
+      button.dataset.cat || "";
+
+    renderProducts();
+
+  });
+
+});
+
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
+document.getElementById("sortFilter")
+.addEventListener("change",renderProducts);
+
+document.getElementById("conditionFilter")
+.addEventListener("change",renderProducts);
+
+
+/* =========================================================
+   AUTH UI
+========================================================= */
+
+function updateAuthUI(){
+
+  const token=getToken();
+
+  const login=
+    document.getElementById("loginBtn");
+
+  const register=
+    document.getElementById("registerBtn");
+
+  const account=
+    document.getElementById("accountBtn");
+
+  if(token){
+
+    login.style.display="none";
+    register.style.display="none";
+    account.style.display="flex";
+
+  }else{
+
+    login.style.display="";
+    register.style.display="";
+    account.style.display="none";
+
+  }
+
+}
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function normalizeCategory(value){
+
+  if(!value)return "";
+
+  const v=String(value).toLowerCase().trim();
+
+  const map={
+
+    electronics:"elektronikë",
+    accessories:"aksesorë",
+    fashion:"rroba",
+    shoes:"këpucë",
+    home:"shtëpi & mobilje",
+    other:"të tjera"
+
+  };
+
+  return map[v] || v;
+
+}
+
+
+function escapeHtml(value){
+
+  return String(value??"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
+
+
+function scrollProducts(){
+
+  document.getElementById("productsSection")
+    .scrollIntoView({
+      behavior:"smooth"
+    });
+
+}
+
+
+/* =========================================================
+   CLOSE MODALS ON BACKGROUND
+========================================================= */
+
+document.getElementById("productOverlay")
+.addEventListener("click",e=>{
+
+  if(e.target.id==="productOverlay"){
+    closeProduct();
+  }
+
+});
+
+document.getElementById("sellOverlay")
+.addEventListener("click",e=>{
+
+  if(e.target.id==="sellOverlay"){
+    closeSell();
+  }
+
+});
+
+
+/* =========================================================
+   START
+========================================================= */
+
+updateAuthUI();
+updateCartCount();
+renderCart();
+loadProducts();
+
+</script>
 
 </body>
 </html>
