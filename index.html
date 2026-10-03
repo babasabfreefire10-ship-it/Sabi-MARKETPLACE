@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SABI Marketplace</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f4f5f7;
+  color:#171717;
+}
+
+header{
+  background:#fff;
+  border-bottom:1px solid #ddd;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.nav{
+  max-width:1200px;
+  margin:auto;
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+}
+
+.logo{
+  font-size:25px;
+  font-weight:900;
+  color:#111;
+}
+
+.logo span{
+  color:#00a86b;
+}
+
+.nav-right{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.btn{
+  border:0;
+  border-radius:8px;
+  padding:11px 16px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.login{
+  background:#f0f1f2;
+  color:#111;
+}
+
+.sell{
+  background:#00a86b;
+  color:#fff;
+}
+
+.hero{
+  background:#111;
+  color:#fff;
+  padding:45px 18px;
+}
+
+.hero-inner{
+  max-width:1200px;
+  margin:auto;
+}
+
+.hero h1{
+  font-size:38px;
+  margin-bottom:10px;
+}
+
+.hero p{
+  color:#cfcfcf;
+  margin-bottom:25px;
+}
+
+.search{
+  background:#fff;
+  padding:7px;
+  border-radius:10px;
+  display:flex;
+  max-width:850px;
+}
+
+.search input{
+  flex:1;
+  border:0;
+  outline:none;
+  font-size:16px;
+  padding:13px;
+}
+
+.search button{
+  background:#00a86b;
+  color:#fff;
+  border:0;
+  border-radius:8px;
+  padding:0 24px;
+  font-weight:bold;
+}
+
+.categories{
+  max-width:1200px;
+  margin:25px auto;
+  padding:0 18px;
+}
+
+.categories h2{
+  margin-bottom:15px;
+}
+
+.cat-list{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding-bottom:5px;
+}
+
+.cat{
+  background:#fff;
+  border:1px solid #ddd;
+  border-radius:20px;
+  padding:10px 15px;
+  white-space:nowrap;
+  cursor:pointer;
+}
+
+.cat:hover{
+  border-color:#00a86b;
+  color:#00a86b;
+}
+
+.products{
+  max-width:1200px;
+  margin:30px auto;
+  padding:0 18px 50px;
+}
+
+.products-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+
+.card{
+  background:#fff;
+  border-radius:10px;
+  overflow:hidden;
+  border:1px solid #ddd;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 20px #0001;
+}
+
+.image{
+  height:190px;
+  background:#eee;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.no-image{
+  color:#999;
+  font-size:14px;
+}
+
+.info{
+  padding:14px;
+}
+
+.title{
+  font-weight:700;
+  font-size:16px;
+  margin-bottom:8px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.price{
+  font-size:19px;
+  font-weight:900;
+  margin-bottom:8px;
+}
+
+.meta{
+  color:#777;
+  font-size:13px;
+}
+
+.loading{
+  text-align:center;
+  padding:50px;
+  color:#777;
+}
+
+.empty{
+  background:#fff;
+  padding:40px;
+  border-radius:10px;
+  text-align:center;
+  color:#777;
+}
+
+.error{
+  background:#fff0f0;
+  color:#b00020;
+  padding:15px;
+  border-radius:8px;
+  margin-bottom:20px;
+}
+
+@media(max-width:900px){
+  .grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+
+@media(max-width:650px){
+  .nav{
+    height:58px;
+  }
+
+  .logo{
+    font-size:22px;
+  }
+
+  .login{
+    display:none;
+  }
+
+  .hero{
+    padding:32px 15px;
+  }
+
+  .hero h1{
+    font-size:29px;
+  }
+
+  .search{
+    width:100%;
+  }
+
+  .search button{
+    padding:0 15px;
+  }
+
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+  }
+
+  .image{
+    height:150px;
+  }
+
+  .info{
+    padding:11px;
+  }
+
+  .price{
+    font-size:17px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+
+    <div class="logo">
+      SABI<span>.</span>
+    </div>
+
+    <div class="nav-right">
+      <button class="btn login" onclick="goLogin()">
+        Hyr
+      </button>
+
+      <button class="btn sell" onclick="sellProduct()">
+        + Shit
+      </button>
+    </div>
+
+  </div>
+</header>
+
+
+<section class="hero">
+
+  <div class="hero-inner">
+
+    <h1>Gjej. Bli. Shit.</h1>
+
+    <p>
+      Marketplace shqiptar për të blerë dhe shitur çdo gjë.
+    </p>
+
+    <div class="search">
+
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="Çfarë po kërkon?"
+      >
+
+      <button onclick="searchProducts()">
+        Kërko
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="categories">
+
+  <h2>Kategoritë</h2>
+
+  <div class="cat-list">
+
+    <div class="cat" onclick="category('Cars')">
+      🚗 Makina
+    </div>
+
+    <div class="cat" onclick="category('Property')">
+      🏠 Prona
+    </div>
+
+    <div class="cat" onclick="category('Phones')">
+      📱 Telefona
+    </div>
+
+    <div class="cat" onclick="category('Electronics')">
+      💻 Elektronikë
+    </div>
+
+    <div class="cat" onclick="category('Fashion')">
+      👕 Rroba
+    </div>
+
+    <div class="cat" onclick="category('Shoes')">
+      👟 Këpucë
+    </div>
+
+    <div class="cat" onclick="category('Jobs')">
+      💼 Punë
+    </div>
+
+    <div class="cat" onclick="category('Services')">
+      🔧 Shërbime
+    </div>
+
+    <div class="cat" onclick="category('Other')">
+      📦 Të tjera
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="products">
+
+  <div class="products-head">
+    <h2>Njoftimet e fundit</h2>
+  </div>
+
+  <div id="message"></div>
+
+  <div id="products" class="grid">
+    <div class="loading">
+      Duke ngarkuar produktet...
+    </div>
+  </div>
+
+</section>
+
+
+<script>
+
+const API = "/api";
+
+
+function goLogin(){
+  location.href = "/login.html";
+}
+
+
+function sellProduct(){
+  location.href = "/login.html?next=sell";
+}
+
+
+function category(cat){
+
+  loadProducts({
+    category:cat
+  });
+
+}
+
+
+function searchProducts(){
+
+  const q =
+    document.getElementById("searchInput").value.trim();
+
+  loadProducts({
+    q:q
+  });
+
+}
+
+
+async function loadProducts(filters = {}){
+
+  const container =
+    document.getElementById("products");
+
+  const message =
+    document.getElementById("message");
+
+  container.innerHTML =
+    '<div class="loading">Duke ngarkuar...</div>';
+
+  message.innerHTML = "";
+
+  try{
+
+    let url;
+
+    const params =
+      new URLSearchParams();
+
+    if(filters.q){
+      params.set("q",filters.q);
+    }
+
+    if(filters.category){
+      params.set(
+        "category",
+        filters.category
+      );
+    }
+
+    if(params.toString()){
+
+      url =
+        API +
+        "/products/search?" +
+        params.toString();
+
+    }else{
+
+      url =
+        API +
+        "/products";
+
+    }
+
+
+    const response =
+      await fetch(url,{
+        method:"GET",
+        headers:{
+          "Accept":"application/json"
+        }
+      });
+
+
+    if(!response.ok){
+
+      throw new Error(
+        "Serveri ktheu HTTP " +
+        response.status
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    if(!Array.isArray(data)){
+
+      throw new Error(
+        data.error ||
+        "Përgjigje e pavlefshme nga API."
+      );
+
+    }
+
+
+    renderProducts(data);
+
+  }catch(error){
+
+    console.error(error);
+
+    container.innerHTML =
+      '<div class="empty">' +
+      'Nuk u ngarkuan produktet.' +
+      '</div>';
+
+    message.innerHTML =
+      '<div class="error">' +
+      'Gabim: ' +
+      escapeHTML(error.message) +
+      '</div>';
+
+  }
+
+}
+
+
+function renderProducts(products){
+
+  const container =
+    document.getElementById("products");
+
+
+  if(!products.length){
+
+    container.innerHTML =
+      '<div class="empty">' +
+      'Nuk ka ende njoftime.' +
+      '</div>';
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    products.map(product => {
+
+      const image =
+        product.image_url ||
+        product.image ||
+        "";
+
+
+      const title =
+        product.title ||
+        product.name ||
+        "Pa titull";
+
+
+      const price =
+        Number(product.price || 0);
+
+
+      const city =
+        product.city ||
+        "Shqipëri";
+
+
+      return `
+
+        <article
+          class="card"
+          onclick="openProduct(${Number(product.id)})"
+        >
+
+          <div class="image">
+
+            ${
+              image
+
+              ?
+
+              `<img
+                src="${escapeAttribute(image)}"
+                alt="${escapeAttribute(title)}"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='block';"
+              >
+              <span
+                class="no-image"
+                style="display:none"
+              >
+                Pa foto
+              </span>`
+
+              :
+
+              `<span class="no-image">
+                Pa foto
+              </span>`
+            }
+
+          </div>
+
+
+          <div class="info">
+
+            <div class="title">
+              ${escapeHTML(title)}
+            </div>
+
+            <div class="price">
+              ${formatPrice(price)}
+            </div>
+
+            <div class="meta">
+              📍 ${escapeHTML(city)}
+            </div>
+
+          </div>
+
+        </article>
+
+      `;
+
+    }).join("");
+
+}
+
+
+function openProduct(id){
+
+  if(!id) return;
+
+  location.href =
+    "/products.html?id=" +
+    encodeURIComponent(id);
+
+}
+
+
+function formatPrice(price){
+
+  return new Intl.NumberFormat(
+    "sq-AL"
+  ).format(price) + " Lek";
+
+}
+
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+function escapeAttribute(value){
+
+  return escapeHTML(value);
+
+}
+
+
+document
+  .getElementById("searchInput")
+  .addEventListener(
+    "keydown",
+    function(event){
+
+      if(event.key === "Enter"){
+        searchProducts();
+      }
+
+    }
+  );
+
+
+loadProducts();
+
+</script>
+
+</body>
+</html>
