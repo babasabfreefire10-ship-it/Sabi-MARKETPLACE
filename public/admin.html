@@ -1,0 +1,3156 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050505">
+
+  <title>Admin | SHIT.BLEJ</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #050505;
+      --card: #101010;
+      --card2: #151515;
+      --border: #292929;
+      --green: #00ff88;
+      --text: #fff;
+      --muted: #888;
+      --red: #ff5555;
+      --yellow: #ffd84d;
+      --blue: #55aaff;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(
+          circle at 50% -10%,
+          rgba(0,255,136,.10),
+          transparent 35%
+        ),
+        var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    header {
+      height: 68px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5,5,5,.96);
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid var(--border);
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 0 22px;
+    }
+
+    .logo {
+      color: var(--green);
+      text-decoration: none;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .admin-label {
+      color: #777;
+      font-size: 11px;
+      margin-left: 8px;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .header-btn {
+      height: 38px;
+      padding: 0 13px;
+      border-radius: 9px;
+      border: 1px solid #303030;
+      background: #111;
+      color: #ddd;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .header-btn:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    main {
+      max-width: 1250px;
+      margin: auto;
+      padding: 28px 18px 70px;
+    }
+
+    .page-title {
+      margin-bottom: 24px;
+    }
+
+    .page-title h1 {
+      font-size: 30px;
+      margin-bottom: 7px;
+    }
+
+    .page-title p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* STATS */
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 18px;
+    }
+
+    .stat-label {
+      color: #777;
+      font-size: 11px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 27px;
+      font-weight: 900;
+    }
+
+    .green {
+      color: var(--green);
+    }
+
+    /* NAV */
+
+    .admin-nav {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      margin-bottom: 20px;
+      padding-bottom: 3px;
+    }
+
+    .nav-btn {
+      flex: 0 0 auto;
+      height: 43px;
+      padding: 0 16px;
+      background: #101010;
+      border: 1px solid #292929;
+      border-radius: 10px;
+      color: #999;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .nav-btn.active {
+      background: var(--green);
+      color: #000;
+      border-color: var(--green);
+    }
+
+    /* SECTIONS */
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .section-head h2 {
+      font-size: 20px;
+    }
+
+    .refresh-btn {
+      height: 38px;
+      padding: 0 13px;
+      background: #111;
+      border: 1px solid #303030;
+      color: #ddd;
+      border-radius: 9px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .refresh-btn:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    /* TABLE */
+
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 750px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 14px;
+      border-bottom: 1px solid #222;
+      text-align: left;
+      font-size: 12px;
+      vertical-align: middle;
+    }
+
+    th {
+      color: #777;
+      font-size: 10px;
+      text-transform: uppercase;
+      background: #0b0b0b;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    td {
+      color: #ddd;
+    }
+
+    .product-mini {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .product-img {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      background: #080808;
+      border: 1px solid #292929;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      font-weight: 900;
+    }
+
+    .product-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-name {
+      font-weight: 800;
+      color: white;
+    }
+
+    .product-category {
+      color: #777;
+      font-size: 10px;
+      margin-top: 3px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .badge-green {
+      background: rgba(0,255,136,.08);
+      color: var(--green);
+      border: 1px solid rgba(0,255,136,.2);
+    }
+
+    .badge-yellow {
+      background: rgba(255,216,77,.08);
+      color: var(--yellow);
+      border: 1px solid rgba(255,216,77,.2);
+    }
+
+    .badge-red {
+      background: rgba(255,85,85,.08);
+      color: #ff7777;
+      border: 1px solid rgba(255,85,85,.2);
+    }
+
+    .badge-blue {
+      background: rgba(85,170,255,.08);
+      color: var(--blue);
+      border: 1px solid rgba(85,170,255,.2);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .action {
+      height: 34px;
+      padding: 0 9px;
+      border-radius: 7px;
+      background: #111;
+      border: 1px solid #303030;
+      color: #ddd;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .action:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .action.danger {
+      color: #ff7777;
+      border-color: rgba(255,85,85,.2);
+    }
+
+    .action.danger:hover {
+      border-color: var(--red);
+      background: rgba(255,85,85,.05);
+    }
+
+    /* SEARCH */
+
+    .search-box {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .search-box input {
+      flex: 1;
+      min-width: 0;
+      height: 44px;
+      padding: 0 13px;
+      border-radius: 9px;
+      border: 1px solid #303030;
+      background: #101010;
+      color: white;
+      outline: none;
+    }
+
+    .search-box input:focus {
+      border-color: var(--green);
+    }
+
+    /* ORDERS */
+
+    .order-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 17px;
+      margin-bottom: 12px;
+    }
+
+    .order-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 14px;
+    }
+
+    .order-code {
+      color: var(--green);
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .order-date {
+      color: #666;
+      font-size: 10px;
+      margin-top: 5px;
+    }
+
+    .order-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    .order-info {
+      background: #0b0b0b;
+      border: 1px solid #222;
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .order-info-label {
+      color: #666;
+      font-size: 9px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .order-info-value {
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .order-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #222;
+    }
+
+    .order-total {
+      color: var(--green);
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    select {
+      height: 36px;
+      background: #111;
+      color: white;
+      border: 1px solid #303030;
+      border-radius: 8px;
+      padding: 0 8px;
+      outline: none;
+    }
+
+    select:focus {
+      border-color: var(--green);
+    }
+
+    /* EMPTY */
+
+    .empty {
+      padding: 60px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      text-align: center;
+      color: #777;
+    }
+
+    .empty-icon {
+      font-size: 45px;
+      margin-bottom: 10px;
+    }
+
+    /* LOADING */
+
+    .loading {
+      padding: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .spinner {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 3px solid #222;
+      border-top-color: var(--green);
+      animation: spin .7s linear infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* SETTINGS */
+
+    .settings-card {
+      max-width: 650px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 20px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      color: #888;
+      font-size: 11px;
+      margin-bottom: 7px;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      background: #0b0b0b;
+      border: 1px solid #303030;
+      color: white;
+      border-radius: 9px;
+      padding: 12px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .field textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      border-color: var(--green);
+    }
+
+    /* TOAST */
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(100px);
+      opacity: 0;
+      transition: .25s;
+      z-index: 999;
+      background: #151515;
+      border: 1px solid #333;
+      border-radius: 11px;
+      padding: 13px 17px;
+      font-size: 13px;
+      max-width: calc(100% - 30px);
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .error {
+      padding: 15px;
+      border-radius: 10px;
+      background: rgba(255,85,85,.08);
+      border: 1px solid rgba(255,85,85,.25);
+      color: #ff8585;
+    }
+
+    @media (max-width: 800px) {
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .order-grid {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+    @media (max-width: 500px) {
+
+      header {
+        padding: 0 13px;
+      }
+
+      .logo {
+        font-size: 21px;
+      }
+
+      .admin-label {
+        display: none;
+      }
+
+      main {
+        padding: 22px 12px 55px;
+      }
+
+      .page-title h1 {
+        font-size: 26px;
+      }
+
+      .stats {
+        gap: 8px;
+      }
+
+      .stat {
+        padding: 14px;
+      }
+
+      .stat-value {
+        font-size: 22px;
+      }
+
+      .order-top {
+        flex-direction: column;
+      }
+
+      .order-bottom {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+<header>
+
+  <a
+    href="/index.html"
+    class="logo"
+  >
+    SHIT.BLEJ
+    <span class="admin-label">
+      ADMIN
+    </span>
+  </a>
+
+  <div class="header-right">
+
+    <a
+      href="/index.html"
+      class="header-btn"
+    >
+      🏠 Faqja
+    </a>
+
+    <button
+      class="header-btn"
+      id="logoutBtn"
+    >
+      Dil
+    </button>
+
+  </div>
+
+</header>
+
+
+<main>
+
+  <div class="page-title">
+
+    <h1>
+      Paneli Admin
+    </h1>
+
+    <p>
+      Menaxho SHIT.BLEJ nga një vend.
+    </p>
+
+  </div>
+
+
+  <!-- STATS -->
+
+  <div class="stats">
+
+    <div class="stat">
+
+      <div class="stat-label">
+        Përdorues
+      </div>
+
+      <div
+        class="stat-value green"
+        id="statUsers"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div class="stat-label">
+        Produkte
+      </div>
+
+      <div
+        class="stat-value green"
+        id="statProducts"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div class="stat-label">
+        Porosi
+      </div>
+
+      <div
+        class="stat-value green"
+        id="statOrders"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div class="stat-label">
+        Në pritje
+      </div>
+
+      <div
+        class="stat-value"
+        id="statPending"
+      >
+        0
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- NAV -->
+
+  <div class="admin-nav">
+
+    <button
+      class="nav-btn active"
+      data-section="dashboard"
+    >
+      📊 Dashboard
+    </button>
+
+    <button
+      class="nav-btn"
+      data-section="orders"
+    >
+      📦 Porositë
+    </button>
+
+    <button
+      class="nav-btn"
+      data-section="products"
+    >
+      🛍️ Produktet
+    </button>
+
+    <button
+      class="nav-btn"
+      data-section="users"
+    >
+      👤 Përdoruesit
+    </button>
+
+    <button
+      class="nav-btn"
+      data-section="settings"
+    >
+      ⚙️ Settings
+    </button>
+
+  </div>
+
+
+  <!-- DASHBOARD -->
+
+  <section
+    class="section active"
+    id="section-dashboard"
+  >
+
+    <div class="section-head">
+
+      <h2>
+        Përmbledhje
+      </h2>
+
+      <button
+        class="refresh-btn"
+        onclick="loadAll()"
+      >
+        ↻ Rifresko
+      </button>
+
+    </div>
+
+
+    <div id="dashboardContent">
+
+      <div class="loading">
+
+        <span class="spinner"></span>
+
+        Duke ngarkuar...
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ORDERS -->
+
+  <section
+    class="section"
+    id="section-orders"
+  >
+
+    <div class="section-head">
+
+      <h2>
+        Të gjitha porositë
+      </h2>
+
+      <button
+        class="refresh-btn"
+        onclick="loadOrders()"
+      >
+        ↻ Rifresko
+      </button>
+
+    </div>
+
+
+    <div
+      id="ordersContent"
+    >
+
+      <div class="loading">
+
+        <span class="spinner"></span>
+
+        Duke ngarkuar...
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- PRODUCTS -->
+
+  <section
+    class="section"
+    id="section-products"
+  >
+
+    <div class="section-head">
+
+      <h2>
+        Produktet
+      </h2>
+
+      <button
+        class="refresh-btn"
+        onclick="loadProducts()"
+      >
+        ↻ Rifresko
+      </button>
+
+    </div>
+
+
+    <div class="search-box">
+
+      <input
+        id="productSearch"
+        type="search"
+        placeholder="Kërko produkt..."
+      >
+
+    </div>
+
+
+    <div
+      id="productsContent"
+    >
+
+      <div class="loading">
+
+        <span class="spinner"></span>
+
+        Duke ngarkuar...
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- USERS -->
+
+  <section
+    class="section"
+    id="section-users"
+  >
+
+    <div class="section-head">
+
+      <h2>
+        Përdoruesit
+      </h2>
+
+      <button
+        class="refresh-btn"
+        onclick="loadUsers()"
+      >
+        ↻ Rifresko
+      </button>
+
+    </div>
+
+
+    <div class="search-box">
+
+      <input
+        id="userSearch"
+        type="search"
+        placeholder="Kërko emër, email, telefon..."
+      >
+
+    </div>
+
+
+    <div
+      id="usersContent"
+    >
+
+      <div class="loading">
+
+        <span class="spinner"></span>
+
+        Duke ngarkuar...
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- SETTINGS -->
+
+  <section
+    class="section"
+    id="section-settings"
+  >
+
+    <div class="section-head">
+
+      <h2>
+        Settings
+      </h2>
+
+    </div>
+
+
+    <div class="settings-card">
+
+      <div class="field">
+
+        <label>
+          Emri i marketplace
+        </label>
+
+        <input
+          id="settingName"
+          placeholder="SHIT.BLEJ"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          Përshkrimi
+        </label>
+
+        <textarea
+          id="settingDescription"
+          placeholder="Marketplace shqiptar..."
+        ></textarea>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          Telefoni i kontaktit
+        </label>
+
+        <input
+          id="settingPhone"
+          placeholder="+355..."
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          Email
+        </label>
+
+        <input
+          id="settingEmail"
+          placeholder="contact@example.com"
+        >
+
+      </div>
+
+
+      <button
+        class="green-btn"
+        onclick="saveSettings()"
+      >
+        Ruaj ndryshimet
+      </button>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<div
+  class="toast"
+  id="toast"
+></div>
+
+
+<script>
+
+  const API = "/api";
+
+  let token = "";
+
+  let currentUser = null;
+
+  let allProducts = [];
+
+  let allUsers = [];
+
+  let allOrders = [];
+
+
+  /* =========================
+     HELPERS
+  ========================= */
+
+  function getToken() {
+
+    return (
+      localStorage.getItem(
+        "shitblej_token"
+      ) ||
+      localStorage.getItem(
+        "sabiAuthToken"
+      ) ||
+      ""
+    );
+
+  }
+
+
+  function escapeHTML(value) {
+
+    if (
+      value === null ||
+      value === undefined
+    ) {
+      return "";
+    }
+
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+
+  function price(value) {
+
+    return Number(value || 0)
+      .toLocaleString("sq-AL") + " L";
+
+  }
+
+
+  function date(value) {
+
+    if (!value) {
+      return "-";
+    }
+
+    try {
+
+      return new Date(value)
+        .toLocaleString(
+          "sq-AL",
+          {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+          }
+        );
+
+    } catch {
+
+      return value;
+
+    }
+
+  }
+
+
+  function statusText(status) {
+
+    const map = {
+
+      pending:
+        "Në pritje",
+
+      confirmed:
+        "Konfirmuar",
+
+      shipped:
+        "Dërguar",
+
+      delivered:
+        "Dorëzuar",
+
+      cancelled:
+        "Anuluar"
+
+    };
+
+    return (
+      map[status] ||
+      status ||
+      "Në pritje"
+    );
+
+  }
+
+
+  function statusClass(status) {
+
+    if (status === "delivered") {
+      return "badge-green";
+    }
+
+    if (status === "shipped") {
+      return "badge-blue";
+    }
+
+    if (status === "confirmed") {
+      return "badge-blue";
+    }
+
+    if (status === "cancelled") {
+      return "badge-red";
+    }
+
+    return "badge-yellow";
+
+  }
+
+
+  function toast(message) {
+
+    const el =
+      document.getElementById(
+        "toast"
+      );
+
+    el.textContent = message;
+
+    el.classList.add("show");
+
+    setTimeout(() => {
+
+      el.classList.remove("show");
+
+    }, 2500);
+
+  }
+
+
+  function errorBox(message) {
+
+    return `
+
+      <div class="error">
+        ${escapeHTML(message)}
+      </div>
+
+    `;
+
+  }
+
+
+  /* =========================
+     API
+  ========================= */
+
+  async function api(
+    endpoint,
+    options = {}
+  ) {
+
+    const headers = {
+
+      ...(options.headers || {}),
+
+      "Authorization":
+        "Bearer " + token
+
+    };
+
+
+    if (
+      options.body &&
+      !headers["Content-Type"]
+    ) {
+
+      headers["Content-Type"] =
+        "application/json";
+
+    }
+
+
+    const response =
+      await fetch(
+        API + endpoint,
+        {
+          ...options,
+          headers
+        }
+      );
+
+
+    let data = {};
+
+    try {
+
+      data =
+        await response.json();
+
+    } catch {
+
+      data = {};
+
+    }
+
+
+    if (
+      response.status === 401 ||
+      response.status === 403
+    ) {
+
+      throw new Error(
+        data.error ||
+        "Nuk ke akses."
+      );
+
+    }
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "Gabim në server."
+      );
+
+    }
+
+
+    return data;
+
+  }
+
+
+  /* =========================
+     AUTH
+  ========================= */
+
+  async function checkAdmin() {
+
+    token =
+      getToken();
+
+
+    if (!token) {
+
+      window.location.href =
+        "/login.html?next=/admin.html";
+
+      return false;
+
+    }
+
+
+    try {
+
+      const data =
+        await api(
+          "/auth/me"
+        );
+
+
+      currentUser =
+        data.user ||
+        null;
+
+
+      if (
+        !currentUser ||
+        currentUser.role !== "admin"
+      ) {
+
+        document.body.innerHTML = `
+
+          <div style="
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:#050505;
+            color:white;
+            font-family:Arial;
+            padding:20px;
+            text-align:center;
+          ">
+
+            <div>
+
+              <div style="
+                font-size:60px;
+                margin-bottom:15px;
+              ">
+                🔒
+              </div>
+
+              <h1>
+                Nuk ke akses
+              </h1>
+
+              <p style="
+                color:#777;
+                margin:10px 0 20px;
+              ">
+                Kjo faqe është vetëm për administratorin.
+              </p>
+
+              <a
+                href="/index.html"
+                style="
+                  display:inline-flex;
+                  height:45px;
+                  padding:0 18px;
+                  align-items:center;
+                  justify-content:center;
+                  background:#00ff88;
+                  color:#000;
+                  border-radius:10px;
+                  text-decoration:none;
+                  font-weight:900;
+                "
+              >
+                Kthehu
+              </a>
+
+            </div>
+
+          </div>
+
+        `;
+
+        return false;
+
+      }
+
+
+      return true;
+
+    } catch (error) {
+
+      console.error(error);
+
+      localStorage.removeItem(
+        "shitblej_token"
+      );
+
+      localStorage.removeItem(
+        "sabiAuthToken"
+      );
+
+      window.location.href =
+        "/login.html?next=/admin.html";
+
+      return false;
+
+    }
+
+  }
+
+
+  /* =========================
+     NAVIGATION
+  ========================= */
+
+  document
+    .querySelectorAll(".nav-btn")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          document
+            .querySelectorAll(".nav-btn")
+            .forEach(
+              b =>
+                b.classList.remove(
+                  "active"
+                )
+            );
+
+          document
+            .querySelectorAll(".section")
+            .forEach(
+              s =>
+                s.classList.remove(
+                  "active"
+                )
+            );
+
+
+          button.classList.add(
+            "active"
+          );
+
+
+          const name =
+            button.dataset.section;
+
+
+          document
+            .getElementById(
+              "section-" + name
+            )
+            .classList.add(
+              "active"
+            );
+
+
+          if (name === "orders") {
+            loadOrders();
+          }
+
+          if (name === "products") {
+            loadProducts();
+          }
+
+          if (name === "users") {
+            loadUsers();
+          }
+
+          if (name === "settings") {
+            loadSettings();
+          }
+
+        }
+      );
+
+    });
+
+
+  /* =========================
+     STATS
+  ========================= */
+
+  async function loadStats() {
+
+    try {
+
+      const data =
+        await api(
+          "/admin/stats"
+        );
+
+
+      const stats =
+        data.stats ||
+        data ||
+        {};
+
+
+      document.getElementById(
+        "statUsers"
+      ).textContent =
+        stats.users ??
+        stats.total_users ??
+        0;
+
+
+      document.getElementById(
+        "statProducts"
+      ).textContent =
+        stats.products ??
+        stats.total_products ??
+        0;
+
+
+      document.getElementById(
+        "statOrders"
+      ).textContent =
+        stats.orders ??
+        stats.total_orders ??
+        0;
+
+
+      document.getElementById(
+        "statPending"
+      ).textContent =
+        stats.pending_orders ??
+        stats.pending ??
+        0;
+
+
+    } catch (error) {
+
+      console.error(
+        "STATS:",
+        error
+      );
+
+    }
+
+  }
+
+
+  /* =========================
+     PRODUCTS
+  ========================= */
+
+  async function loadProducts() {
+
+    const box =
+      document.getElementById(
+        "productsContent"
+      );
+
+
+    box.innerHTML = `
+
+      <div class="loading">
+
+        <span class="spinner"></span>
+
+        Duke ngarkuar produktet...
+
+      </div>
+
+    `;
+
+
+    try {
+
+      const data =
+        await api(
+          "/products"
+        );
+
+
+      allProducts =
+        Array.isArray(data)
+          ? data
+          : (
+            data.products ||
+            []
+          );
+
+
+      renderProducts(
+        allProducts
+      );
+
+
+    } catch (error) {
+
+      box.innerHTML =
+        errorBox(
+          error.message
+        );
+
+    }
+
+  }
+
+
+  function renderProducts(
+    products
+  ) {
+
+    const box =
+      document.getElementById(
+        "productsContent"
+      );
+
+
+    if (!products.length) {
+
+      box.innerHTML = `
+
+        <div class="empty">
+
+          <div class="empty-icon">
+            🛍️
+          </div>
+
+          Nuk ka produkte.
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    box.innerHTML = `
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Produkti
+              </th>
+
+              <th>
+                Çmimi
+              </th>
+
+              <th>
+                Shitësi
+              </th>
+
+              <th>
+                Kategoria
+              </th>
+
+              <th>
+                Data
+              </th>
+
+              <th>
+                Veprime
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${products
+              .map(
+                product =>
+                  productRow(
+                    product
+                  )
+              )
+              .join("")}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    `;
+
+  }
+
+
+  function productRow(
+    product
+  ) {
+
+    const name =
+      product.title ||
+      product.name ||
+      "Produkt";
+
+
+    const image =
+      product.image_url ||
+      product.image ||
+      "";
+
+
+    const seller =
+      product.sellerName ||
+      product.seller ||
+      product.seller_name ||
+      "-";
+
+
+    return `
+
+      <tr>
+
+        <td>
+
+          <div class="product-mini">
+
+            <div class="product-img">
+
+              ${
+                image
+                  ? `
+                    <img
+                      src="${escapeHTML(image)}"
+                      alt=""
+                      onerror="this.style.display='none'"
+                    >
+                  `
+                  : "S"
+              }
+
+            </div>
+
+            <div>
+
+              <div class="product-name">
+
+                ${escapeHTML(name)}
+
+              </div>
+
+              <div class="product-category">
+
+                ${escapeHTML(
+                  product.category ||
+                  "Të tjera"
+                )}
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </td>
+
+
+        <td>
+          <strong>
+            ${price(product.price)}
+          </strong>
+        </td>
+
+
+        <td>
+          ${escapeHTML(seller)}
+        </td>
+
+
+        <td>
+          ${escapeHTML(
+            product.category ||
+            "-"
+          )}
+        </td>
+
+
+        <td>
+          ${date(
+            product.created_at
+          )}
+        </td>
+
+
+        <td>
+
+          <div class="actions">
+
+            <button
+              class="action"
+              onclick="openProduct(${product.id})"
+            >
+              Shiko
+            </button>
+
+            <button
+              class="action danger"
+              onclick="deleteProduct(${product.id})"
+            >
+              Fshi
+            </button>
+
+            <button
+              class="action danger"
+              onclick="blockProduct(${product.id})"
+            >
+              Blloko
+            </button>
+
+          </div>
+
+        </td>
+
+      </tr>
+
+    `;
+
+  }
+
+
+  async function deleteProduct(
+    id
+  ) {
+
+    const yes =
+      confirm(
+        "A je i sigurt që do ta fshish këtë produkt?"
+      );
+
+
+    if (!yes) {
+      return;
+    }
+
+
+    try {
+
+      await api(
+        "/products/" +
+        encodeURIComponent(id),
+        {
+          method: "DELETE"
+        }
+      );
+
+
+      toast(
+        "Produkti u fshi."
+      );
+
+
+      await loadProducts();
+
+      await loadStats();
+
+
+    } catch (error) {
+
+      toast(
+        error.message
+      );
+
+    }
+
+  }
+
+
+  async function blockProduct(
+    id
+  ) {
+
+    const yes =
+      confirm(
+        "A do ta bllokosh këtë produkt?"
+      );
+
+
+    if (!yes) {
+      return;
+    }
+
+
+    try {
+
+      await api(
+        "/api/products/" +
+        encodeURIComponent(id) +
+        "/block",
+        {
+          method: "POST"
+        }
+      );
+
+
+      toast(
+        "Produkti u bllokua."
+      );
+
+
+      await loadProducts();
+
+
+    } catch (error) {
+
+      /*
+        Nëse worker përdor:
+        /api/products/:id/block
+        provo endpoint-in korrekt.
+      */
+
+      try {
+
+        await api(
+          "/products/" +
+          encodeURIComponent(id) +
+          "/block",
+          {
+            method: "POST"
+          }
+        );
+
+
+        toast(
+          "Produkti u bllokua."
+        );
+
+
+        await loadProducts();
+
+      } catch (secondError) {
+
+        toast(
+          secondError.message
+        );
+
+      }
+
+    }
+
+  }
+
+
+  function openProduct(
+    id
+  ) {
+
+    window.location.href =
+      "/products.html?id=" +
+      encodeURIComponent(id);
+
+  }
+
+
+  /* =========================
+     PRODUCT SEARCH
+  ========================= */
+
+  document
+    .getElementById(
+      "productSearch"
+    )
+    .addEventListener(
+      "input",
+      event => {
+
+        const q =
+          event.target.value
+            .trim()
+            .toLowerCase();
+
+
+        const filtered =
+          allProducts.filter(
+            product => {
+
+              const text =
+                [
+                  product.title,
+                  product.name,
+                  product.category,
+                  product.seller,
+                  product.sellerName
+                ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
+
+
+              return text.includes(q);
+
+            }
+          );
+
+
+        renderProducts(
+          filtered
+        );
+
+      }
+    );
+
+
+  /* =========================
+     USERS
+  ========================= */
+
+  async function loadUsers() {
+
+    const box =
+      document.getElementById(
+        "usersContent"
+      );
+
+
+    box.innerHTML = `
+
+      <div class="loading">
+
+        <span class="spinner"></span>
+
+        Duke ngarkuar përdoruesit...
+
+      </div>
+
+    `;
+
+
+    try {
+
+      const data =
+        await api(
+          "/users/all"
+        );
+
+
+      allUsers =
+        Array.isArray(data)
+          ? data
+          : (
+            data.users ||
+            []
+          );
+
+
+      renderUsers(
+        allUsers
+      );
+
+
+    } catch (error) {
+
+      box.innerHTML =
+        errorBox(
+          error.message
+        );
+
+    }
+
+  }
+
+
+  function renderUsers(
+    users
+  ) {
+
+    const box =
+      document.getElementById(
+        "usersContent"
+      );
+
+
+    if (!users.length) {
+
+      box.innerHTML = `
+
+        <div class="empty">
+
+          <div class="empty-icon">
+            👤
+          </div>
+
+          Nuk ka përdorues.
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    box.innerHTML = `
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Përdoruesi
+              </th>
+
+              <th>
+                Email
+              </th>
+
+              <th>
+                Telefon
+              </th>
+
+              <th>
+                Roli
+              </th>
+
+              <th>
+                Data
+              </th>
+
+              <th>
+                Veprime
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${users
+              .map(
+                user =>
+                  userRow(
+                    user
+                  )
+              )
+              .join("")}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    `;
+
+  }
+
+
+  function userRow(
+    user
+  ) {
+
+    const role =
+      user.role ||
+      "customer";
+
+
+    return `
+
+      <tr>
+
+        <td>
+
+          <strong>
+            ${escapeHTML(
+              user.name ||
+              "Pa emër"
+            )}
+          </strong>
+
+        </td>
+
+
+        <td>
+
+          ${escapeHTML(
+            user.email ||
+            "-"
+          )}
+
+        </td>
+
+
+        <td>
+
+          ${escapeHTML(
+            user.phone ||
+            "-"
+          )}
+
+        </td>
+
+
+        <td>
+
+          <span
+            class="badge ${
+              role === "admin"
+                ? "badge-green"
+                : role === "seller"
+                  ? "badge-blue"
+                  : "badge-yellow"
+            }"
+          >
+
+            ${escapeHTML(role)}
+
+          </span>
+
+        </td>
+
+
+        <td>
+
+          ${date(
+            user.created_at
+          )}
+
+        </td>
+
+
+        <td>
+
+          <div class="actions">
+
+            ${
+              role !== "admin"
+                ? `
+
+                  <button
+                    class="action danger"
+                    onclick="blockUser(${user.id})"
+                  >
+                    Blloko
+                  </button>
+
+                `
+                : ""
+            }
+
+          </div>
+
+        </td>
+
+      </tr>
+
+    `;
+
+  }
+
+
+  async function blockUser(
+    id
+  ) {
+
+    const yes =
+      confirm(
+        "A do ta bllokosh këtë përdorues?"
+      );
+
+
+    if (!yes) {
+      return;
+    }
+
+
+    try {
+
+      await api(
+        "/users/" +
+        encodeURIComponent(id) +
+        "/block",
+        {
+          method: "POST"
+        }
+      );
+
+
+      toast(
+        "Përdoruesi u bllokua."
+      );
+
+
+      await loadUsers();
+
+
+    } catch (error) {
+
+      toast(
+        error.message
+      );
+
+    }
+
+  }
+
+
+  /* =========================
+     USER SEARCH
+  ========================= */
+
+  document
+    .getElementById(
+      "userSearch"
+    )
+    .addEventListener(
+      "input",
+      event => {
+
+        const q =
+          event.target.value
+            .trim()
+            .toLowerCase();
+
+
+        const filtered =
+          allUsers.filter(
+            user => {
+
+              const text =
+                [
+                  user.name,
+                  user.email,
+                  user.phone,
+                  user.role
+                ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
+
+
+              return text.includes(q);
+
+            }
+          );
+
+
+        renderUsers(
+          filtered
+        );
+
+      }
+    );
+
+
+  /* =========================
+     ORDERS
+  ========================= */
+
+  async function loadOrders() {
+
+    const box =
+      document.getElementById(
+        "ordersContent"
+      );
+
+
+    box.innerHTML = `
+
+      <div class="loading">
+
+        <span class="spinner"></span>
+
+        Duke ngarkuar porositë...
+
+      </div>
+
+    `;
+
+
+    try {
+
+      const data =
+        await api(
+          "/orders"
+        );
+
+
+      allOrders =
+        Array.isArray(data)
+          ? data
+          : (
+            data.orders ||
+            []
+          );
+
+
+      renderOrders(
+        allOrders
+      );
+
+
+    } catch (error) {
+
+      box.innerHTML =
+        errorBox(
+          error.message
+        );
+
+    }
+
+  }
+
+
+  function renderOrders(
+    orders
+  ) {
+
+    const box =
+      document.getElementById(
+        "ordersContent"
+      );
+
+
+    if (!orders.length) {
+
+      box.innerHTML = `
+
+        <div class="empty">
+
+          <div class="empty-icon">
+            📦
+          </div>
+
+          Nuk ka porosi.
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    box.innerHTML =
+      orders
+        .map(
+          order =>
+            renderOrder(
+              order
+            )
+        )
+        .join("");
+
+  }
+
+
+  function renderOrder(
+    order
+  ) {
+
+    const product =
+      order.product_name ||
+      order.product_title ||
+      order.title ||
+      order.name ||
+      "Produkt";
+
+
+    const buyer =
+      order.customer_name ||
+      order.buyer_name ||
+      "-";
+
+
+    const phone =
+      order.customer_phone ||
+      order.buyer_phone ||
+      "-";
+
+
+    const city =
+      order.customer_city ||
+      order.buyer_city ||
+      "-";
+
+
+    const address =
+      order.customer_address ||
+      order.buyer_address ||
+      "-";
+
+
+    const total =
+      order.total_price ||
+      order.price ||
+      0;
+
+
+    const status =
+      order.status ||
+      "pending";
+
+
+    const code =
+      order.order_code ||
+      order.code ||
+      ("ORDER-" + order.id);
+
+
+    return `
+
+      <div
+        class="order-card"
+      >
+
+        <div class="order-top">
+
+          <div>
+
+            <div class="order-code">
+
+              ${escapeHTML(code)}
+
+            </div>
+
+            <div class="order-date">
+
+              ${date(
+                order.created_at
+              )}
+
+            </div>
+
+          </div>
+
+
+          <span
+            class="badge ${statusClass(status)}"
+          >
+
+            ${escapeHTML(
+              statusText(status)
+            )}
+
+          </span>
+
+        </div>
+
+
+        <div class="order-grid">
+
+
+          <div class="order-info">
+
+            <div class="order-info-label">
+              Produkti
+            </div>
+
+            <div class="order-info-value">
+
+              ${escapeHTML(product)}
+
+            </div>
+
+          </div>
+
+
+          <div class="order-info">
+
+            <div class="order-info-label">
+              Blerësi
+            </div>
+
+            <div class="order-info-value">
+
+              ${escapeHTML(buyer)}
+
+            </div>
+
+          </div>
+
+
+          <div class="order-info">
+
+            <div class="order-info-label">
+              Telefoni
+            </div>
+
+            <div class="order-info-value">
+
+              ${escapeHTML(phone)}
+
+            </div>
+
+          </div>
+
+
+          <div class="order-info">
+
+            <div class="order-info-label">
+              Qyteti
+            </div>
+
+            <div class="order-info-value">
+
+              ${escapeHTML(city)}
+
+            </div>
+
+          </div>
+
+
+          <div class="order-info">
+
+            <div class="order-info-label">
+              Adresa
+            </div>
+
+            <div class="order-info-value">
+
+              ${escapeHTML(address)}
+
+            </div>
+
+          </div>
+
+
+          <div class="order-info">
+
+            <div class="order-info-label">
+              Sasia
+            </div>
+
+            <div class="order-info-value">
+
+              ${escapeHTML(
+                order.quantity ||
+                1
+              )}
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+
+        <div class="order-bottom">
+
+          <div>
+
+            <div
+              style="
+                color:#666;
+                font-size:9px;
+                margin-bottom:4px;
+              "
+            >
+              TOTAL
+            </div>
+
+            <div class="order-total">
+
+              ${price(total)}
+
+            </div>
+
+          </div>
+
+
+          <div
+            style="
+              display:flex;
+              gap:8px;
+              flex-wrap:wrap;
+            "
+          >
+
+            ${
+              phone !== "-"
+                ? `
+
+                  <button
+                    class="action"
+                    onclick="callNumber('${escapeHTML(phone)}')"
+                  >
+                    ☎ Telefon
+                  </button>
+
+                `
+                : ""
+            }
+
+
+            <select
+              onchange="
+                changeOrderStatus(
+                  ${order.id},
+                  this.value
+                )
+              "
+            >
+
+              <option
+                value="pending"
+                ${status === "pending" ? "selected" : ""}
+              >
+                Në pritje
+              </option>
+
+              <option
+                value="confirmed"
+                ${status === "confirmed" ? "selected" : ""}
+              >
+                Konfirmuar
+              </option>
+
+              <option
+                value="shipped"
+                ${status === "shipped" ? "selected" : ""}
+              >
+                Dërguar
+              </option>
+
+              <option
+                value="delivered"
+                ${status === "delivered" ? "selected" : ""}
+              >
+                Dorëzuar
+              </option>
+
+              <option
+                value="cancelled"
+                ${status === "cancelled" ? "selected" : ""}
+              >
+                Anuluar
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  async function changeOrderStatus(
+    id,
+    status
+  ) {
+
+    try {
+
+      await api(
+        "/orders/" +
+        encodeURIComponent(id),
+        {
+          method: "PUT",
+
+          body:
+            JSON.stringify({
+              status
+            })
+        }
+      );
+
+
+      toast(
+        "Statusi i porosisë u ndryshua."
+      );
+
+
+      await loadOrders();
+
+      await loadStats();
+
+
+    } catch (error) {
+
+      toast(
+        error.message
+      );
+
+    }
+
+  }
+
+
+  function callNumber(
+    phone
+  ) {
+
+    window.location.href =
+      "tel:" + phone;
+
+  }
+
+
+  /* =========================
+     SETTINGS
+  ========================= */
+
+  async function loadSettings() {
+
+    try {
+
+      const data =
+        await api(
+          "/admin/settings"
+        );
+
+
+      const settings =
+        data.settings ||
+        data ||
+        {};
+
+
+      document.getElementById(
+        "settingName"
+      ).value =
+        settings.name ||
+        "SHIT.BLEJ";
+
+
+      document.getElementById(
+        "settingDescription"
+      ).value =
+        settings.description ||
+        "";
+
+
+      document.getElementById(
+        "settingPhone"
+      ).value =
+        settings.phone ||
+        "";
+
+
+      document.getElementById(
+        "settingEmail"
+      ).value =
+        settings.email ||
+        "";
+
+
+    } catch (error) {
+
+      toast(
+        error.message
+      );
+
+    }
+
+  }
+
+
+  async function saveSettings() {
+
+    const body = {
+
+      name:
+        document.getElementById(
+          "settingName"
+        ).value.trim(),
+
+      description:
+        document.getElementById(
+          "settingDescription"
+        ).value.trim(),
+
+      phone:
+        document.getElementById(
+          "settingPhone"
+        ).value.trim(),
+
+      email:
+        document.getElementById(
+          "settingEmail"
+        ).value.trim()
+
+    };
+
+
+    try {
+
+      await api(
+        "/admin/settings",
+        {
+          method: "PUT",
+
+          body:
+            JSON.stringify(body)
+        }
+      );
+
+
+      toast(
+        "Settings u ruajtën."
+      );
+
+
+    } catch (error) {
+
+      toast(
+        error.message
+      );
+
+    }
+
+  }
+
+
+  /* =========================
+     DASHBOARD
+  ========================= */
+
+  async function loadDashboard() {
+
+    const box =
+      document.getElementById(
+        "dashboardContent"
+      );
+
+
+    try {
+
+      await Promise.all([
+        loadStats(),
+        loadOrders()
+      ]);
+
+
+      const recent =
+        allOrders
+          .slice()
+          .sort(
+            (a,b) =>
+              new Date(
+                b.created_at || 0
+              ) -
+              new Date(
+                a.created_at || 0
+              )
+          )
+          .slice(0,5);
+
+
+      if (!recent.length) {
+
+        box.innerHTML = `
+
+          <div class="empty">
+
+            <div class="empty-icon">
+              📊
+            </div>
+
+            Nuk ka ende aktivitet.
+
+          </div>
+
+        `;
+
+        return;
+
+      }
+
+
+      box.innerHTML = `
+
+        <div class="section-head">
+
+          <h2>
+            Porositë e fundit
+          </h2>
+
+        </div>
+
+
+        ${recent
+          .map(
+            order =>
+              renderOrder(
+                order
+              )
+          )
+          .join("")}
+
+      `;
+
+
+    } catch (error) {
+
+      box.innerHTML =
+        errorBox(
+          error.message
+        );
+
+    }
+
+  }
+
+
+  /* =========================
+     LOAD ALL
+  ========================= */
+
+  async function loadAll() {
+
+    await loadStats();
+
+    await loadDashboard();
+
+  }
+
+
+  /* =========================
+     LOGOUT
+  ========================= */
+
+  document
+    .getElementById(
+      "logoutBtn"
+    )
+    .addEventListener(
+      "click",
+      async () => {
+
+        try {
+
+          await api(
+            "/auth/logout",
+            {
+              method: "POST"
+            }
+          );
+
+        } catch {}
+
+        localStorage.removeItem(
+          "shitblej_token"
+        );
+
+        localStorage.removeItem(
+          "sabiAuthToken"
+        );
+
+        localStorage.removeItem(
+          "shitblej_user"
+        );
+
+        window.location.href =
+          "/index.html";
+
+      }
+    );
+
+
+  /* =========================
+     START
+  ========================= */
+
+  async function init() {
+
+    const ok =
+      await checkAdmin();
+
+
+    if (!ok) {
+      return;
+    }
+
+
+    await loadStats();
+
+    await loadDashboard();
+
+  }
+
+
+  init();
+
+</script>
+
+</body>
+</html>
