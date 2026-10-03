@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050505">
+
+  <title>Regjistrohu | SHIT.BLEJ</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #050505;
+      --card: #101010;
+      --border: #272727;
+      --green: #00ff88;
+      --text: #fff;
+      --muted: #8c8c8c;
+      --danger: #ff5555;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(
+          circle at 50% -10%,
+          rgba(0,255,136,.12),
+          transparent 35%
+        ),
+        var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      height: 68px;
+      padding: 0 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(5,5,5,.94);
+      backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      color: var(--green);
+      font-size: 24px;
+      font-weight: 900;
+      text-decoration: none;
+      letter-spacing: -1px;
+    }
+
+    .back {
+      color: #aaa;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .back:hover {
+      color: var(--green);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 35px 15px 60px;
+    }
+
+    .register-box {
+      width: 100%;
+      max-width: 460px;
+      background: linear-gradient(180deg, #111, #0b0b0b);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 30px;
+      box-shadow: 0 25px 80px rgba(0,0,0,.55);
+    }
+
+    .top-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 18px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,255,136,.08);
+      border: 1px solid rgba(0,255,136,.22);
+      color: var(--green);
+      font-size: 27px;
+      font-weight: 900;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 29px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 26px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      color: #ccc;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      height: 50px;
+      padding: 0 14px;
+      background: #080808;
+      border: 1px solid #292929;
+      border-radius: 12px;
+      color: white;
+      outline: none;
+      font-size: 15px;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(0,255,136,.08);
+    }
+
+    input::placeholder {
+      color: #555;
+    }
+
+    select {
+      cursor: pointer;
+    }
+
+    select option {
+      background: #111;
+      color: white;
+    }
+
+    .password-wrap {
+      position: relative;
+    }
+
+    .password-wrap input {
+      padding-right: 55px;
+    }
+
+    .show-password {
+      position: absolute;
+      right: 7px;
+      top: 7px;
+      width: 40px;
+      height: 36px;
+      border: 0;
+      background: transparent;
+      color: #777;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    .show-password:hover {
+      color: var(--green);
+      background: rgba(255,255,255,.04);
+    }
+
+    .terms {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 18px 0;
+      color: #888;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .terms input {
+      width: 17px;
+      height: 17px;
+      min-width: 17px;
+      margin-top: 1px;
+      accent-color: var(--green);
+    }
+
+    .terms a {
+      color: var(--green);
+      text-decoration: none;
+    }
+
+    .register-btn {
+      width: 100%;
+      height: 52px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--green);
+      color: #000;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .register-btn:hover {
+      background: #32ffa3;
+      transform: translateY(-1px);
+    }
+
+    .register-btn:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .message {
+      display: none;
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .message.error {
+      display: block;
+      background: rgba(255,85,85,.08);
+      border: 1px solid rgba(255,85,85,.25);
+      color: #ff8585;
+    }
+
+    .message.success {
+      display: block;
+      background: rgba(0,255,136,.08);
+      border: 1px solid rgba(0,255,136,.25);
+      color: var(--green);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+      color: #555;
+      font-size: 12px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      height: 1px;
+      background: #222;
+      flex: 1;
+    }
+
+    .login-text {
+      text-align: center;
+      color: #888;
+      font-size: 14px;
+    }
+
+    .login-btn {
+      display: block;
+      width: 100%;
+      height: 48px;
+      margin-top: 12px;
+      border: 1px solid #303030;
+      background: #111;
+      color: white;
+      border-radius: 12px;
+      text-decoration: none;
+      text-align: center;
+      line-height: 48px;
+      font-weight: 700;
+    }
+
+    .login-btn:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    footer {
+      text-align: center;
+      color: #555;
+      font-size: 12px;
+      padding: 18px;
+    }
+
+    .loader {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(0,0,0,.25);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle;
+      margin-right: 7px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .success-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.94);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .success-card {
+      width: 100%;
+      max-width: 370px;
+      background: #111;
+      border: 1px solid #252525;
+      border-radius: 22px;
+      padding: 32px 25px;
+      text-align: center;
+    }
+
+    .success-check {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      background: rgba(0,255,136,.1);
+      border: 1px solid rgba(0,255,136,.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--green);
+      font-size: 32px;
+    }
+
+    .success-card h2 {
+      margin-bottom: 8px;
+    }
+
+    .success-card p {
+      color: #888;
+      font-size: 14px;
+    }
+
+    .countdown {
+      margin-top: 18px;
+      color: var(--green);
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    @media (max-width: 500px) {
+      header {
+        padding: 0 16px;
+      }
+
+      .logo {
+        font-size: 21px;
+      }
+
+      main {
+        padding: 25px 12px 40px;
+        align-items: flex-start;
+      }
+
+      .register-box {
+        padding: 24px 18px;
+        border-radius: 18px;
+      }
+
+      h1 {
+        font-size: 27px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <a href="/index.html" class="logo">SHIT.BLEJ</a>
+  <a href="/index.html" class="back">← Kthehu</a>
+</header>
+
+<main>
+
+  <section class="register-box">
+
+    <div class="top-icon">S</div>
+
+    <h1>Krijo llogari</h1>
+
+    <p class="subtitle">
+      Bli dhe shit lehtësisht në SHIT.BLEJ
+    </p>
+
+    <form id="registerForm">
+
+      <div class="field">
+        <label for="name">Emri</label>
+
+        <input
+          id="name"
+          type="text"
+          placeholder="Emri yt"
+          autocomplete="name"
+          maxlength="80"
+          required
+        >
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+
+        <input
+          id="email"
+          type="email"
+          placeholder="email@example.com"
+          autocomplete="email"
+          maxlength="120"
+          required
+        >
+      </div>
+
+      <div class="field">
+        <label for="phone">Telefoni</label>
+
+        <input
+          id="phone"
+          type="tel"
+          placeholder="06xxxxxxxx"
+          autocomplete="tel"
+          maxlength="30"
+          required
+        >
+      </div>
+
+      <div class="field">
+        <label for="role">Lloji i llogarisë</label>
+
+        <select id="role" required>
+          <option value="">Zgjidh rolin</option>
+          <option value="customer">Blerës</option>
+          <option value="seller">Shitës</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="password">Fjalëkalimi</label>
+
+        <div class="password-wrap">
+
+          <input
+            id="password"
+            type="password"
+            placeholder="Minimumi 6 karaktere"
+            autocomplete="new-password"
+            minlength="6"
+            maxlength="100"
+            required
+          >
+
+          <button
+            type="button"
+            class="show-password"
+            id="showPassword"
+          >
+            👁
+          </button>
+
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="confirmPassword">
+          Konfirmo fjalëkalimin
+        </label>
+
+        <div class="password-wrap">
+
+          <input
+            id="confirmPassword"
+            type="password"
+            placeholder="Përsërite fjalëkalimin"
+            autocomplete="new-password"
+            minlength="6"
+            maxlength="100"
+            required
+          >
+
+          <button
+            type="button"
+            class="show-password"
+            id="showConfirmPassword"
+          >
+            👁
+          </button>
+
+        </div>
+      </div>
+
+      <label class="terms">
+
+        <input
+          type="checkbox"
+          id="terms"
+          required
+        >
+
+        <span>
+          Pranoj që të dhënat e mia të përdoren për
+          krijimin dhe menaxhimin e llogarisë në SHIT.BLEJ.
+        </span>
+
+      </label>
+
+      <button
+        type="submit"
+        class="register-btn"
+        id="registerBtn"
+      >
+        Krijo llogarinë
+      </button>
+
+      <div
+        id="message"
+        class="message"
+      ></div>
+
+    </form>
+
+    <div class="divider">
+      OSE
+    </div>
+
+    <div class="login-text">
+      Ke tashmë një llogari?
+    </div>
+
+    <a href="/login.html" class="login-btn">
+      Hyr në llogari
+    </a>
+
+  </section>
+
+</main>
+
+<footer>
+  © 2026 SHIT.BLEJ · Gjej. Bli. Shit.
+</footer>
+
+
+<!-- SUCCESS -->
+
+<div
+  class="success-overlay"
+  id="successOverlay"
+>
+
+  <div class="success-card">
+
+    <div class="success-check">
+      ✓
+    </div>
+
+    <h2>Llogaria u krijua!</h2>
+
+    <p>
+      Tani po të çojmë te hyrja.
+    </p>
+
+    <div
+      class="countdown"
+      id="countdown"
+    >
+      3
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  const API = "/api";
+
+
+  const form =
+    document.getElementById("registerForm");
+
+  const nameInput =
+    document.getElementById("name");
+
+  const emailInput =
+    document.getElementById("email");
+
+  const phoneInput =
+    document.getElementById("phone");
+
+  const roleInput =
+    document.getElementById("role");
+
+  const passwordInput =
+    document.getElementById("password");
+
+  const confirmPasswordInput =
+    document.getElementById("confirmPassword");
+
+  const termsInput =
+    document.getElementById("terms");
+
+  const registerBtn =
+    document.getElementById("registerBtn");
+
+  const message =
+    document.getElementById("message");
+
+  const successOverlay =
+    document.getElementById("successOverlay");
+
+  const countdownElement =
+    document.getElementById("countdown");
+
+
+  /*
+    SHOW / HIDE PASSWORD
+  */
+
+  document
+    .getElementById("showPassword")
+    .addEventListener("click", () => {
+
+      if (
+        passwordInput.type === "password"
+      ) {
+
+        passwordInput.type = "text";
+
+        document.getElementById(
+          "showPassword"
+        ).textContent = "🙈";
+
+      } else {
+
+        passwordInput.type = "password";
+
+        document.getElementById(
+          "showPassword"
+        ).textContent = "👁";
+
+      }
+
+    });
+
+
+  document
+    .getElementById("showConfirmPassword")
+    .addEventListener("click", () => {
+
+      if (
+        confirmPasswordInput.type === "password"
+      ) {
+
+        confirmPasswordInput.type = "text";
+
+        document.getElementById(
+          "showConfirmPassword"
+        ).textContent = "🙈";
+
+      } else {
+
+        confirmPasswordInput.type = "password";
+
+        document.getElementById(
+          "showConfirmPassword"
+        ).textContent = "👁";
+
+      }
+
+    });
+
+
+  /*
+    MESSAGE
+  */
+
+  function showMessage(
+    text,
+    type = "error"
+  ) {
+
+    message.textContent = text;
+
+    message.className =
+      "message " + type;
+
+  }
+
+
+  function clearMessage() {
+
+    message.textContent = "";
+
+    message.className =
+      "message";
+
+  }
+
+
+  /*
+    EMAIL VALIDATION
+  */
+
+  function validEmail(email) {
+
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      .test(email);
+
+  }
+
+
+  /*
+    REGISTER
+  */
+
+  form.addEventListener(
+    "submit",
+    async (event) => {
+
+      event.preventDefault();
+
+      clearMessage();
+
+
+      const name =
+        nameInput.value.trim();
+
+      const email =
+        emailInput.value.trim().toLowerCase();
+
+      const phone =
+        phoneInput.value.trim();
+
+      const role =
+        roleInput.value;
+
+      const password =
+        passwordInput.value;
+
+      const confirmPassword =
+        confirmPasswordInput.value;
+
+
+      /*
+        VALIDATION
+      */
+
+      if (name.length < 2) {
+
+        showMessage(
+          "Shkruaj emrin tënd."
+        );
+
+        nameInput.focus();
+
+        return;
+
+      }
+
+
+      if (!validEmail(email)) {
+
+        showMessage(
+          "Shkruaj një email të vlefshëm."
+        );
+
+        emailInput.focus();
+
+        return;
+
+      }
+
+
+      if (phone.length < 5) {
+
+        showMessage(
+          "Shkruaj numrin e telefonit."
+        );
+
+        phoneInput.focus();
+
+        return;
+
+      }
+
+
+      if (!role) {
+
+        showMessage(
+          "Zgjidh nëse je blerës apo shitës."
+        );
+
+        roleInput.focus();
+
+        return;
+
+      }
+
+
+      if (password.length < 6) {
+
+        showMessage(
+          "Fjalëkalimi duhet të ketë të paktën 6 karaktere."
+        );
+
+        passwordInput.focus();
+
+        return;
+
+      }
+
+
+      if (password !== confirmPassword) {
+
+        showMessage(
+          "Fjalëkalimet nuk përputhen."
+        );
+
+        confirmPasswordInput.focus();
+
+        return;
+
+      }
+
+
+      if (!termsInput.checked) {
+
+        showMessage(
+          "Duhet të pranosh kushtet për të vazhduar."
+        );
+
+        return;
+
+      }
+
+
+      /*
+        DISABLE BUTTON
+      */
+
+      registerBtn.disabled = true;
+
+      registerBtn.innerHTML =
+        '<span class="loader"></span>Duke krijuar...';
+
+
+      try {
+
+        const response =
+          await fetch(
+            API + "/auth/register",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body: JSON.stringify({
+                name: name,
+                email: email,
+                phone: phone,
+
+                // Worker-i e përdor
+                // si identifier për login
+                identifier: email,
+
+                password: password,
+                role: role
+              })
+            }
+          );
+
+
+        let data = null;
+
+        try {
+
+          data =
+            await response.json();
+
+        } catch {
+
+          data = null;
+
+        }
+
+
+        if (!response.ok) {
+
+          let errorText =
+            "Nuk u arrit të krijohej llogaria.";
+
+          if (
+            data &&
+            data.error
+          ) {
+
+            errorText =
+              data.error;
+
+          }
+
+          throw new Error(errorText);
+
+        }
+
+
+        /*
+          REGISTRATION SUCCESS
+        */
+
+        showSuccess();
+
+
+      } catch (error) {
+
+        console.error(
+          "REGISTER ERROR:",
+          error
+        );
+
+
+        showMessage(
+          error.message ||
+          "Ndodhi një problem gjatë regjistrimit."
+        );
+
+
+        registerBtn.disabled = false;
+
+        registerBtn.textContent =
+          "Krijo llogarinë";
+
+      }
+
+    }
+  );
+
+
+  /*
+    SUCCESS + REDIRECT
+  */
+
+  function showSuccess() {
+
+    successOverlay.style.display =
+      "flex";
+
+    let count = 3;
+
+    countdownElement.textContent =
+      count;
+
+
+    const timer =
+      setInterval(() => {
+
+        count--;
+
+        if (count > 0) {
+
+          countdownElement.textContent =
+            count;
+
+        } else {
+
+          clearInterval(timer);
+
+          countdownElement.textContent =
+            "✓";
+
+
+          setTimeout(() => {
+
+            window.location.href =
+              "/login.html?registered=1";
+
+          }, 350);
+
+        }
+
+      }, 700);
+
+  }
+
+
+  /*
+    ENTER KEY
+  */
+
+  [
+    nameInput,
+    emailInput,
+    phoneInput,
+    passwordInput,
+    confirmPasswordInput
+  ].forEach(input => {
+
+    input.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Enter"
+        ) {
+
+          form.requestSubmit();
+
+        }
+
+      }
+    );
+
+  });
+
+</script>
+
+</body>
+</html>
