@@ -5,6 +5,10 @@ const CORS = {
   "Content-Type": "application/json; charset=UTF-8"
 };
 
+/* =========================================================
+   HELPERS
+========================================================= */
+
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -17,7 +21,7 @@ function getToken(request) {
 
   if (!auth.startsWith("Bearer ")) return null;
 
-  return auth.substring(7).trim();
+  return auth.slice(7).trim();
 }
 
 function randomToken(length = 64) {
@@ -42,7 +46,7 @@ function fromHex(value) {
   const bytes = new Uint8Array(value.length / 2);
 
   for (let i = 0; i < bytes.length; i++) {
-    bytes[i] = parseInt(value.substr(i * 2, 2), 16);
+    bytes[i] = parseInt(value.substring(i * 2, i * 2 + 2), 16);
   }
 
   return bytes;
@@ -78,12 +82,33 @@ async function passwordHash(password, saltHex = null) {
   };
 }
 
+function clean(value) {
+  return String(value ?? "").trim();
+}
+
+function number(value, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
 
 /* =========================================================
-   DATABASE SETUP
+   DATABASE MIGRATION
+   NON-DESTRUCTIVE
 ========================================================= */
 
+async function addColumn(env, table, column, definition) {
+  try {
+    await env.DB.prepare(
+      `ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`
+    ).run();
+  } catch (_) {
+    // Column already exists.
+  }
+}
+
 async function setupDatabase(env) {
+
+  /* USERS */
 
   await env.DB.prepare(`
     CREATE TABLE IF NOT EXISTS auth_accounts (
@@ -99,6 +124,7 @@ async function setupDatabase(env) {
     )
   `).run();
 
+  /* SESSIONS */
 
   await env.DB.prepare(`
     CREATE TABLE IF NOT EXISTS sessions (
@@ -109,6 +135,7 @@ async function setupDatabase(env) {
     )
   `).run();
 
+  /* SAVED */
 
   await env.DB.prepare(`
     CREATE TABLE IF NOT EXISTS saved_listings (
@@ -120,6 +147,7 @@ async function setupDatabase(env) {
     )
   `).run();
 
+  /* BLOCKED USERS */
 
   await env.DB.prepare(`
     CREATE TABLE IF NOT EXISTS blocked_users (
@@ -131,6 +159,7 @@ async function setupDatabase(env) {
     )
   `).run();
 
+  /* BLOCKED PRODUCTS */
 
   await env.DB.prepare(`
     CREATE TABLE IF NOT EXISTS blocked_listings (
@@ -142,6 +171,7 @@ async function setupDatabase(env) {
     )
   `).run();
 
+  /* SETTINGS */
 
   await env.DB.prepare(`
     CREATE TABLE IF NOT EXISTS marketplace_settings (
@@ -151,38 +181,72 @@ async function setupDatabase(env) {
     )
   `).run();
 
-
   /*
-    Mos fshijmë asgjë.
-    Nëse kolonat ekzistojnë, SQLite jep error dhe
-    catch e injoron.
+    PRODUCTS
+    Ekzistojnë te D1 yt.
+    Shtojmë vetëm kolonat që mungojnë.
   */
 
-  try {
-    await env.DB.prepare(
-      `ALTER TABLE products ADD COLUMN city TEXT DEFAULT ''`
-    ).run();
-  } catch {}
+  await addColumn(env, "products", "name", "TEXT DEFAULT ''");
+  await addColumn(env, "products", "image", "TEXT DEFAULT ''");
+  await addColumn(env, "products", "seller", "TEXT DEFAULT ''");
+  await addColumn(env, "products", "sellerName", "TEXT DEFAULT ''");
+  await addColumn(env, "products", "sellerPhone", "TEXT DEFAULT ''");
+  await addColumn(env, "products", "sellerEmail", "TEXT DEFAULT ''");
+  await addColumn(env, "products", "city", "TEXT DEFAULT ''");
+  await addColumn(env, "products", "condition", "TEXT DEFAULT ''");
+  await addColumn(env, "products", "phone", "TEXT DEFAULT ''");
+  await addColumn(env, "products", "negotiable", "INTEGER DEFAULT 0");
 
-  try {
-    await env.DB.prepare(
-      `ALTER TABLE products ADD COLUMN condition TEXT DEFAULT ''`
-    ).run();
-  } catch {}
+  /*
+    ORDERS
+    Nëse ekziston, nuk preket.
+    Nëse nuk ekziston, krijohet.
+  */
 
-  try {
-    await env.DB.prepare(
-      `ALTER TABLE products ADD COLUMN phone TEXT DEFAULT ''`
-    ).run();
-  } catch {}
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS orders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_id INTEGER,
+      buyer_id INTEGER,
+      quantity INTEGER DEFAULT 1,
+      total_price REAL DEFAULT 0,
+      status TEXT DEFAULT 'pending',
+      customer_name TEXT DEFAULT '',
+      customer_phone TEXT DEFAULT '',
+      customer_city TEXT DEFAULT '',
+      customer_address TEXT DEFAULT '',
+      payment_method TEXT DEFAULT 'cash_on_delivery',
+      order_code TEXT DEFAULT '',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `).run();
 
-  try {
-    await env.DB.prepare(
-      `ALTER TABLE products ADD COLUMN negotiable INTEGER DEFAULT 0`
-    ).run();
-  } catch {}
+  /* Missing order columns */
+
+  await addColumn(env, "orders", "product_id", "INTEGER");
+  await addColumn(env, "orders", "buyer_id", "INTEGER");
+  await addColumn(env, "orders", "quantity", "INTEGER DEFAULT 1");
+  await addColumn(env, "orders", "total_price", "REAL DEFAULT 0");
+  await addColumn(env, "orders", "status", "TEXT DEFAULT 'pending'");
+  await addColumn(env, "orders", "customer_name", "TEXT DEFAULT ''");
+  await addColumn(env, "orders", "customer_phone", "TEXT DEFAULT ''");
+  await addColumn(env, "orders", "customer_city", "TEXT DEFAULT ''");
+  await addColumn(env, "orders", "customer_address", "TEXT DEFAULT ''");
+  await addColumn(
+    env,
+    "orders",
+    "payment_method",
+    "TEXT DEFAULT 'cash_on_delivery'"
+  );
+  await addColumn(env, "orders", "order_code", "TEXT DEFAULT ''");
+  await addColumn(
+    env,
+    "orders",
+    "created_at",
+    "TEXT DEFAULT CURRENT_TIMESTAMP"
+  );
 }
-
 
 /* =========================================================
    AUTH
@@ -204,7 +268,10 @@ async function currentUser(request, env) {
     FROM sessions s
     JOIN auth_accounts a
       ON a.id = s.user_id
+    LEFT JOIN blocked_users b
+      ON b.user_id = a.id
     WHERE s.token = ?
+      AND b.id IS NULL
     LIMIT 1
   `)
     .bind(token)
@@ -213,9 +280,7 @@ async function currentUser(request, env) {
   return user || null;
 }
 
-
 async function requireUser(request, env) {
-
   const user = await currentUser(request, env);
 
   if (!user) {
@@ -225,9 +290,7 @@ async function requireUser(request, env) {
   return user;
 }
 
-
 async function requireAdmin(request, env) {
-
   const user = await requireUser(request, env);
 
   if (user.role !== "admin") {
@@ -236,7 +299,6 @@ async function requireAdmin(request, env) {
 
   return user;
 }
-
 
 /* =========================================================
    PRODUCT FORMAT
@@ -251,9 +313,9 @@ function formatProduct(product) {
 
     id: Number(product.id),
 
-    price: Number(product.price || 0),
+    price: number(product.price),
 
-    stock: Number(product.stock || 0),
+    stock: number(product.stock),
 
     seller_id:
       product.seller_id == null
@@ -275,38 +337,66 @@ function formatProduct(product) {
       product.name ||
       "",
 
+    name:
+      product.name ||
+      product.title ||
+      "",
+
+    seller:
+      product.seller ||
+      product.sellerName ||
+      "",
+
     sellerName:
       product.sellerName ||
-      product.seller_name ||
       product.seller ||
+      product.seller_name ||
       "",
 
     sellerPhone:
       product.sellerPhone ||
       product.seller_phone ||
       product.phone ||
+      product.seller_account_phone ||
       "",
 
     sellerEmail:
       product.sellerEmail ||
       product.seller_email ||
-      ""
+      product.seller_account_email ||
+      "",
+
+    city:
+      product.city || "",
+
+    condition:
+      product.condition || "",
+
+    phone:
+      product.phone || "",
+
+    negotiable:
+      Number(product.negotiable || 0)
   };
 }
-
 
 async function findProduct(env, id) {
 
   const product = await env.DB.prepare(`
     SELECT
       p.*,
-      a.name AS seller_name,
-      a.email AS seller_email,
+
+      a.name AS seller_account_name,
+      a.email AS seller_account_email,
       a.phone AS seller_account_phone
+
     FROM products p
+
     LEFT JOIN auth_accounts a
       ON a.id = p.seller_id
+
     WHERE p.id = ?
+
     LIMIT 1
   `)
     .bind(id)
@@ -319,23 +409,74 @@ async function findProduct(env, id) {
 
     sellerName:
       product.sellerName ||
-      product.seller_name ||
       product.seller ||
+      product.seller_account_name ||
       "",
 
     sellerPhone:
       product.sellerPhone ||
-      product.seller_account_phone ||
       product.phone ||
+      product.seller_account_phone ||
       "",
 
     sellerEmail:
       product.sellerEmail ||
-      product.seller_email ||
+      product.seller_account_email ||
       ""
   });
 }
 
+/* =========================================================
+   ORDER FORMAT
+========================================================= */
+
+function formatOrder(order) {
+
+  return {
+    ...order,
+
+    id: Number(order.id),
+
+    product_id:
+      order.product_id == null
+        ? null
+        : Number(order.product_id),
+
+    buyer_id:
+      order.buyer_id == null
+        ? null
+        : Number(order.buyer_id),
+
+    seller_id:
+      order.seller_id == null
+        ? null
+        : Number(order.seller_id),
+
+    quantity:
+      number(order.quantity, 1),
+
+    total_price:
+      number(order.total_price),
+
+    product_title:
+      order.product_title ||
+      order.product_name ||
+      "Produkt",
+
+    product_name:
+      order.product_name ||
+      order.product_title ||
+      "Produkt",
+
+    product_image:
+      order.product_image ||
+      order.image_url ||
+      "",
+
+    status:
+      order.status || "pending"
+  };
+}
 
 /* =========================================================
    MAIN WORKER
@@ -350,7 +491,9 @@ export default {
 
     try {
 
-      /* OPTIONS */
+      /* =====================================================
+         OPTIONS
+      ===================================================== */
 
       if (request.method === "OPTIONS") {
         return new Response(null, {
@@ -359,11 +502,11 @@ export default {
         });
       }
 
-
-      /* DATABASE */
+      /* =====================================================
+         DATABASE
+      ===================================================== */
 
       await setupDatabase(env);
-
 
       /* =====================================================
          API HEALTH
@@ -373,12 +516,11 @@ export default {
 
         return json({
           success: true,
-          app: "SABI Marketplace",
+          app: "SHIT.BLEJ",
           status: "online"
         });
 
       }
-
 
       /* =====================================================
          REGISTER
@@ -391,23 +533,23 @@ export default {
 
         const body = await request.json();
 
-        const name =
-          String(body.name || "").trim();
+        const name = clean(body.name);
 
         const email =
-          String(body.email || "").trim().toLowerCase();
+          clean(body.email).toLowerCase();
 
-        const phone =
-          String(body.phone || "").trim();
+        const phone = clean(body.phone);
 
         const password =
           String(body.password || "");
 
+        const requestedRole =
+          clean(body.role).toLowerCase();
+
         const role =
-          body.role === "seller"
+          requestedRole === "seller"
             ? "seller"
             : "customer";
-
 
         if (!name) {
           return json({
@@ -416,7 +558,6 @@ export default {
           }, 400);
         }
 
-
         if (!email) {
           return json({
             success: false,
@@ -424,25 +565,31 @@ export default {
           }, 400);
         }
 
+        if (!email.includes("@")) {
+          return json({
+            success: false,
+            error: "Email nuk është i vlefshëm."
+          }, 400);
+        }
 
         if (password.length < 4) {
           return json({
             success: false,
-            error: "Password duhet të ketë të paktën 4 karaktere."
+            error:
+              "Password duhet të ketë të paktën 4 karaktere."
           }, 400);
         }
-
 
         const existing =
           await env.DB.prepare(`
             SELECT id
             FROM auth_accounts
             WHERE LOWER(email) = ?
+               OR LOWER(identifier) = ?
             LIMIT 1
           `)
-            .bind(email)
+            .bind(email, email)
             .first();
-
 
         if (existing) {
           return json({
@@ -451,10 +598,8 @@ export default {
           }, 409);
         }
 
-
         const { hash, salt } =
           await passwordHash(password);
-
 
         const result =
           await env.DB.prepare(`
@@ -481,7 +626,6 @@ export default {
             )
             .run();
 
-
         return json({
           success: true,
           message: "Llogaria u krijua.",
@@ -493,9 +637,7 @@ export default {
             role
           }
         }, 201);
-
       }
-
 
       /* =====================================================
          LOGIN
@@ -509,27 +651,21 @@ export default {
         const body = await request.json();
 
         const identifier =
-          String(
+          clean(
             body.identifier ||
             body.email ||
             ""
-          )
-            .trim()
-            .toLowerCase();
+          ).toLowerCase();
 
         const password =
           String(body.password || "");
 
-
         if (!identifier || !password) {
-
           return json({
             success: false,
             error: "Plotëso të gjitha fushat."
           }, 400);
-
         }
-
 
         const account =
           await env.DB.prepare(`
@@ -546,16 +682,29 @@ export default {
             )
             .first();
 
-
         if (!account) {
-
           return json({
             success: false,
             error: "Email ose password i gabuar."
           }, 401);
-
         }
 
+        const blocked =
+          await env.DB.prepare(`
+            SELECT id
+            FROM blocked_users
+            WHERE user_id = ?
+            LIMIT 1
+          `)
+            .bind(account.id)
+            .first();
+
+        if (blocked) {
+          return json({
+            success: false,
+            error: "Kjo llogari është bllokuar."
+          }, 403);
+        }
 
         const { hash } =
           await passwordHash(
@@ -563,35 +712,25 @@ export default {
             account.password_salt
           );
 
-
-        if (
-          hash !== account.password_hash
-        ) {
-
+        if (hash !== account.password_hash) {
           return json({
             success: false,
             error: "Email ose password i gabuar."
           }, 401);
-
         }
-
 
         if (
           body.role &&
           body.role !== account.role
         ) {
-
           return json({
             success: false,
             error: "Roli nuk përputhet me llogarinë."
           }, 401);
-
         }
-
 
         const token =
           randomToken(64);
-
 
         await env.DB.prepare(`
           INSERT INTO sessions
@@ -607,7 +746,6 @@ export default {
           )
           .run();
 
-
         return json({
           success: true,
           token,
@@ -620,9 +758,7 @@ export default {
             role: account.role || "customer"
           }
         });
-
       }
-
 
       /* =====================================================
          ME
@@ -639,24 +775,18 @@ export default {
             env
           );
 
-
         if (!user) {
-
           return json({
             success: false,
             error: "Nuk jeni i loguar."
           }, 401);
-
         }
-
 
         return json({
           success: true,
           user
         });
-
       }
-
 
       /* =====================================================
          LOGOUT
@@ -670,29 +800,22 @@ export default {
         const token =
           getToken(request);
 
-
         if (token) {
-
           await env.DB.prepare(`
             DELETE FROM sessions
             WHERE token = ?
           `)
             .bind(token)
             .run();
-
         }
-
 
         return json({
           success: true
         });
-
       }
-
 
       /* =====================================================
          PRODUCTS SEARCH
-         MUST COME BEFORE /products/:id
       ===================================================== */
 
       if (
@@ -701,10 +824,10 @@ export default {
       ) {
 
         const q =
-          url.searchParams.get("q") || "";
+          clean(url.searchParams.get("q"));
 
         const category =
-          url.searchParams.get("category") || "";
+          clean(url.searchParams.get("category"));
 
         const minRaw =
           url.searchParams.get("min");
@@ -712,90 +835,84 @@ export default {
         const maxRaw =
           url.searchParams.get("max");
 
-
         let sql = `
-          SELECT *
-          FROM products
-          WHERE 1 = 1
+          SELECT p.*
+          FROM products p
+          LEFT JOIN blocked_listings bl
+            ON bl.product_id = p.id
+          WHERE bl.id IS NULL
         `;
 
         const params = [];
 
-
-        if (q.trim()) {
+        if (q) {
 
           sql += `
             AND (
-              LOWER(COALESCE(title,'')) LIKE ?
-              OR LOWER(COALESCE(name,'')) LIKE ?
-              OR LOWER(COALESCE(description,'')) LIKE ?
+              LOWER(COALESCE(p.title,'')) LIKE ?
+              OR LOWER(COALESCE(p.name,'')) LIKE ?
+              OR LOWER(COALESCE(p.description,'')) LIKE ?
+              OR LOWER(COALESCE(p.category,'')) LIKE ?
+              OR LOWER(COALESCE(p.city,'')) LIKE ?
             )
           `;
 
           const search =
-            `%${q.trim().toLowerCase()}%`;
+            `%${q.toLowerCase()}%`;
 
           params.push(
+            search,
+            search,
             search,
             search,
             search
           );
-
         }
 
-
-        if (category.trim()) {
+        if (category) {
 
           sql += `
-            AND LOWER(COALESCE(category,'')) = LOWER(?)
+            AND LOWER(COALESCE(p.category,'')) =
+                LOWER(?)
           `;
 
-          params.push(
-            category.trim()
-          );
-
+          params.push(category);
         }
-
 
         if (
           minRaw !== null &&
           minRaw !== "" &&
-          !Number.isNaN(Number(minRaw))
+          Number.isFinite(Number(minRaw))
         ) {
 
           sql += `
-            AND CAST(price AS REAL) >= ?
+            AND CAST(p.price AS REAL) >= ?
           `;
 
           params.push(
             Number(minRaw)
           );
-
         }
-
 
         if (
           maxRaw !== null &&
           maxRaw !== "" &&
-          !Number.isNaN(Number(maxRaw))
+          Number.isFinite(Number(maxRaw))
         ) {
 
           sql += `
-            AND CAST(price AS REAL) <= ?
+            AND CAST(p.price AS REAL) <= ?
           `;
 
           params.push(
             Number(maxRaw)
           );
-
         }
 
-
         sql += `
-          ORDER BY id DESC
+          ORDER BY p.id DESC
           LIMIT 300
         `;
-
 
         const result =
           await env.DB
@@ -803,14 +920,11 @@ export default {
             .bind(...params)
             .all();
 
-
         return json(
           (result.results || [])
             .map(formatProduct)
         );
-
       }
-
 
       /* =====================================================
          SAVED PRODUCTS
@@ -827,19 +941,20 @@ export default {
             env
           );
 
-
         const result =
           await env.DB.prepare(`
             SELECT p.*
             FROM saved_listings s
             JOIN products p
               ON p.id = s.product_id
+            LEFT JOIN blocked_listings bl
+              ON bl.product_id = p.id
             WHERE s.user_id = ?
+              AND bl.id IS NULL
             ORDER BY s.id DESC
           `)
             .bind(user.id)
             .all();
-
 
         return json({
           success: true,
@@ -847,9 +962,7 @@ export default {
             (result.results || [])
               .map(formatProduct)
         });
-
       }
-
 
       /* =====================================================
          ALL PRODUCTS
@@ -861,21 +974,25 @@ export default {
       ) {
 
         const category =
-          url.searchParams.get("category");
-
+          clean(
+            url.searchParams.get("category")
+          );
 
         let result;
-
 
         if (category) {
 
           result =
             await env.DB.prepare(`
-              SELECT *
-              FROM products
-              WHERE LOWER(COALESCE(category,'')) =
+              SELECT p.*
+              FROM products p
+              LEFT JOIN blocked_listings bl
+                ON bl.product_id = p.id
+              WHERE
+                bl.id IS NULL
+                AND LOWER(COALESCE(p.category,'')) =
                     LOWER(?)
-              ORDER BY id DESC
+              ORDER BY p.id DESC
               LIMIT 500
             `)
               .bind(category)
@@ -885,26 +1002,73 @@ export default {
 
           result =
             await env.DB.prepare(`
-              SELECT *
-              FROM products
-              ORDER BY id DESC
+              SELECT p.*
+              FROM products p
+              LEFT JOIN blocked_listings bl
+                ON bl.product_id = p.id
+              WHERE bl.id IS NULL
+              ORDER BY p.id DESC
               LIMIT 500
             `)
               .all();
-
         }
-
 
         return json(
           (result.results || [])
             .map(formatProduct)
         );
-
       }
 
+      /* =====================================================
+         SINGLE PRODUCT
+      ===================================================== */
+
+      if (
+        /^\/api\/products\/[0-9]+$/.test(path) &&
+        request.method === "GET"
+      ) {
+
+        const id =
+          Number(path.split("/").pop());
+
+        const blocked =
+          await env.DB.prepare(`
+            SELECT id
+            FROM blocked_listings
+            WHERE product_id = ?
+            LIMIT 1
+          `)
+            .bind(id)
+            .first();
+
+        if (blocked) {
+          return json({
+            success: false,
+            error: "Ky produkt nuk është i disponueshëm."
+          }, 404);
+        }
+
+        const product =
+          await findProduct(
+            env,
+            id
+          );
+
+        if (!product) {
+          return json({
+            success: false,
+            error: "Produkti nuk u gjet."
+          }, 404);
+        }
+
+        return json({
+          success: true,
+          product
+        });
+      }
 
       /* =====================================================
-         PRODUCT SAVE
+         SAVE / UNSAVE
       ===================================================== */
 
       if (
@@ -918,10 +1082,8 @@ export default {
             env
           );
 
-
         const id =
           Number(path.split("/")[3]);
-
 
         const product =
           await env.DB.prepare(`
@@ -932,16 +1094,12 @@ export default {
             .bind(id)
             .first();
 
-
         if (!product) {
-
           return json({
             success: false,
             error: "Produkti nuk ekziston."
           }, 404);
-
         }
-
 
         const saved =
           await env.DB.prepare(`
@@ -949,13 +1107,13 @@ export default {
             FROM saved_listings
             WHERE user_id = ?
               AND product_id = ?
+            LIMIT 1
           `)
             .bind(
               user.id,
               id
             )
             .first();
-
 
         if (saved) {
 
@@ -970,14 +1128,11 @@ export default {
             )
             .run();
 
-
           return json({
             success: true,
             saved: false
           });
-
         }
-
 
         await env.DB.prepare(`
           INSERT OR IGNORE INTO saved_listings
@@ -993,52 +1148,11 @@ export default {
           )
           .run();
 
-
         return json({
           success: true,
           saved: true
         });
-
       }
-
-
-      /* =====================================================
-         SINGLE PRODUCT
-      ===================================================== */
-
-      if (
-        /^\/api\/products\/[0-9]+$/.test(path) &&
-        request.method === "GET"
-      ) {
-
-        const id =
-          Number(path.split("/").pop());
-
-
-        const product =
-          await findProduct(
-            env,
-            id
-          );
-
-
-        if (!product) {
-
-          return json({
-            success: false,
-            error: "Produkti nuk u gjet."
-          }, 404);
-
-        }
-
-
-        return json({
-          success: true,
-          product
-        });
-
-      }
-
 
       /* =====================================================
          CREATE PRODUCT
@@ -1055,88 +1169,72 @@ export default {
             env
           );
 
-
         const body =
           await request.json();
 
-
         const title =
-          String(
+          clean(
             body.title ||
-            body.name ||
-            ""
-          ).trim();
-
-
-        const description =
-          String(
-            body.description ||
-            ""
-          ).trim();
-
-
-        const price =
-          Number(body.price || 0);
-
-
-        const image =
-          String(
-            body.image_url ||
-            body.image ||
-            ""
-          ).trim();
-
-
-        const category =
-          String(
-            body.category ||
-            "Të tjera"
-          ).trim();
-
-
-        const stock =
-          Number(
-            body.stock ?? 1
+            body.name
           );
 
+        const description =
+          clean(body.description);
+
+        const price =
+          number(body.price);
+
+        const image =
+          clean(
+            body.image_url ||
+            body.image
+          );
+
+        const category =
+          clean(
+            body.category ||
+            "Të tjera"
+          );
+
+        const stock =
+          Math.max(
+            0,
+            number(
+              body.stock,
+              1
+            )
+          );
 
         const city =
-          String(
-            body.city ||
-            ""
-          ).trim();
-
+          clean(body.city);
 
         const condition =
-          String(
-            body.condition ||
-            ""
-          ).trim();
-
+          clean(body.condition);
 
         const phone =
-          String(
+          clean(
             body.phone ||
-            user.phone ||
-            ""
-          ).trim();
-
+            user.phone
+          );
 
         const negotiable =
           body.negotiable
             ? 1
             : 0;
 
-
         if (!title) {
-
           return json({
             success: false,
             error: "Titulli mungon."
           }, 400);
-
         }
 
+        if (price < 0) {
+          return json({
+            success: false,
+            error: "Çmimi nuk është i vlefshëm."
+          }, 400);
+        }
 
         const result =
           await env.DB.prepare(`
@@ -1185,21 +1283,17 @@ export default {
             )
             .run();
 
-
         const product =
           await findProduct(
             env,
             result.meta.last_row_id
           );
 
-
         return json({
           success: true,
           product
         }, 201);
-
       }
-
 
       /* =====================================================
          UPDATE PRODUCT
@@ -1216,123 +1310,101 @@ export default {
             env
           );
 
-
         const id =
           Number(path.split("/").pop());
-
 
         const existing =
           await env.DB.prepare(`
             SELECT *
             FROM products
             WHERE id = ?
+            LIMIT 1
           `)
             .bind(id)
             .first();
 
-
         if (!existing) {
-
           return json({
             success: false,
             error: "Produkti nuk ekziston."
           }, 404);
-
         }
-
 
         if (
           user.role !== "admin" &&
           Number(existing.seller_id) !==
             Number(user.id)
         ) {
-
           return json({
             success: false,
             error: "Nuk keni akses."
           }, 403);
-
         }
-
 
         const body =
           await request.json();
 
-
         const title =
-          String(
+          clean(
             body.title ??
+            body.name ??
             existing.title ??
-            existing.name ??
-            ""
+            existing.name
           );
-
 
         const description =
-          String(
+          clean(
             body.description ??
-            existing.description ??
-            ""
+            existing.description
           );
-
 
         const price =
-          Number(
+          number(
             body.price ??
-            existing.price ??
-            0
+            existing.price
           );
 
-
         const image =
-          String(
+          clean(
             body.image_url ??
             body.image ??
             existing.image_url ??
-            existing.image ??
-            ""
+            existing.image
           );
 
-
         const category =
-          String(
+          clean(
             body.category ??
             existing.category ??
             "Të tjera"
           );
 
-
         const stock =
-          Number(
-            body.stock ??
-            existing.stock ??
-            0
+          Math.max(
+            0,
+            number(
+              body.stock ??
+              existing.stock
+            )
           );
-
 
         const city =
-          String(
+          clean(
             body.city ??
-            existing.city ??
-            ""
+            existing.city
           );
-
 
         const condition =
-          String(
+          clean(
             body.condition ??
-            existing.condition ??
-            ""
+            existing.condition
           );
-
 
         const phone =
-          String(
+          clean(
             body.phone ??
-            existing.phone ??
-            ""
+            existing.phone
           );
-
 
         const negotiable =
           body.negotiable === undefined
@@ -1340,7 +1412,6 @@ export default {
             : body.negotiable
               ? 1
               : 0;
-
 
         await env.DB.prepare(`
           UPDATE products
@@ -1376,7 +1447,6 @@ export default {
           )
           .run();
 
-
         return json({
           success: true,
           product:
@@ -1385,9 +1455,7 @@ export default {
               id
             )
         });
-
       }
-
 
       /* =====================================================
          DELETE PRODUCT
@@ -1404,44 +1472,36 @@ export default {
             env
           );
 
-
         const id =
           Number(path.split("/").pop());
-
 
         const product =
           await env.DB.prepare(`
             SELECT *
             FROM products
             WHERE id = ?
+            LIMIT 1
           `)
             .bind(id)
             .first();
 
-
         if (!product) {
-
           return json({
             success: false,
             error: "Produkti nuk ekziston."
           }, 404);
-
         }
-
 
         if (
           user.role !== "admin" &&
           Number(product.seller_id) !==
             Number(user.id)
         ) {
-
           return json({
             success: false,
             error: "Nuk keni akses."
           }, 403);
-
         }
-
 
         await env.DB.prepare(`
           DELETE FROM saved_listings
@@ -1450,7 +1510,6 @@ export default {
           .bind(id)
           .run();
 
-
         await env.DB.prepare(`
           DELETE FROM blocked_listings
           WHERE product_id = ?
@@ -1458,6 +1517,10 @@ export default {
           .bind(id)
           .run();
 
+        /*
+          Nuk fshijmë porositë.
+          Produkti mund të mbetet i lidhur me porositë.
+        */
 
         await env.DB.prepare(`
           DELETE FROM products
@@ -1466,17 +1529,14 @@ export default {
           .bind(id)
           .run();
 
-
         return json({
           success: true,
           message: "Produkti u fshi."
         });
-
       }
 
-
       /* =====================================================
-         ORDERS CREATE
+         CREATE ORDER
       ===================================================== */
 
       if (
@@ -1490,55 +1550,102 @@ export default {
             env
           );
 
-
         const body =
           await request.json();
 
-
         const productId =
-          Number(
+          number(
             body.product_id ||
             body.productId
           );
 
-
         const quantity =
-          Number(
-            body.quantity || 1
+          Math.max(
+            1,
+            Math.floor(
+              number(
+                body.quantity,
+                1
+              )
+            )
           );
 
+        if (!productId) {
+          return json({
+            success: false,
+            error: "Produkti mungon."
+          }, 400);
+        }
 
         const product =
           await env.DB.prepare(`
             SELECT *
             FROM products
             WHERE id = ?
+            LIMIT 1
           `)
             .bind(productId)
             .first();
 
-
         if (!product) {
-
           return json({
             success: false,
             error: "Produkti nuk ekziston."
           }, 404);
-
         }
 
+        const blocked =
+          await env.DB.prepare(`
+            SELECT id
+            FROM blocked_listings
+            WHERE product_id = ?
+            LIMIT 1
+          `)
+            .bind(productId)
+            .first();
+
+        if (blocked) {
+          return json({
+            success: false,
+            error: "Ky produkt nuk është i disponueshëm."
+          }, 400);
+        }
+
+        if (
+          product.stock != null &&
+          Number(product.stock) > 0 &&
+          quantity > Number(product.stock)
+        ) {
+          return json({
+            success: false,
+            error:
+              `Ka vetëm ${product.stock} copë në stok.`
+          }, 400);
+        }
+
+        if (
+          Number(product.seller_id) ===
+          Number(user.id)
+        ) {
+          return json({
+            success: false,
+            error:
+              "Nuk mund të blesh produktin tënd."
+          }, 400);
+        }
 
         const total =
           Number(product.price || 0) *
           quantity;
 
-
         const code =
           "SABI-" +
-          Date.now().toString(36).toUpperCase() +
+          new Date()
+            .toISOString()
+            .slice(0, 10)
+            .replaceAll("-", "") +
           "-" +
           randomToken(4).toUpperCase();
-
 
         const result =
           await env.DB.prepare(`
@@ -1554,10 +1661,11 @@ export default {
               customer_city,
               customer_address,
               payment_method,
-              order_code
+              order_code,
+              created_at
             )
             VALUES
-            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
           `)
             .bind(
               productId,
@@ -1565,22 +1673,47 @@ export default {
               quantity,
               total,
               "pending",
-              body.customer_name ||
-                user.name ||
-                "",
-              body.customer_phone ||
-                user.phone ||
-                "",
-              body.customer_city ||
-                "",
-              body.customer_address ||
-                "",
-              body.payment_method ||
-                "cash",
+              clean(
+                body.customer_name ||
+                user.name
+              ),
+              clean(
+                body.customer_phone ||
+                user.phone
+              ),
+              clean(
+                body.customer_city
+              ),
+              clean(
+                body.customer_address
+              ),
+              clean(
+                body.payment_method ||
+                "cash_on_delivery"
+              ),
               code
             )
             .run();
 
+        /*
+          Ulje stoku vetëm nëse stock > 0.
+        */
+
+        if (Number(product.stock) > 0) {
+
+          await env.DB.prepare(`
+            UPDATE products
+            SET stock = stock - ?
+            WHERE id = ?
+              AND stock >= ?
+          `)
+            .bind(
+              quantity,
+              productId,
+              quantity
+            )
+            .run();
+        }
 
         return json({
           success: true,
@@ -1594,9 +1727,7 @@ export default {
             status: "pending"
           }
         }, 201);
-
       }
-
 
       /* =====================================================
          ORDERS LIST
@@ -1613,9 +1744,7 @@ export default {
             env
           );
 
-
         let result;
-
 
         if (user.role === "admin") {
 
@@ -1623,14 +1752,26 @@ export default {
             await env.DB.prepare(`
               SELECT
                 o.*,
+
                 p.title AS product_title,
                 p.name AS product_name,
                 p.image_url AS product_image,
                 p.seller_id,
-                p.seller
+                p.seller,
+                p.sellerName,
+
+                a.name AS buyer_name,
+                a.email AS buyer_email,
+                a.phone AS buyer_account_phone
+
               FROM orders o
+
               LEFT JOIN products p
                 ON p.id = o.product_id
+
+              LEFT JOIN auth_accounts a
+                ON a.id = o.buyer_id
+
               ORDER BY o.id DESC
             `)
               .all();
@@ -1641,17 +1782,30 @@ export default {
             await env.DB.prepare(`
               SELECT
                 o.*,
+
                 p.title AS product_title,
                 p.name AS product_name,
                 p.image_url AS product_image,
                 p.seller_id,
-                p.seller
+                p.seller,
+                p.sellerName,
+
+                a.name AS buyer_name,
+                a.email AS buyer_email,
+                a.phone AS buyer_account_phone
+
               FROM orders o
+
               LEFT JOIN products p
                 ON p.id = o.product_id
+
+              LEFT JOIN auth_accounts a
+                ON a.id = o.buyer_id
+
               WHERE
                 o.buyer_id = ?
                 OR p.seller_id = ?
+
               ORDER BY o.id DESC
             `)
               .bind(
@@ -1659,21 +1813,19 @@ export default {
                 user.id
               )
               .all();
-
         }
-
 
         return json({
           success: true,
-          orders:
-            result.results || []
-        });
 
+          orders:
+            (result.results || [])
+              .map(formatOrder)
+        });
       }
 
-
       /* =====================================================
-         ORDER UPDATE
+         UPDATE ORDER
       ===================================================== */
 
       if (
@@ -1687,10 +1839,8 @@ export default {
             env
           );
 
-
         const id =
           Number(path.split("/").pop());
-
 
         const order =
           await env.DB.prepare(`
@@ -1701,57 +1851,65 @@ export default {
             LEFT JOIN products p
               ON p.id = o.product_id
             WHERE o.id = ?
+            LIMIT 1
           `)
             .bind(id)
             .first();
 
-
         if (!order) {
-
           return json({
             success: false,
             error: "Porosia nuk ekziston."
           }, 404);
-
         }
-
 
         const body =
           await request.json();
 
-
         const status =
-          String(body.status || "")
-            .trim();
+          clean(body.status).toLowerCase();
 
+        const allowedStatuses = [
+          "pending",
+          "confirmed",
+          "shipped",
+          "completed",
+          "cancelled"
+        ];
+
+        if (!allowedStatuses.includes(status)) {
+          return json({
+            success: false,
+            error:
+              "Status i pavlefshëm."
+          }, 400);
+        }
 
         const seller =
           Number(order.seller_id) ===
           Number(user.id);
 
-
         const buyer =
           Number(order.buyer_id) ===
           Number(user.id);
 
-
         const admin =
           user.role === "admin";
-
 
         if (
           !admin &&
           !seller &&
           !buyer
         ) {
-
           return json({
             success: false,
             error: "Nuk keni akses."
           }, 403);
-
         }
 
+        /*
+          Blerësi mund vetëm ta anulojë.
+        */
 
         if (
           buyer &&
@@ -1759,14 +1917,41 @@ export default {
           !admin &&
           status !== "cancelled"
         ) {
-
           return json({
             success: false,
-            error: "Blerësi mund vetëm ta anulojë porosinë."
+            error:
+              "Blerësi mund vetëm ta anulojë porosinë."
           }, 403);
-
         }
 
+        /*
+          Mos lejo ndryshime pas anulimit/përfundimit
+          nga user normal.
+        */
+
+        if (
+          !admin &&
+          order.status === "cancelled" &&
+          status !== "cancelled"
+        ) {
+          return json({
+            success: false,
+            error:
+              "Porosia është anuluar."
+          }, 400);
+        }
+
+        if (
+          !admin &&
+          order.status === "completed" &&
+          status !== "completed"
+        ) {
+          return json({
+            success: false,
+            error:
+              "Porosia është përfunduar."
+          }, 400);
+        }
 
         await env.DB.prepare(`
           UPDATE orders
@@ -1779,13 +1964,11 @@ export default {
           )
           .run();
 
-
         return json({
-          success: true
+          success: true,
+          status
         });
-
       }
-
 
       /* =====================================================
          ADMIN STATS
@@ -1801,14 +1984,12 @@ export default {
           env
         );
 
-
         const users =
           await env.DB.prepare(`
             SELECT COUNT(*) AS count
             FROM auth_accounts
           `)
             .first();
-
 
         const products =
           await env.DB.prepare(`
@@ -1817,14 +1998,12 @@ export default {
           `)
             .first();
 
-
         const orders =
           await env.DB.prepare(`
             SELECT COUNT(*) AS count
             FROM orders
           `)
             .first();
-
 
         const sellers =
           await env.DB.prepare(`
@@ -1833,7 +2012,6 @@ export default {
             WHERE role = 'seller'
           `)
             .first();
-
 
         return json({
           success: true,
@@ -1852,9 +2030,7 @@ export default {
               Number(sellers?.count || 0)
           }
         });
-
       }
-
 
       /* =====================================================
          ADMIN USERS
@@ -1870,31 +2046,37 @@ export default {
           env
         );
 
-
         const result =
           await env.DB.prepare(`
             SELECT
-              id,
-              name,
-              email,
-              phone,
-              identifier,
-              role,
-              created_at
-            FROM auth_accounts
-            ORDER BY id DESC
+              a.id,
+              a.name,
+              a.email,
+              a.phone,
+              a.identifier,
+              a.role,
+              a.created_at,
+
+              CASE
+                WHEN b.id IS NULL THEN 0
+                ELSE 1
+              END AS blocked
+
+            FROM auth_accounts a
+
+            LEFT JOIN blocked_users b
+              ON b.user_id = a.id
+
+            ORDER BY a.id DESC
           `)
             .all();
-
 
         return json({
           success: true,
           users:
             result.results || []
         });
-
       }
-
 
       /* =====================================================
          ADMIN BLOCK USER
@@ -1911,32 +2093,29 @@ export default {
             env
           );
 
-
         const userId =
           Number(path.split("/")[3]);
 
-
         if (
-          userId === Number(admin.id)
+          userId ===
+          Number(admin.id)
         ) {
-
           return json({
             success: false,
-            error: "Nuk mund të bllokosh veten."
+            error:
+              "Nuk mund të bllokosh veten."
           }, 400);
-
         }
-
 
         const existing =
           await env.DB.prepare(`
             SELECT id
             FROM blocked_users
             WHERE user_id = ?
+            LIMIT 1
           `)
             .bind(userId)
             .first();
-
 
         if (existing) {
 
@@ -1947,18 +2126,17 @@ export default {
             .bind(userId)
             .run();
 
-
           return json({
             success: true,
             blocked: false
           });
-
         }
 
+        let body = {};
 
-        const body =
-          await request.json();
-
+        try {
+          body = await request.json();
+        } catch (_) {}
 
         await env.DB.prepare(`
           INSERT INTO blocked_users
@@ -1972,10 +2150,9 @@ export default {
           .bind(
             userId,
             admin.id,
-            body.reason || ""
+            clean(body.reason)
           )
           .run();
-
 
         await env.DB.prepare(`
           DELETE FROM sessions
@@ -1984,14 +2161,11 @@ export default {
           .bind(userId)
           .run();
 
-
         return json({
           success: true,
           blocked: true
         });
-
       }
-
 
       /* =====================================================
          ADMIN BLOCK PRODUCT
@@ -2008,20 +2182,18 @@ export default {
             env
           );
 
-
         const productId =
           Number(path.split("/")[3]);
-
 
         const existing =
           await env.DB.prepare(`
             SELECT id
             FROM blocked_listings
             WHERE product_id = ?
+            LIMIT 1
           `)
             .bind(productId)
             .first();
-
 
         if (existing) {
 
@@ -2032,18 +2204,17 @@ export default {
             .bind(productId)
             .run();
 
-
           return json({
             success: true,
             blocked: false
           });
-
         }
 
+        let body = {};
 
-        const body =
-          await request.json();
-
+        try {
+          body = await request.json();
+        } catch (_) {}
 
         await env.DB.prepare(`
           INSERT INTO blocked_listings
@@ -2057,21 +2228,18 @@ export default {
           .bind(
             productId,
             admin.id,
-            body.reason || ""
+            clean(body.reason)
           )
           .run();
-
 
         return json({
           success: true,
           blocked: true
         });
-
       }
 
-
       /* =====================================================
-         ADMIN SETTINGS
+         ADMIN SETTINGS GET
       ===================================================== */
 
       if (
@@ -2084,37 +2252,35 @@ export default {
           env
         );
 
-
         const result =
           await env.DB.prepare(`
             SELECT
               setting_key,
               setting_value
             FROM marketplace_settings
+            ORDER BY setting_key
           `)
             .all();
 
-
         const settings = {};
 
-
         for (
-          const item of result.results || []
+          const item of
+          result.results || []
         ) {
-
           settings[item.setting_key] =
             item.setting_value;
-
         }
-
 
         return json({
           success: true,
           settings
         });
-
       }
 
+      /* =====================================================
+         ADMIN SETTINGS PUT
+      ===================================================== */
 
       if (
         path === "/api/admin/settings" &&
@@ -2126,17 +2292,14 @@ export default {
           env
         );
 
-
         const body =
           await request.json();
-
 
         const settings =
           body.settings || body;
 
-
         for (
-          const [key,value]
+          const [key, value]
           of Object.entries(settings)
         ) {
 
@@ -2147,27 +2310,24 @@ export default {
               setting_value
             )
             VALUES (?, ?)
+
             ON CONFLICT(setting_key)
             DO UPDATE SET
               setting_value =
                 excluded.setting_value
           `)
             .bind(
-              key,
+              String(key),
               String(value ?? "")
             )
             .run();
-
         }
-
 
         return json({
           success: true,
           settings
         });
-
       }
-
 
       /* =====================================================
          ADMIN SETUP
@@ -2179,77 +2339,62 @@ export default {
       ) {
 
         if (!env.ADMIN_SETUP_KEY) {
-
           return json({
             success: false,
             error:
               "ADMIN_SETUP_KEY nuk është vendosur."
           }, 500);
-
         }
-
 
         const body =
           await request.json();
-
 
         if (
           body.setupKey !==
           env.ADMIN_SETUP_KEY
         ) {
-
           return json({
             success: false,
-            error: "Setup key e gabuar."
+            error:
+              "Setup key e gabuar."
           }, 401);
-
         }
 
-
         const name =
-          body.name ||
-          "SABI Admin";
-
-
-        const email =
-          String(
-            body.email ||
-            "admin@sabi.com"
-          )
-            .toLowerCase()
-            .trim();
-
-
-        const password =
-          String(
-            body.password || ""
+          clean(
+            body.name ||
+            "SHIT.BLEJ Admin"
           );
 
+        const email =
+          clean(
+            body.email ||
+            "admin@shitblej.al"
+          ).toLowerCase();
+
+        const password =
+          String(body.password || "");
 
         if (password.length < 4) {
-
           return json({
             success: false,
             error:
               "Password shumë i shkurtër."
           }, 400);
-
         }
 
-
-        const {hash,salt} =
+        const { hash, salt } =
           await passwordHash(password);
-
 
         const existing =
           await env.DB.prepare(`
             SELECT id
             FROM auth_accounts
             WHERE LOWER(email) = ?
+            LIMIT 1
           `)
             .bind(email)
             .first();
-
 
         if (existing) {
 
@@ -2270,14 +2415,12 @@ export default {
             )
             .run();
 
-
           return json({
             success: true,
-            message: "Admini u përditësua."
+            message:
+              "Admini u përditësua."
           });
-
         }
-
 
         await env.DB.prepare(`
           INSERT INTO auth_accounts
@@ -2302,14 +2445,12 @@ export default {
           )
           .run();
 
-
         return json({
           success: true,
-          message: "Admini u krijua."
+          message:
+            "Admini u krijua."
         });
-
       }
-
 
       /* =====================================================
          STATIC FILES
@@ -2317,16 +2458,12 @@ export default {
 
       if (env.ASSETS) {
 
-        /*
-          / -> index.html
-        */
-
         if (
           path === "/" ||
           path === ""
         ) {
 
-          const newRequest =
+          const homepage =
             new Request(
               new URL(
                 "/index.html",
@@ -2336,21 +2473,17 @@ export default {
             );
 
           return env.ASSETS.fetch(
-            newRequest
+            homepage
           );
-
         }
-
 
         return env.ASSETS.fetch(
           request
         );
-
       }
 
-
       return new Response(
-        "SABI Marketplace API is online.",
+        "SHIT.BLEJ API is online.",
         {
           status: 404,
           headers: {
@@ -2360,40 +2493,34 @@ export default {
         }
       );
 
-
     } catch (error) {
 
       console.error(
-        "SABI WORKER ERROR:",
+        "SHIT.BLEJ WORKER ERROR:",
         error
       );
-
 
       if (
         error.message ===
         "UNAUTHORIZED"
       ) {
-
         return json({
           success: false,
-          error: "Duhet të identifikoheni."
+          error:
+            "Duhet të identifikoheni."
         }, 401);
-
       }
-
 
       if (
         error.message ===
         "FORBIDDEN"
       ) {
-
         return json({
           success: false,
-          error: "Nuk keni akses."
+          error:
+            "Nuk keni akses."
         }, 403);
-
       }
-
 
       return json({
         success: false,
@@ -2401,9 +2528,6 @@ export default {
           error.message ||
           "Gabim serveri."
       }, 500);
-
     }
-
   }
-
 };
