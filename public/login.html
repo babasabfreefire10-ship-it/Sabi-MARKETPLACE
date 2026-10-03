@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050505">
+
+  <title>Hyr | SHIT.BLEJ</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #050505;
+      --card: #101010;
+      --card2: #151515;
+      --border: #252525;
+      --green: #00ff88;
+      --green2: #00cc6d;
+      --text: #ffffff;
+      --muted: #8c8c8c;
+      --danger: #ff4d4d;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(0,255,136,.12), transparent 35%),
+        var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+
+    header {
+      height: 68px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      background: rgba(5,5,5,.94);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .logo {
+      color: var(--green);
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      text-decoration: none;
+    }
+
+    .back {
+      color: #aaa;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .back:hover {
+      color: var(--green);
+    }
+
+    /* MAIN */
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 35px 18px 60px;
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 430px;
+      background: linear-gradient(180deg, #111, #0b0b0b);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 30px;
+      box-shadow:
+        0 25px 80px rgba(0,0,0,.55),
+        0 0 35px rgba(0,255,136,.04);
+    }
+
+    .top-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 18px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,255,136,.08);
+      border: 1px solid rgba(0,255,136,.2);
+      color: var(--green);
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    /* FORM */
+
+    .field {
+      margin-bottom: 17px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #ccc;
+      margin-bottom: 8px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      height: 50px;
+      background: #080808;
+      color: white;
+      border: 1px solid #292929;
+      border-radius: 12px;
+      outline: none;
+      padding: 0 14px;
+      font-size: 15px;
+      transition: .2s;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(0,255,136,.08);
+    }
+
+    input::placeholder {
+      color: #555;
+    }
+
+    select {
+      cursor: pointer;
+    }
+
+    select option {
+      background: #111;
+      color: white;
+    }
+
+    .password-wrap {
+      position: relative;
+    }
+
+    .password-wrap input {
+      padding-right: 54px;
+    }
+
+    .show-password {
+      position: absolute;
+      right: 8px;
+      top: 7px;
+      height: 36px;
+      min-width: 38px;
+      border: 0;
+      background: transparent;
+      color: #777;
+      cursor: pointer;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .show-password:hover {
+      color: var(--green);
+      background: rgba(255,255,255,.04);
+    }
+
+    /* BUTTON */
+
+    .login-btn {
+      width: 100%;
+      height: 52px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--green);
+      color: #000;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      margin-top: 7px;
+      transition: .2s;
+    }
+
+    .login-btn:hover {
+      background: #32ffa3;
+      transform: translateY(-1px);
+    }
+
+    .login-btn:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* MESSAGE */
+
+    .message {
+      display: none;
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .message.error {
+      display: block;
+      background: rgba(255,77,77,.08);
+      border: 1px solid rgba(255,77,77,.25);
+      color: #ff8585;
+    }
+
+    .message.success {
+      display: block;
+      background: rgba(0,255,136,.08);
+      border: 1px solid rgba(0,255,136,.25);
+      color: var(--green);
+    }
+
+    /* DIVIDER */
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+      color: #555;
+      font-size: 12px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      height: 1px;
+      background: #222;
+      flex: 1;
+    }
+
+    /* REGISTER */
+
+    .register-text {
+      text-align: center;
+      color: #888;
+      font-size: 14px;
+    }
+
+    .register-btn {
+      display: block;
+      width: 100%;
+      height: 48px;
+      margin-top: 12px;
+      border: 1px solid #303030;
+      background: #111;
+      color: white;
+      border-radius: 12px;
+      text-decoration: none;
+      text-align: center;
+      line-height: 48px;
+      font-weight: 700;
+      transition: .2s;
+    }
+
+    .register-btn:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    /* FOOTER */
+
+    footer {
+      text-align: center;
+      color: #555;
+      font-size: 12px;
+      padding: 18px;
+    }
+
+    /* LOADING */
+
+    .loader {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(0,0,0,.25);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle;
+      margin-right: 7px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* SUCCESS OVERLAY */
+
+    .success-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.92);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .success-card {
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 22px;
+      padding: 32px 25px;
+    }
+
+    .success-check {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      background: rgba(0,255,136,.1);
+      border: 1px solid rgba(0,255,136,.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--green);
+      font-size: 32px;
+    }
+
+    .success-card h2 {
+      margin-bottom: 8px;
+    }
+
+    .success-card p {
+      color: #888;
+      font-size: 14px;
+    }
+
+    .countdown {
+      margin-top: 18px;
+      color: var(--green);
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 500px) {
+      header {
+        padding: 0 16px;
+      }
+
+      .logo {
+        font-size: 21px;
+      }
+
+      main {
+        padding: 25px 12px 40px;
+        align-items: flex-start;
+      }
+
+      .login-box {
+        padding: 24px 18px;
+        border-radius: 18px;
+      }
+
+      h1 {
+        font-size: 27px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <a href="/index.html" class="logo">SHIT.BLEJ</a>
+    <a href="/index.html" class="back">← Kthehu</a>
+  </header>
+
+  <main>
+
+    <section class="login-box">
+
+      <div class="top-icon">S</div>
+
+      <h1>Mirë se u ktheve</h1>
+
+      <p class="subtitle">
+        Hyr në llogarinë tënde në SHIT.BLEJ
+      </p>
+
+      <form id="loginForm">
+
+        <div class="field">
+          <label for="identifier">
+            Email ose username
+          </label>
+
+          <input
+            id="identifier"
+            type="text"
+            placeholder="Shkruaj email-in ose username"
+            autocomplete="username"
+            required
+          >
+        </div>
+
+        <div class="field">
+          <label for="password">
+            Fjalëkalimi
+          </label>
+
+          <div class="password-wrap">
+
+            <input
+              id="password"
+              type="password"
+              placeholder="Shkruaj fjalëkalimin"
+              autocomplete="current-password"
+              required
+            >
+
+            <button
+              type="button"
+              class="show-password"
+              id="showPassword"
+              aria-label="Shfaq fjalëkalimin"
+            >
+              👁
+            </button>
+
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="role">
+            Lloji i llogarisë
+          </label>
+
+          <select id="role">
+            <option value="">Zgjidh rolin</option>
+            <option value="customer">Blerës</option>
+            <option value="seller">Shitës</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          class="login-btn"
+          id="loginBtn"
+        >
+          Hyr në llogari
+        </button>
+
+        <div id="message" class="message"></div>
+
+      </form>
+
+      <div class="divider">
+        OSE
+      </div>
+
+      <div class="register-text">
+        Nuk ke akoma llogari?
+      </div>
+
+      <a href="/register.html" class="register-btn">
+        Krijo llogari
+      </a>
+
+    </section>
+
+  </main>
+
+  <footer>
+    © 2026 SHIT.BLEJ · Gjej. Bli. Shit.
+  </footer>
+
+
+  <!-- SUCCESS OVERLAY -->
+
+  <div class="success-overlay" id="successOverlay">
+
+    <div class="success-card">
+
+      <div class="success-check">
+        ✓
+      </div>
+
+      <h2>Hyrja u krye!</h2>
+
+      <p id="successText">
+        Po të çojmë në llogarinë tënde...
+      </p>
+
+      <div class="countdown" id="countdown">
+        3
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    const API = "/api";
+
+    const form = document.getElementById("loginForm");
+    const identifierInput = document.getElementById("identifier");
+    const passwordInput = document.getElementById("password");
+    const roleInput = document.getElementById("role");
+
+    const loginBtn = document.getElementById("loginBtn");
+    const message = document.getElementById("message");
+
+    const showPassword = document.getElementById("showPassword");
+
+    const successOverlay =
+      document.getElementById("successOverlay");
+
+    const countdownElement =
+      document.getElementById("countdown");
+
+    const successText =
+      document.getElementById("successText");
+
+
+    /*
+      SHOW / HIDE PASSWORD
+    */
+
+    showPassword.addEventListener("click", () => {
+
+      if (passwordInput.type === "password") {
+
+        passwordInput.type = "text";
+        showPassword.textContent = "🙈";
+
+      } else {
+
+        passwordInput.type = "password";
+        showPassword.textContent = "👁";
+
+      }
+
+    });
+
+
+    /*
+      MESSAGE
+    */
+
+    function showMessage(text, type = "error") {
+
+      message.textContent = text;
+
+      message.className = "message " + type;
+
+    }
+
+
+    function clearMessage() {
+
+      message.textContent = "";
+      message.className = "message";
+
+    }
+
+
+    /*
+      SAVE LOGIN
+    */
+
+    function saveUserSession(data) {
+
+      const token = data.token;
+      const user = data.user || {};
+
+      if (token) {
+
+        localStorage.setItem(
+          "shitblej_token",
+          token
+        );
+
+        // Compatibility me versionet e vjetra
+        localStorage.setItem(
+          "sabiAuthToken",
+          token
+        );
+
+      }
+
+      localStorage.setItem(
+        "shitblej_user",
+        JSON.stringify(user)
+      );
+
+      if (user.id != null) {
+
+        localStorage.setItem(
+          "sabiUserId",
+          String(user.id)
+        );
+
+      }
+
+      if (user.name) {
+
+        localStorage.setItem(
+          "sabiUserName",
+          user.name
+        );
+
+      }
+
+      if (user.role) {
+
+        localStorage.setItem(
+          "sabiUserRole",
+          user.role
+        );
+
+      }
+
+      if (user.email) {
+
+        localStorage.setItem(
+          "sabiUserEmail",
+          user.email
+        );
+
+      }
+
+      if (user.phone) {
+
+        localStorage.setItem(
+          "sabiUserPhone",
+          user.phone
+        );
+
+      }
+
+    }
+
+
+    /*
+      GET REDIRECT DESTINATION
+    */
+
+    function getNextPage(user) {
+
+      const params = new URLSearchParams(
+        window.location.search
+      );
+
+      const next = params.get("next");
+
+      // Mos lejo redirectime të jashtme
+      if (
+        next &&
+        next.startsWith("/") &&
+        !next.startsWith("//")
+      ) {
+
+        return next;
+
+      }
+
+      if (user && user.role === "admin") {
+
+        return "/admin.html";
+
+      }
+
+      return "/index.html";
+
+    }
+
+
+    /*
+      COUNTDOWN + REDIRECT
+    */
+
+    function showSuccessAndRedirect(user) {
+
+      const destination = getNextPage(user);
+
+      successOverlay.style.display = "flex";
+
+      let count = 3;
+
+      countdownElement.textContent = count;
+
+      successText.textContent =
+        "Po të çojmë në llogarinë tënde...";
+
+      const timer = setInterval(() => {
+
+        count--;
+
+        if (count > 0) {
+
+          countdownElement.textContent = count;
+
+        } else {
+
+          countdownElement.textContent = "✓";
+
+          clearInterval(timer);
+
+          setTimeout(() => {
+
+            window.location.href = destination;
+
+          }, 350);
+
+        }
+
+      }, 700);
+
+    }
+
+
+    /*
+      LOGIN
+    */
+
+    form.addEventListener("submit", async (event) => {
+
+      event.preventDefault();
+
+      clearMessage();
+
+      const identifier =
+        identifierInput.value.trim();
+
+      const password =
+        passwordInput.value;
+
+      const role =
+        roleInput.value;
+
+
+      if (!identifier) {
+
+        showMessage(
+          "Shkruaj email-in ose username-in."
+        );
+
+        identifierInput.focus();
+
+        return;
+
+      }
+
+
+      if (!password) {
+
+        showMessage(
+          "Shkruaj fjalëkalimin."
+        );
+
+        passwordInput.focus();
+
+        return;
+
+      }
+
+
+      /*
+        Roli është opsional.
+        Nëse lihet bosh, worker-i gjen rolin
+        e përdoruesit nga databaza.
+      */
+
+      const body = {
+        identifier,
+        password
+      };
+
+      if (role) {
+
+        body.role = role;
+
+      }
+
+
+      loginBtn.disabled = true;
+
+      loginBtn.innerHTML =
+        '<span class="loader"></span>Duke hyrë...';
+
+
+      try {
+
+        const response = await fetch(
+          API + "/auth/login",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(body)
+          }
+        );
+
+
+        let data = null;
+
+        try {
+
+          data = await response.json();
+
+        } catch {
+
+          data = null;
+
+        }
+
+
+        if (!response.ok) {
+
+          let errorText =
+            "Email-i ose fjalëkalimi nuk është i saktë.";
+
+          if (data && data.error) {
+
+            errorText = data.error;
+
+          }
+
+          throw new Error(errorText);
+
+        }
+
+
+        if (!data || !data.token) {
+
+          throw new Error(
+            "Serveri nuk ktheu token-in e hyrjes."
+          );
+
+        }
+
+
+        saveUserSession(data);
+
+
+        /*
+          Nëse përdoruesi ka hyrë si admin,
+          worker-i duhet të ketë kthyer role=admin.
+        */
+
+        const user = data.user || {};
+
+        showSuccessAndRedirect(user);
+
+
+      } catch (error) {
+
+        console.error(
+          "LOGIN ERROR:",
+          error
+        );
+
+        showMessage(
+          error.message ||
+          "Ndodhi një problem gjatë hyrjes."
+        );
+
+
+        loginBtn.disabled = false;
+
+        loginBtn.textContent =
+          "Hyr në llogari";
+
+      }
+
+    });
+
+
+    /*
+      REGISTERED MESSAGE
+      Kur register.html e kthen këtu:
+      /login.html?registered=1
+    */
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+    if (params.get("registered") === "1") {
+
+      showMessage(
+        "Llogaria u krijua me sukses. Tani hyr me email-in dhe fjalëkalimin.",
+        "success"
+      );
+
+    }
+
+
+    /*
+      NEXT=SELL
+      Nëse përdoruesi ka ardhur nga butoni "Shit"
+      pas login-it, ruajmë destinacionin.
+    */
+
+    const next =
+      params.get("next");
+
+    if (next === "sell") {
+
+      /*
+        Nuk bëjmë asgjë këtu.
+        Pas login-it getNextPage() do ta dërgojë
+        përdoruesin te /sell nëse ekziston.
+
+        Për momentin, nëse faqja sell nuk ekziston,
+        përdoruesi shkon në index.
+      */
+
+    }
+
+
+    /*
+      NËSE KA SESSION AKTIVE
+      Kontrollo vetëm në mënyrë të sigurt.
+    */
+
+    async function checkExistingSession() {
+
+      const token =
+        localStorage.getItem("shitblej_token") ||
+        localStorage.getItem("sabiAuthToken");
+
+      if (!token) return;
+
+
+      try {
+
+        const response = await fetch(
+          API + "/auth/me",
+          {
+            headers: {
+              "Authorization":
+                "Bearer " + token
+            }
+          }
+        );
+
+
+        if (!response.ok) {
+
+          return;
+
+        }
+
+
+        const data =
+          await response.json();
+
+
+        if (
+          data &&
+          data.user
+        ) {
+
+          localStorage.setItem(
+            "shitblej_user",
+            JSON.stringify(data.user)
+          );
+
+        }
+
+      } catch (error) {
+
+        console.log(
+          "Session check skipped:",
+          error
+        );
+
+      }
+
+    }
+
+
+    checkExistingSession();
+
+  </script>
+
+</body>
+</html>
