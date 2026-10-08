@@ -1,0 +1,2077 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Paneli i Shitësit — SHIT.BLEJ PRO</title>
+
+  <style>
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+      font-family:Arial,Helvetica,sans-serif;
+    }
+
+    body{
+      background:#070b09;
+      color:#fff;
+      min-height:100vh;
+    }
+
+    header{
+      height:64px;
+      background:#0b100d;
+      border-bottom:1px solid #1b2821;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 18px;
+      position:sticky;
+      top:0;
+      z-index:20;
+    }
+
+    .logo{
+      color:#fff;
+      text-decoration:none;
+      font-size:25px;
+      font-weight:900;
+    }
+
+    .logo span{
+      color:#00ff88;
+    }
+
+    nav{
+      display:flex;
+      gap:6px;
+      align-items:center;
+    }
+
+    nav a,
+    nav button{
+      color:#cbd4ce;
+      text-decoration:none;
+      background:none;
+      border:0;
+      padding:9px 10px;
+      border-radius:9px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    nav a:hover,
+    nav button:hover{
+      background:#142019;
+      color:#00ff88;
+    }
+
+    .container{
+      max-width:1150px;
+      margin:auto;
+      padding:25px 15px 60px;
+    }
+
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:15px;
+      margin-bottom:20px;
+    }
+
+    h1{
+      font-size:28px;
+    }
+
+    .subtitle{
+      color:#7e8b83;
+      font-size:13px;
+      margin-top:5px;
+    }
+
+    .user{
+      background:#0d1711;
+      border:1px solid #1c3024;
+      color:#00ff88;
+      border-radius:10px;
+      padding:9px 12px;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-bottom:20px;
+    }
+
+    .stat{
+      background:#0d1310;
+      border:1px solid #1b2821;
+      border-radius:14px;
+      padding:16px;
+    }
+
+    .stat-label{
+      color:#718077;
+      font-size:11px;
+      margin-bottom:7px;
+    }
+
+    .stat-value{
+      font-size:22px;
+      font-weight:900;
+    }
+
+    .actions-top{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+
+    .primary{
+      background:#00ff88;
+      color:#001a0d;
+      border:0;
+      padding:12px 15px;
+      border-radius:10px;
+      font-weight:900;
+      cursor:pointer;
+      font-size:13px;
+    }
+
+    .secondary{
+      background:#121a16;
+      color:#fff;
+      border:1px solid #29372f;
+      padding:11px 14px;
+      border-radius:10px;
+      font-weight:800;
+      cursor:pointer;
+      font-size:13px;
+    }
+
+    .secondary:hover{
+      border-color:#00ff88;
+      color:#00ff88;
+    }
+
+    .search{
+      width:100%;
+      padding:13px;
+      border-radius:11px;
+      border:1px solid #24342b;
+      background:#0d1310;
+      color:#fff;
+      outline:none;
+      margin-bottom:15px;
+    }
+
+    .search:focus{
+      border-color:#00ff88;
+    }
+
+    .products{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+    }
+
+    .card{
+      background:#0d1310;
+      border:1px solid #1b2821;
+      border-radius:15px;
+      overflow:hidden;
+    }
+
+    .card-image{
+      height:180px;
+      background:#080d0a;
+      position:relative;
+    }
+
+    .card-image img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .no-image{
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#657169;
+    }
+
+    .vip{
+      position:absolute;
+      top:10px;
+      left:10px;
+      background:#00ff88;
+      color:#001a0d;
+      padding:6px 9px;
+      border-radius:7px;
+      font-size:9px;
+      font-weight:900;
+    }
+
+    .card-body{
+      padding:14px;
+    }
+
+    .category{
+      color:#00ff88;
+      font-size:10px;
+      font-weight:800;
+      margin-bottom:6px;
+    }
+
+    .title{
+      font-size:16px;
+      font-weight:900;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .price{
+      color:#00ff88;
+      font-size:18px;
+      font-weight:900;
+      margin-top:7px;
+    }
+
+    .small{
+      color:#75827a;
+      font-size:11px;
+      margin-top:6px;
+    }
+
+    .card-actions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:7px;
+      margin-top:13px;
+    }
+
+    .card-actions button{
+      padding:9px;
+      border-radius:8px;
+      cursor:pointer;
+      background:#141c17;
+      color:#fff;
+      border:1px solid #29372f;
+      font-size:11px;
+      font-weight:800;
+    }
+
+    .card-actions button:hover{
+      border-color:#00ff88;
+      color:#00ff88;
+    }
+
+    .delete{
+      color:#ff8585 !important;
+    }
+
+    .empty{
+      grid-column:1/-1;
+      text-align:center;
+      padding:60px 20px;
+      background:#0d1310;
+      border:1px solid #1b2821;
+      border-radius:15px;
+    }
+
+    .empty-icon{
+      font-size:42px;
+      margin-bottom:12px;
+    }
+
+    .empty p{
+      color:#75827a;
+      margin:7px 0 17px;
+      font-size:13px;
+    }
+
+    .loading,
+    .error{
+      text-align:center;
+      padding:60px 20px;
+      color:#89968e;
+    }
+
+    .error{
+      color:#ff8d8d;
+    }
+
+    .modal-bg{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.8);
+      z-index:100;
+      padding:15px;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .modal{
+      width:100%;
+      max-width:560px;
+      max-height:92vh;
+      overflow:auto;
+      background:#0d1310;
+      border:1px solid #25372d;
+      border-radius:18px;
+      padding:22px;
+    }
+
+    .modal h2{
+      margin-bottom:5px;
+    }
+
+    .modal-sub{
+      color:#7d8981;
+      font-size:12px;
+      margin-bottom:18px;
+    }
+
+    label{
+      display:block;
+      color:#c4cec8;
+      font-size:12px;
+      font-weight:800;
+      margin:12px 0 6px;
+    }
+
+    input,
+    textarea,
+    select{
+      width:100%;
+      padding:13px;
+      background:#080d0a;
+      color:#fff;
+      border:1px solid #29372f;
+      border-radius:10px;
+      outline:none;
+      font-size:14px;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus{
+      border-color:#00ff88;
+    }
+
+    textarea{
+      min-height:90px;
+      resize:vertical;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .image-preview{
+      display:none;
+      width:100%;
+      height:180px;
+      object-fit:contain;
+      background:#080d0a;
+      border-radius:10px;
+      margin-top:10px;
+    }
+
+    .modal-buttons{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      margin-top:18px;
+    }
+
+    .cancel{
+      background:#151c18;
+      border:1px solid #29372f;
+      color:#fff;
+      padding:13px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:900;
+    }
+
+    .save{
+      background:#00ff88;
+      border:0;
+      color:#001a0d;
+      padding:13px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:900;
+    }
+
+    .notice{
+      display:none;
+      background:#351313;
+      border:1px solid #652626;
+      color:#ff9d9d;
+      padding:11px;
+      border-radius:9px;
+      font-size:12px;
+      margin-top:12px;
+    }
+
+    .success{
+      background:#0b2619;
+      border:1px solid #175c39;
+      color:#00ff88;
+      padding:11px;
+      border-radius:9px;
+      font-size:12px;
+      margin-top:12px;
+      display:none;
+    }
+
+    .promotion{
+      margin-top:12px;
+      padding:12px;
+      background:#09130e;
+      border:1px solid #183b29;
+      border-radius:10px;
+    }
+
+    .promotion-title{
+      color:#00ff88;
+      font-size:12px;
+      font-weight:900;
+      margin-bottom:7px;
+    }
+
+    .promotion p{
+      color:#7f8b83;
+      font-size:11px;
+      line-height:1.5;
+    }
+
+    @media(max-width:850px){
+
+      .products{
+        grid-template-columns:repeat(2,1fr);
+      }
+
+      .stats{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
+    @media(max-width:550px){
+
+      header{
+        padding:0 10px;
+      }
+
+      nav a:nth-child(2){
+        display:none;
+      }
+
+      .top{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+
+      .products{
+        grid-template-columns:1fr;
+      }
+
+      .row,
+      .modal-buttons{
+        grid-template-columns:1fr;
+      }
+
+      .card-image{
+        height:210px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+
+  <a href="/" class="logo">
+    SHIT<span>.</span>BLEJ
+  </a>
+
+  <nav>
+    <a href="/">Kryefaqja</a>
+    <a href="/orders.html">Porositë</a>
+    <a href="/login.html">Hyr</a>
+    <button onclick="logout()">Dil</button>
+  </nav>
+
+</header>
+
+
+<main class="container">
+
+  <div class="top">
+
+    <div>
+      <h1>Paneli i shitësit</h1>
+      <div class="subtitle">
+        Menaxho produktet dhe shitjet e tua
+      </div>
+    </div>
+
+    <div class="user" id="userName">
+      Po ngarkohet...
+    </div>
+
+  </div>
+
+
+  <div id="loading" class="loading">
+    Po ngarkohet paneli...
+  </div>
+
+  <div id="error" class="error" style="display:none;"></div>
+
+
+  <div id="content" style="display:none;">
+
+    <div class="stats">
+
+      <div class="stat">
+        <div class="stat-label">PRODUKTE</div>
+        <div class="stat-value" id="productCount">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">NË SHITJE</div>
+        <div class="stat-value" id="activeCount">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">POROSI</div>
+        <div class="stat-value" id="orderCount">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">VLERË SHITJESH</div>
+        <div class="stat-value" id="salesValue">0 ALL</div>
+      </div>
+
+    </div>
+
+
+    <div class="actions-top">
+
+      <button class="primary" onclick="openProductModal()">
+        ＋ SHTO PRODUKT
+      </button>
+
+      <button
+        class="secondary"
+        onclick="window.location.href='/orders.html'"
+      >
+        📦 POROSITË
+      </button>
+
+      <button
+        class="secondary"
+        onclick="window.location.href='/'"
+      >
+        🏠 KRYEFAQJA
+      </button>
+
+    </div>
+
+
+    <input
+      id="search"
+      class="search"
+      type="search"
+      placeholder="Kërko produktet e tua..."
+      oninput="renderProducts()"
+    >
+
+
+    <div id="products" class="products"></div>
+
+  </div>
+
+</main>
+
+
+<!-- PRODUCT MODAL -->
+
+<div id="modalBg" class="modal-bg">
+
+  <div class="modal">
+
+    <h2 id="modalTitle">
+      Shto produkt
+    </h2>
+
+    <div class="modal-sub">
+      Plotëso informacionin e produktit.
+    </div>
+
+
+    <form id="productForm">
+
+      <input type="hidden" id="productId">
+
+
+      <label>Titulli i produktit *</label>
+
+      <input
+        id="title"
+        type="text"
+        placeholder="p.sh. iPhone 15 Pro Max"
+        required
+      >
+
+
+      <label>Përshkrimi</label>
+
+      <textarea
+        id="description"
+        placeholder="Përshkruaj produktin..."
+      ></textarea>
+
+
+      <div class="row">
+
+        <div>
+
+          <label>Çmimi ALL *</label>
+
+          <input
+            id="price"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="50000"
+            required
+          >
+
+        </div>
+
+        <div>
+
+          <label>Stoku</label>
+
+          <input
+            id="stock"
+            type="number"
+            min="0"
+            step="1"
+            value="1"
+          >
+
+        </div>
+
+      </div>
+
+
+      <div class="row">
+
+        <div>
+
+          <label>Kategoria</label>
+
+          <select id="category">
+
+            <option value="Elektronikë">
+              Elektronikë
+            </option>
+
+            <option value="Telefona">
+              Telefona
+            </option>
+
+            <option value="Makina">
+              Makina
+            </option>
+
+            <option value="Moda">
+              Moda
+            </option>
+
+            <option value="Shtëpi">
+              Shtëpi
+            </option>
+
+            <option value="Punë">
+              Punë
+            </option>
+
+            <option value="Shërbime">
+              Shërbime
+            </option>
+
+            <option value="Aksesorë">
+              Aksesorë
+            </option>
+
+            <option value="Të tjera">
+              Të tjera
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div>
+
+          <label>Gjendja</label>
+
+          <select id="condition">
+
+            <option value="E re">
+              E re
+            </option>
+
+            <option value="E përdorur">
+              E përdorur
+            </option>
+
+            <option value="Si e re">
+              Si e re
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <div class="row">
+
+        <div>
+
+          <label>Qyteti</label>
+
+          <input
+            id="city"
+            type="text"
+            placeholder="Tiranë"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label>Telefoni</label>
+
+          <input
+            id="phone"
+            type="tel"
+            placeholder="06xxxxxxxx"
+          >
+
+        </div>
+
+      </div>
+
+
+      <label>Foto URL</label>
+
+      <input
+        id="image"
+        type="url"
+        placeholder="https://..."
+        oninput="previewImage()"
+      >
+
+      <img id="imagePreview" class="image-preview">
+
+
+      <div style="margin-top:12px;">
+
+        <label style="
+          display:flex;
+          align-items:center;
+          gap:8px;
+          cursor:pointer;
+        ">
+
+          <input
+            id="negotiable"
+            type="checkbox"
+            style="width:18px;height:18px;"
+          >
+
+          Çmimi është i diskutueshëm
+
+        </label>
+
+      </div>
+
+
+      <div class="promotion">
+
+        <div class="promotion-title">
+          🚀 Promovo produktin
+        </div>
+
+        <p>
+          Pas publikimit mund të përdorësh paketat
+          Promovim 1 ditë, 7 ditë ose 30 ditë.
+        </p>
+
+      </div>
+
+
+      <div id="notice" class="notice"></div>
+
+      <div id="success" class="success">
+        Produkti u ruajt me sukses.
+      </div>
+
+
+      <div class="modal-buttons">
+
+        <button
+          type="button"
+          class="cancel"
+          onclick="closeProductModal()"
+        >
+          ANULO
+        </button>
+
+        <button
+          type="submit"
+          class="save"
+          id="saveButton"
+        >
+          PUBLIKO PRODUKTIN
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const API = "/api";
+
+let currentUser = null;
+
+let products = [];
+
+let orders = [];
+
+
+function getToken(){
+
+  return (
+    localStorage.getItem("shitblej_token") ||
+    localStorage.getItem("sabiAuthToken") ||
+    ""
+  );
+
+}
+
+
+function money(value){
+
+  return Number(value || 0)
+    .toLocaleString("sq-AL") + " ALL";
+
+}
+
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+async function apiFetch(url,options={}){
+
+  const token = getToken();
+
+  const headers = {
+    ...(options.headers || {})
+  };
+
+
+  if(token){
+
+    headers.Authorization =
+      "Bearer " + token;
+
+  }
+
+
+  if(options.body && !headers["Content-Type"]){
+
+    headers["Content-Type"] =
+      "application/json";
+
+  }
+
+
+  const response =
+    await fetch(API + url,{
+      ...options,
+      headers
+    });
+
+
+  let data = {};
+
+  try{
+    data = await response.json();
+  }catch(e){}
+
+
+  if(!response.ok){
+
+    throw new Error(
+      data.message ||
+      data.error ||
+      "Kërkesa dështoi."
+    );
+
+  }
+
+
+  return data;
+
+}
+
+
+function normalizeProducts(data){
+
+  if(Array.isArray(data)){
+    return data;
+  }
+
+  if(Array.isArray(data.products)){
+    return data.products;
+  }
+
+  if(Array.isArray(data.results)){
+    return data.results;
+  }
+
+  if(Array.isArray(data.data)){
+    return data.data;
+  }
+
+  if(Array.isArray(data.data?.products)){
+    return data.data.products;
+  }
+
+  return [];
+
+}
+
+
+function normalizeOrders(data){
+
+  if(Array.isArray(data)){
+    return data;
+  }
+
+  if(Array.isArray(data.orders)){
+    return data.orders;
+  }
+
+  if(Array.isArray(data.data)){
+    return data.data;
+  }
+
+  if(Array.isArray(data.data?.orders)){
+    return data.data.orders;
+  }
+
+  return [];
+
+}
+
+
+async function checkAuth(){
+
+  const token = getToken();
+
+
+  if(!token){
+
+    window.location.href =
+      "/login.html?next=/seller.html";
+
+    return false;
+
+  }
+
+
+  try{
+
+    const data =
+      await apiFetch("/auth/me");
+
+
+    currentUser =
+      data.user ||
+      data.account ||
+      data.data?.user ||
+      data;
+
+
+    if(!currentUser){
+
+      throw new Error("Sesioni nuk është aktiv.");
+
+    }
+
+
+    const role =
+      String(currentUser.role || "").toLowerCase();
+
+
+    /*
+      Lejojmë seller dhe admin.
+      Admini mund ta përdorë panelin si seller.
+    */
+
+    if(
+      role !== "seller" &&
+      role !== "admin" &&
+      role !== "owner"
+    ){
+
+      document.getElementById("loading").style.display =
+        "none";
+
+      document.getElementById("error").textContent =
+        "Kjo faqe është vetëm për shitësit.";
+
+      document.getElementById("error").style.display =
+        "block";
+
+      return false;
+
+    }
+
+
+    document.getElementById("userName").textContent =
+      currentUser.name ||
+      currentUser.email ||
+      "Shitës";
+
+
+    return true;
+
+
+  }catch(error){
+
+    console.error(error);
+
+    localStorage.removeItem("shitblej_token");
+    localStorage.removeItem("sabiAuthToken");
+
+    window.location.href =
+      "/login.html?next=/seller.html";
+
+    return false;
+
+  }
+
+}
+
+
+async function loadProducts(){
+
+  const data =
+    await apiFetch("/products");
+
+
+  products =
+    normalizeProducts(data);
+
+
+  /*
+    Nëse API kthen të gjitha produktet,
+    filtrojmë ato që i përkasin këtij shitësi.
+  */
+
+  const userId =
+    Number(
+      currentUser?.id ||
+      currentUser?.user_id ||
+      0
+    );
+
+
+  if(
+    userId &&
+    products.some(p =>
+      p.seller_id != null ||
+      p.sellerId != null
+    )
+  ){
+
+    products =
+      products.filter(p => {
+
+        const sellerId =
+          Number(
+            p.seller_id ??
+            p.sellerId ??
+            0
+          );
+
+        return sellerId === userId;
+
+      });
+
+  }
+
+}
+
+
+async function loadOrders(){
+
+  try{
+
+    const data =
+      await apiFetch("/orders");
+
+    orders =
+      normalizeOrders(data);
+
+  }catch(error){
+
+    console.warn("Orders:",error);
+
+    orders = [];
+
+  }
+
+}
+
+
+function updateStats(){
+
+  document.getElementById("productCount").textContent =
+    products.length;
+
+
+  const active =
+    products.filter(p =>
+      Number(p.stock ?? 1) !== 0
+    ).length;
+
+
+  document.getElementById("activeCount").textContent =
+    active;
+
+
+  document.getElementById("orderCount").textContent =
+    orders.length;
+
+
+  const sales =
+    orders
+      .filter(o =>
+        String(o.status || "") !== "cancelled" &&
+        String(o.status || "") !== "canceled"
+      )
+      .reduce((sum,o) => {
+
+        const total =
+          Number(
+            o.total ??
+            o.order_total ??
+            (
+              Number(o.price || 0) *
+              Number(o.quantity || 1)
+            )
+          );
+
+        return sum + total;
+
+      },0);
+
+
+  document.getElementById("salesValue").textContent =
+    money(sales);
+
+}
+
+
+function renderProducts(){
+
+  const container =
+    document.getElementById("products");
+
+
+  const search =
+    document.getElementById("search")
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const filtered =
+    products.filter(p => {
+
+      const text = [
+
+        p.title,
+        p.name,
+        p.description,
+        p.category,
+        p.city
+
+      ].join(" ").toLowerCase();
+
+
+      return text.includes(search);
+
+    });
+
+
+  if(filtered.length === 0){
+
+    container.innerHTML = `
+
+      <div class="empty">
+
+        <div class="empty-icon">
+          📦
+        </div>
+
+        <h2>Nuk ke produkte</h2>
+
+        <p>
+          Shto produktin e parë në SHIT.BLEJ.
+        </p>
+
+        <button
+          class="primary"
+          onclick="openProductModal()"
+        >
+          ＋ SHTO PRODUKT
+        </button>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    filtered.map(renderProductCard).join("");
+
+}
+
+
+function renderProductCard(product){
+
+  const id =
+    Number(product.id);
+
+
+  const title =
+    product.title ||
+    product.name ||
+    "Produkt";
+
+
+  const image =
+    product.image_url ||
+    product.image ||
+    "";
+
+
+  const category =
+    product.category ||
+    "Të tjera";
+
+
+  const price =
+    money(product.price);
+
+
+  const city =
+    product.city ||
+    product.location ||
+    "—";
+
+
+  const stock =
+    Number(product.stock ?? 0);
+
+
+  const promoted =
+    product.promoted === true ||
+    product.is_promoted === true ||
+    product.is_promoted === 1 ||
+    product.promotion_active === true;
+
+
+  return `
+
+    <div class="card">
+
+      <div class="card-image">
+
+        ${
+          image
+          ? `
+            <img
+              src="${escapeHTML(image)}"
+              onerror="this.style.display='none'"
+            >
+          `
+          : `
+            <div class="no-image">
+              Pa foto
+            </div>
+          `
+        }
+
+
+        ${
+          promoted
+          ? `
+            <div class="vip">
+              ⭐ PROMOVUAR
+            </div>
+          `
+          : ""
+        }
+
+      </div>
+
+
+      <div class="card-body">
+
+        <div class="category">
+          ${escapeHTML(category)}
+        </div>
+
+        <div class="title">
+          ${escapeHTML(title)}
+        </div>
+
+        <div class="price">
+          ${price}
+        </div>
+
+        <div class="small">
+          📍 ${escapeHTML(city)}
+          &nbsp; • &nbsp;
+          📦 ${stock} copë
+        </div>
+
+
+        <div class="card-actions">
+
+          <button onclick="editProduct(${id})">
+            ✏️ Ndrysho
+          </button>
+
+          <button
+            class="delete"
+            onclick="deleteProduct(${id})"
+          >
+            🗑 Fshi
+          </button>
+
+          <button
+            onclick="window.location.href='/products.html?id=${id}'"
+          >
+            👁 Shiko
+          </button>
+
+          <button
+            onclick="promoteProduct(${id})"
+          >
+            🚀 Promovo
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+function openProductModal(product=null){
+
+  document.getElementById("modalBg").style.display =
+    "flex";
+
+
+  document.getElementById("notice").style.display =
+    "none";
+
+  document.getElementById("success").style.display =
+    "none";
+
+
+  if(product){
+
+    document.getElementById("modalTitle").textContent =
+      "Ndrysho produktin";
+
+    document.getElementById("saveButton").textContent =
+      "RUAJ NDRYSHIMET";
+
+
+    document.getElementById("productId").value =
+      product.id || "";
+
+    document.getElementById("title").value =
+      product.title ||
+      product.name ||
+      "";
+
+    document.getElementById("description").value =
+      product.description ||
+      "";
+
+    document.getElementById("price").value =
+      product.price ??
+      "";
+
+    document.getElementById("stock").value =
+      product.stock ??
+      1;
+
+    document.getElementById("category").value =
+      product.category ||
+      "Të tjera";
+
+    document.getElementById("condition").value =
+      product.condition ||
+      "E përdorur";
+
+    document.getElementById("city").value =
+      product.city ||
+      product.location ||
+      "";
+
+    document.getElementById("phone").value =
+      product.phone ||
+      product.sellerPhone ||
+      "";
+
+    document.getElementById("image").value =
+      product.image_url ||
+      product.image ||
+      "";
+
+    document.getElementById("negotiable").checked =
+      product.negotiable === true ||
+      product.negotiable === 1 ||
+      product.negotiable === "1";
+
+    previewImage();
+
+  }else{
+
+    document.getElementById("modalTitle").textContent =
+      "Shto produkt";
+
+    document.getElementById("saveButton").textContent =
+      "PUBLIKO PRODUKTIN";
+
+
+    document.getElementById("productForm").reset();
+
+    document.getElementById("productId").value =
+      "";
+
+    document.getElementById("stock").value =
+      1;
+
+    document.getElementById("category").value =
+      "Elektronikë";
+
+    document.getElementById("condition").value =
+      "E re";
+
+
+    document.getElementById("imagePreview").style.display =
+      "none";
+
+  }
+
+}
+
+
+function closeProductModal(){
+
+  document.getElementById("modalBg").style.display =
+    "none";
+
+}
+
+
+function previewImage(){
+
+  const url =
+    document.getElementById("image").value.trim();
+
+
+  const img =
+    document.getElementById("imagePreview");
+
+
+  if(!url){
+
+    img.style.display =
+      "none";
+
+    return;
+
+  }
+
+
+  img.src = url;
+
+  img.style.display =
+    "block";
+
+
+  img.onerror = function(){
+
+    img.style.display =
+      "none";
+
+  };
+
+}
+
+
+function showNotice(message){
+
+  const box =
+    document.getElementById("notice");
+
+  box.textContent =
+    message;
+
+  box.style.display =
+    "block";
+
+}
+
+
+document.getElementById("productForm")
+  .addEventListener("submit",async function(e){
+
+    e.preventDefault();
+
+
+    const id =
+      document.getElementById("productId")
+        .value
+        .trim();
+
+
+    const body = {
+
+      title:
+        document.getElementById("title")
+          .value.trim(),
+
+      description:
+        document.getElementById("description")
+          .value.trim(),
+
+      price:
+        Number(
+          document.getElementById("price")
+            .value
+        ),
+
+      stock:
+        Number(
+          document.getElementById("stock")
+            .value || 0
+        ),
+
+      category:
+        document.getElementById("category")
+          .value,
+
+      condition:
+        document.getElementById("condition")
+          .value,
+
+      city:
+        document.getElementById("city")
+          .value.trim(),
+
+      phone:
+        document.getElementById("phone")
+          .value.trim(),
+
+      image_url:
+        document.getElementById("image")
+          .value.trim(),
+
+      negotiable:
+        document.getElementById("negotiable")
+          .checked
+
+    };
+
+
+    if(!body.title){
+
+      showNotice("Vendos titullin e produktit.");
+
+      return;
+
+    }
+
+
+    if(
+      !Number.isFinite(body.price) ||
+      body.price < 0
+    ){
+
+      showNotice("Vendos një çmim të vlefshëm.");
+
+      return;
+
+    }
+
+
+    const button =
+      document.getElementById("saveButton");
+
+
+    button.disabled =
+      true;
+
+    button.textContent =
+      "Po ruhet...";
+
+
+    try{
+
+      if(id){
+
+        await apiFetch(
+          "/products/" + encodeURIComponent(id),
+          {
+            method:"PUT",
+            body:JSON.stringify(body)
+          }
+        );
+
+      }else{
+
+        await apiFetch(
+          "/products",
+          {
+            method:"POST",
+            body:JSON.stringify(body)
+          }
+        );
+
+      }
+
+
+      document.getElementById("success")
+        .style.display =
+        "block";
+
+
+      await loadProducts();
+
+      await loadOrders();
+
+      updateStats();
+
+      renderProducts();
+
+
+      setTimeout(() => {
+
+        closeProductModal();
+
+      },700);
+
+
+    }catch(error){
+
+      console.error(error);
+
+      showNotice(
+        error.message ||
+        "Produkti nuk u ruajt."
+      );
+
+
+    }finally{
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        id
+        ? "RUAJ NDRYSHIMET"
+        : "PUBLIKO PRODUKTIN";
+
+    }
+
+  });
+
+
+function editProduct(id){
+
+  const product =
+    products.find(
+      p => Number(p.id) === Number(id)
+    );
+
+
+  if(!product){
+
+    alert("Produkti nuk u gjet.");
+
+    return;
+
+  }
+
+
+  openProductModal(product);
+
+}
+
+
+async function deleteProduct(id){
+
+  const product =
+    products.find(
+      p => Number(p.id) === Number(id)
+    );
+
+
+  if(!product) return;
+
+
+  const title =
+    product.title ||
+    product.name ||
+    "këtë produkt";
+
+
+  if(
+    !confirm(
+      `A je i sigurt që dëshiron të fshish "${title}"?`
+    )
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    await apiFetch(
+      "/products/" + encodeURIComponent(id),
+      {
+        method:"DELETE"
+      }
+    );
+
+
+    showToast("Produkti u fshi.");
+
+    await loadProducts();
+
+    updateStats();
+
+    renderProducts();
+
+
+  }catch(error){
+
+    alert(
+      error.message ||
+      "Produkti nuk u fshi."
+    );
+
+  }
+
+}
+
+
+function promoteProduct(id){
+
+  /*
+    Pagesa reale do lidhet me endpoint-in
+    e promocioneve në backend.
+  */
+
+  const product =
+    products.find(
+      p => Number(p.id) === Number(id)
+    );
+
+
+  if(!product) return;
+
+
+  const choice =
+    prompt(
+      "Zgjidh paketën:\n\n" +
+      "1 = 100 ALL / 1 ditë\n" +
+      "2 = 300 ALL / 7 ditë\n" +
+      "3 = 700 ALL / 30 ditë\n\n" +
+      "Shkruaj 1, 2 ose 3:"
+    );
+
+
+  if(!choice){
+    return;
+  }
+
+
+  const plans = {
+
+    "1":{
+      days:1,
+      amount:100
+    },
+
+    "2":{
+      days:7,
+      amount:300
+    },
+
+    "3":{
+      days:30,
+      amount:700
+    }
+
+  };
+
+
+  const plan =
+    plans[choice];
+
+
+  if(!plan){
+
+    alert("Zgjedhje e pavlefshme.");
+
+    return;
+
+  }
+
+
+  alert(
+    `Paketa u zgjodh:\n\n` +
+    `${plan.amount} ALL / ${plan.days} ditë\n\n` +
+    `Pagesa online do aktivizohet nga sistemi i promocioneve.`
+  );
+
+}
+
+
+function showToast(message){
+
+  const toast =
+    document.createElement("div");
+
+  toast.style.position =
+    "fixed";
+
+  toast.style.left =
+    "50%";
+
+  toast.style.bottom =
+    "20px";
+
+  toast.style.transform =
+    "translateX(-50%)";
+
+  toast.style.background =
+    "#00ff88";
+
+  toast.style.color =
+    "#001a0d";
+
+  toast.style.padding =
+    "12px 17px";
+
+  toast.style.borderRadius =
+    "10px";
+
+  toast.style.fontWeight =
+    "900";
+
+  toast.style.fontSize =
+    "13px";
+
+  toast.style.zIndex =
+    "999";
+
+
+  toast.textContent =
+    message;
+
+
+  document.body.appendChild(toast);
+
+
+  setTimeout(() => {
+
+    toast.remove();
+
+  },2200);
+
+}
+
+
+function logout(){
+
+  const token =
+    getToken();
+
+
+  if(token){
+
+    fetch(
+      API + "/auth/logout",
+      {
+        method:"POST",
+        headers:{
+          "Authorization":
+            "Bearer " + token
+        }
+      }
+    ).catch(()=>{});
+
+  }
+
+
+  localStorage.removeItem("shitblej_token");
+  localStorage.removeItem("sabiAuthToken");
+  localStorage.removeItem("shitblej_user");
+  localStorage.removeItem("sabiUserId");
+  localStorage.removeItem("sabiUserName");
+  localStorage.removeItem("sabiUserRole");
+  localStorage.removeItem("sabiUserEmail");
+  localStorage.removeItem("sabiUserPhone");
+
+
+  window.location.href =
+    "/";
+
+}
+
+
+document.getElementById("modalBg")
+  .addEventListener("click",function(e){
+
+    if(e.target === this){
+
+      closeProductModal();
+
+    }
+
+  });
+
+
+(async function(){
+
+  try{
+
+    const authenticated =
+      await checkAuth();
+
+
+    if(!authenticated){
+      return;
+    }
+
+
+    await loadProducts();
+
+    await loadOrders();
+
+    updateStats();
+
+    renderProducts();
+
+
+    document.getElementById("loading")
+      .style.display =
+      "none";
+
+    document.getElementById("content")
+      .style.display =
+      "block";
+
+
+  }catch(error){
+
+    console.error(error);
+
+    document.getElementById("loading")
+      .style.display =
+      "none";
+
+    document.getElementById("error")
+      .textContent =
+      error.message ||
+      "Paneli nuk u ngarkua.";
+
+    document.getElementById("error")
+      .style.display =
+      "block";
+
+  }
+
+})();
+
+</script>
+
+</body>
+</html>
