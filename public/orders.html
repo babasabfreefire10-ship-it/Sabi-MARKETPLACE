@@ -3,551 +3,416 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#050505">
 
-  <title>Porositë | SHIT.BLEJ</title>
+  <title>Porositë — SHIT.BLEJ PRO</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+      font-family:Arial,Helvetica,sans-serif;
     }
 
-    :root {
-      --bg: #050505;
-      --card: #101010;
-      --card2: #151515;
-      --border: #292929;
-      --green: #00ff88;
-      --text: #fff;
-      --muted: #8d8d8d;
-      --red: #ff5555;
-      --yellow: #ffd84d;
-      --blue: #55aaff;
+    body{
+      background:#070b09;
+      color:#fff;
+      min-height:100vh;
     }
 
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(
-          circle at 50% -10%,
-          rgba(0,255,136,.10),
-          transparent 35%
-        ),
-        var(--bg);
-      color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
+    header{
+      height:64px;
+      background:#0b100d;
+      border-bottom:1px solid #1b2821;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 18px;
+      position:sticky;
+      top:0;
+      z-index:20;
     }
 
-    header {
-      height: 68px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(5,5,5,.95);
-      backdrop-filter: blur(12px);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 22px;
-      position: sticky;
-      top: 0;
-      z-index: 20;
+    .logo{
+      color:#fff;
+      text-decoration:none;
+      font-size:25px;
+      font-weight:900;
     }
 
-    .logo {
-      color: var(--green);
-      font-size: 24px;
-      font-weight: 900;
-      text-decoration: none;
-      letter-spacing: -1px;
+    .logo span{
+      color:#00ff88;
     }
 
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    nav{
+      display:flex;
+      gap:7px;
     }
 
-    .header-btn {
-      height: 38px;
-      padding: 0 13px;
-      border-radius: 9px;
-      border: 1px solid #303030;
-      background: #111;
-      color: #ddd;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      font-size: 13px;
-      font-weight: 700;
+    nav a{
+      color:#cbd4ce;
+      text-decoration:none;
+      padding:9px 11px;
+      border-radius:9px;
+      font-size:13px;
+      font-weight:700;
     }
 
-    .header-btn:hover {
-      border-color: var(--green);
-      color: var(--green);
+    nav a:hover{
+      background:#142019;
+      color:#00ff88;
     }
 
-    main {
-      max-width: 1150px;
-      margin: auto;
-      padding: 30px 18px 70px;
+    .container{
+      max-width:1100px;
+      margin:auto;
+      padding:25px 15px 60px;
     }
 
-    .top {
-      margin-bottom: 25px;
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:15px;
+      margin-bottom:22px;
     }
 
-    .top h1 {
-      font-size: 31px;
-      margin-bottom: 7px;
+    h1{
+      font-size:28px;
     }
 
-    .top p {
-      color: var(--muted);
-      font-size: 14px;
+    .subtitle{
+      color:#7f8c84;
+      font-size:13px;
+      margin-top:5px;
     }
 
-    .user-box {
-      margin-top: 18px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
+    .user-badge{
+      background:#0d1711;
+      border:1px solid #1c3024;
+      color:#00ff88;
+      padding:9px 12px;
+      border-radius:10px;
+      font-size:12px;
+      font-weight:800;
     }
 
-    .user-info strong {
-      display: block;
-      font-size: 15px;
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-bottom:20px;
     }
 
-    .user-info span {
-      display: block;
-      color: #777;
-      font-size: 12px;
-      margin-top: 4px;
+    .stat{
+      background:#0d1310;
+      border:1px solid #1b2821;
+      border-radius:14px;
+      padding:16px;
     }
 
-    .role {
-      color: var(--green);
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
+    .stat-label{
+      color:#718077;
+      font-size:11px;
+      margin-bottom:7px;
     }
 
-    .tabs {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      margin-bottom: 20px;
-      padding-bottom: 3px;
+    .stat-value{
+      font-size:22px;
+      font-weight:900;
     }
 
-    .tab {
-      flex: 0 0 auto;
-      height: 42px;
-      padding: 0 16px;
-      border-radius: 10px;
-      border: 1px solid #2b2b2b;
-      background: #101010;
-      color: #999;
-      cursor: pointer;
-      font-weight: 700;
+    .filters{
+      display:flex;
+      gap:7px;
+      overflow-x:auto;
+      padding-bottom:7px;
+      margin-bottom:17px;
     }
 
-    .tab.active {
-      background: var(--green);
-      color: #000;
-      border-color: var(--green);
+    .filter{
+      flex-shrink:0;
+      border:1px solid #26342c;
+      background:#0d1310;
+      color:#aeb9b2;
+      padding:9px 13px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:12px;
+      font-weight:800;
     }
 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 22px;
+    .filter.active{
+      background:#00ff88;
+      color:#001a0d;
+      border-color:#00ff88;
     }
 
-    .stat {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 15px;
+    .orders{
+      display:grid;
+      gap:12px;
     }
 
-    .stat-label {
-      color: #777;
-      font-size: 11px;
-      margin-bottom: 7px;
+    .order{
+      background:#0d1310;
+      border:1px solid #1c2921;
+      border-radius:16px;
+      padding:17px;
     }
 
-    .stat-value {
-      font-size: 22px;
-      font-weight: 900;
+    .order-head{
+      display:flex;
+      justify-content:space-between;
+      gap:15px;
+      align-items:flex-start;
+      margin-bottom:14px;
     }
 
-    .loading {
-      min-height: 250px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--green);
-      font-weight: 700;
+    .order-code{
+      color:#00ff88;
+      font-size:13px;
+      font-weight:900;
     }
 
-    .spinner {
-      width: 24px;
-      height: 24px;
-      border: 3px solid #252525;
-      border-top-color: var(--green);
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-      margin-right: 10px;
+    .date{
+      color:#66736b;
+      font-size:11px;
+      margin-top:5px;
     }
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
+    .status{
+      padding:7px 10px;
+      border-radius:8px;
+      font-size:10px;
+      font-weight:900;
+      white-space:nowrap;
+    }
+
+    .pending{
+      color:#ffd76a;
+      background:#30280e;
+    }
+
+    .confirmed{
+      color:#6ac7ff;
+      background:#0d2635;
+    }
+
+    .shipped{
+      color:#c18cff;
+      background:#211232;
+    }
+
+    .delivered{
+      color:#00ff88;
+      background:#0c2b1d;
+    }
+
+    .cancelled{
+      color:#ff8888;
+      background:#321515;
+    }
+
+    .order-body{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:15px;
+    }
+
+    .product-name{
+      font-size:17px;
+      font-weight:900;
+      margin-bottom:6px;
+    }
+
+    .details{
+      color:#8b9790;
+      font-size:12px;
+      line-height:1.7;
+    }
+
+    .details strong{
+      color:#cbd4ce;
+    }
+
+    .total{
+      text-align:right;
+    }
+
+    .total-label{
+      color:#6e7b73;
+      font-size:11px;
+      margin-bottom:4px;
+    }
+
+    .total-value{
+      color:#00ff88;
+      font-size:20px;
+      font-weight:900;
+    }
+
+    .customer-box{
+      background:#090e0b;
+      border:1px solid #19251f;
+      border-radius:10px;
+      padding:12px;
+      margin-top:13px;
+      font-size:12px;
+      line-height:1.7;
+    }
+
+    .customer-title{
+      color:#00ff88;
+      font-weight:900;
+      margin-bottom:4px;
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:7px;
+      margin-top:14px;
+      padding-top:13px;
+      border-top:1px solid #19251f;
+    }
+
+    .actions button,
+    .actions a{
+      border:1px solid #29372f;
+      background:#131b17;
+      color:#fff;
+      padding:9px 11px;
+      border-radius:8px;
+      text-decoration:none;
+      cursor:pointer;
+      font-size:11px;
+      font-weight:800;
+    }
+
+    .actions button:hover,
+    .actions a:hover{
+      border-color:#00ff88;
+      color:#00ff88;
+    }
+
+    .actions .cancel-btn{
+      color:#ff8888;
+    }
+
+    .actions select{
+      background:#080d0a;
+      border:1px solid #29372f;
+      color:#fff;
+      border-radius:8px;
+      padding:8px;
+      font-size:11px;
+    }
+
+    .empty{
+      text-align:center;
+      padding:65px 20px;
+      background:#0d1310;
+      border:1px solid #1b2821;
+      border-radius:16px;
+    }
+
+    .empty-icon{
+      font-size:45px;
+      margin-bottom:12px;
+    }
+
+    .empty h2{
+      margin-bottom:7px;
+    }
+
+    .empty p{
+      color:#77847c;
+      font-size:13px;
+      margin-bottom:18px;
+    }
+
+    .empty a{
+      display:inline-block;
+      background:#00ff88;
+      color:#001a0d;
+      padding:12px 17px;
+      border-radius:10px;
+      text-decoration:none;
+      font-weight:900;
+      font-size:13px;
+    }
+
+    .loading,
+    .error{
+      text-align:center;
+      padding:60px 20px;
+      color:#89968e;
+    }
+
+    .error{
+      color:#ff8d8d;
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:20px;
+      transform:translateX(-50%) translateY(100px);
+      background:#00ff88;
+      color:#001a0d;
+      padding:12px 17px;
+      border-radius:10px;
+      font-size:13px;
+      font-weight:900;
+      transition:.25s;
+      z-index:100;
+    }
+
+    .toast.show{
+      transform:translateX(-50%) translateY(0);
+    }
+
+    @media(max-width:700px){
+
+      header{
+        padding:0 11px;
+      }
+
+      nav a{
+        font-size:11px;
+        padding:8px 7px;
+      }
+
+      .stats{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .top{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+
+      .order-body{
+        grid-template-columns:1fr;
+      }
+
+      .total{
+        text-align:left;
       }
     }
 
-    .empty {
-      text-align: center;
-      padding: 65px 20px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-    }
+    @media(max-width:430px){
 
-    .empty-icon {
-      font-size: 50px;
-      margin-bottom: 14px;
-    }
-
-    .empty h2 {
-      margin-bottom: 8px;
-    }
-
-    .empty p {
-      color: #777;
-      margin-bottom: 20px;
-      font-size: 14px;
-    }
-
-    .green-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      height: 45px;
-      padding: 0 18px;
-      background: var(--green);
-      color: #000;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 900;
-      border: 0;
-      cursor: pointer;
-    }
-
-    .orders {
-      display: grid;
-      gap: 14px;
-    }
-
-    .order-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px;
-    }
-
-    .order-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 15px;
-      margin-bottom: 16px;
-    }
-
-    .order-code {
-      color: var(--green);
-      font-size: 14px;
-      font-weight: 900;
-    }
-
-    .order-date {
-      color: #666;
-      font-size: 11px;
-      margin-top: 5px;
-    }
-
-    .status {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 30px;
-      padding: 5px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 900;
-      white-space: nowrap;
-    }
-
-    .status.pending {
-      background: rgba(255,216,77,.10);
-      border: 1px solid rgba(255,216,77,.25);
-      color: var(--yellow);
-    }
-
-    .status.confirmed {
-      background: rgba(85,170,255,.10);
-      border: 1px solid rgba(85,170,255,.25);
-      color: var(--blue);
-    }
-
-    .status.shipped {
-      background: rgba(0,255,136,.08);
-      border: 1px solid rgba(0,255,136,.22);
-      color: var(--green);
-    }
-
-    .status.delivered {
-      background: rgba(0,255,136,.13);
-      border: 1px solid rgba(0,255,136,.3);
-      color: var(--green);
-    }
-
-    .status.cancelled {
-      background: rgba(255,85,85,.08);
-      border: 1px solid rgba(255,85,85,.25);
-      color: #ff7777;
-    }
-
-    .product-row {
-      display: grid;
-      grid-template-columns: 75px 1fr auto;
-      gap: 14px;
-      align-items: center;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #222;
-    }
-
-    .product-image {
-      width: 75px;
-      height: 75px;
-      background: #080808;
-      border: 1px solid #252525;
-      border-radius: 11px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #444;
-      font-weight: 900;
-      font-size: 25px;
-    }
-
-    .product-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .product-title {
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 5px;
-    }
-
-    .product-meta {
-      color: #777;
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    .total {
-      text-align: right;
-    }
-
-    .total-label {
-      color: #666;
-      font-size: 11px;
-    }
-
-    .total-price {
-      color: var(--green);
-      font-size: 19px;
-      font-weight: 900;
-      margin-top: 3px;
-    }
-
-    .customer-box {
-      margin-top: 15px;
-      padding: 14px;
-      background: #0b0b0b;
-      border: 1px solid #222;
-      border-radius: 12px;
-    }
-
-    .customer-title {
-      color: #777;
-      font-size: 11px;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-    }
-
-    .customer-name {
-      font-size: 14px;
-      font-weight: 800;
-    }
-
-    .customer-info {
-      color: #888;
-      font-size: 12px;
-      margin-top: 5px;
-      line-height: 1.6;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 15px;
-    }
-
-    .action {
-      min-height: 40px;
-      padding: 0 12px;
-      border-radius: 9px;
-      border: 1px solid #303030;
-      background: #111;
-      color: #ddd;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .action:hover {
-      border-color: var(--green);
-      color: var(--green);
-    }
-
-    .action.cancel {
-      border-color: rgba(255,85,85,.25);
-      color: #ff7777;
-    }
-
-    .action.cancel:hover {
-      border-color: var(--red);
-      background: rgba(255,85,85,.06);
-    }
-
-    .status-select {
-      min-height: 40px;
-      padding: 0 10px;
-      border-radius: 9px;
-      background: #111;
-      border: 1px solid #303030;
-      color: white;
-      outline: none;
-      cursor: pointer;
-    }
-
-    .status-select:focus {
-      border-color: var(--green);
-    }
-
-    .status-select option {
-      background: #111;
-    }
-
-    .error {
-      background: rgba(255,85,85,.08);
-      border: 1px solid rgba(255,85,85,.25);
-      color: #ff8585;
-      border-radius: 12px;
-      padding: 15px;
-      font-size: 14px;
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 22px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: #151515;
-      border: 1px solid #333;
-      color: white;
-      padding: 13px 17px;
-      border-radius: 12px;
-      z-index: 200;
-      opacity: 0;
-      transition: .25s;
-      font-size: 13px;
-      max-width: calc(100% - 30px);
-      text-align: center;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    @media (max-width: 750px) {
-      .stats {
-        grid-template-columns: repeat(2, 1fr);
+      h1{
+        font-size:24px;
       }
 
-      .product-row {
-        grid-template-columns: 65px 1fr;
+      .stat{
+        padding:13px;
       }
 
-      .product-image {
-        width: 65px;
-        height: 65px;
-      }
-
-      .total {
-        grid-column: 2;
-        text-align: left;
-      }
-    }
-
-    @media (max-width: 500px) {
-      header {
-        padding: 0 15px;
-      }
-
-      .logo {
-        font-size: 21px;
-      }
-
-      .header-btn {
-        padding: 0 10px;
-      }
-
-      main {
-        padding: 23px 12px 55px;
-      }
-
-      .top h1 {
-        font-size: 27px;
-      }
-
-      .user-box {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .order-card {
-        padding: 14px;
-      }
-
-      .order-head {
-        flex-direction: column;
+      .stat-value{
+        font-size:19px;
       }
     }
   </style>
@@ -557,1478 +422,974 @@
 
 <header>
 
-  <a
-    href="/index.html"
-    class="logo"
-  >
-    SHIT.BLEJ
+  <a href="/" class="logo">
+    SHIT<span>.</span>BLEJ
   </a>
 
-  <div class="header-right">
-
-    <a
-      href="/index.html"
-      class="header-btn"
-    >
-      🏠 Kryefaqja
-    </a>
-
-    <a
-      href="/login.html"
-      class="header-btn"
-      id="loginLink"
-    >
-      Hyr
-    </a>
-
-  </div>
+  <nav>
+    <a href="/">Kryefaqja</a>
+    <a href="/seller.html">Shit</a>
+    <a href="/admin.html">Admin</a>
+  </nav>
 
 </header>
 
 
-<main>
+<main class="container">
 
   <div class="top">
 
-    <h1>Porositë</h1>
+    <div>
+      <h1>Porositë</h1>
 
-    <p>
-      Menaxho porositë e tua në SHIT.BLEJ.
-    </p>
-
-    <div
-      class="user-box"
-      id="userBox"
-    >
-      <div class="user-info">
-        <strong id="userName">
-          Duke kontrolluar llogarinë...
-        </strong>
-
-        <span id="userEmail">
-          -
-        </span>
+      <div class="subtitle" id="subtitle">
+        Menaxho porositë e tua
       </div>
+    </div>
 
-      <div
-        class="role"
-        id="userRole"
-      >
-        -
-      </div>
+    <div class="user-badge" id="userBadge">
+      Po kontrollohet...
     </div>
 
   </div>
 
 
-  <div class="tabs">
-
-    <button
-      class="tab active"
-      data-filter="all"
-    >
-      Të gjitha
-    </button>
-
-    <button
-      class="tab"
-      data-filter="pending"
-    >
-      Në pritje
-    </button>
-
-    <button
-      class="tab"
-      data-filter="confirmed"
-    >
-      Konfirmuar
-    </button>
-
-    <button
-      class="tab"
-      data-filter="shipped"
-    >
-      Dërguar
-    </button>
-
-    <button
-      class="tab"
-      data-filter="delivered"
-    >
-      Dorëzuar
-    </button>
-
+  <div id="loading" class="loading">
+    Po ngarkohen porositë...
   </div>
 
+  <div id="error" class="error" style="display:none;"></div>
 
-  <div class="stats">
 
-    <div class="stat">
-      <div class="stat-label">
-        TOTAL
+  <div id="content" style="display:none;">
+
+    <div class="stats">
+
+      <div class="stat">
+        <div class="stat-label">TË GJITHA</div>
+        <div class="stat-value" id="allCount">0</div>
       </div>
 
-      <div
-        class="stat-value"
-        id="statTotal"
-      >
-        0
+      <div class="stat">
+        <div class="stat-label">NË PRITJE</div>
+        <div class="stat-value" id="pendingCount">0</div>
       </div>
+
+      <div class="stat">
+        <div class="stat-label">DORËZUAR</div>
+        <div class="stat-value" id="deliveredCount">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">VLERË</div>
+        <div class="stat-value" id="valueCount">0</div>
+      </div>
+
     </div>
 
-    <div class="stat">
-      <div class="stat-label">
-        NË PRITJE
-      </div>
 
-      <div
-        class="stat-value"
-        id="statPending"
-      >
-        0
-      </div>
+    <div class="filters">
+
+      <button class="filter active" data-filter="all">
+        Të gjitha
+      </button>
+
+      <button class="filter" data-filter="pending">
+        Në pritje
+      </button>
+
+      <button class="filter" data-filter="confirmed">
+        Konfirmuar
+      </button>
+
+      <button class="filter" data-filter="shipped">
+        Dërguar
+      </button>
+
+      <button class="filter" data-filter="delivered">
+        Dorëzuar
+      </button>
+
+      <button class="filter" data-filter="cancelled">
+        Anuluar
+      </button>
+
     </div>
 
-    <div class="stat">
-      <div class="stat-label">
-        DËRGUAR
-      </div>
 
-      <div
-        class="stat-value"
-        id="statShipped"
-      >
-        0
-      </div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-label">
-        DORËZUAR
-      </div>
-
-      <div
-        class="stat-value"
-        id="statDelivered"
-      >
-        0
-      </div>
-    </div>
-
-  </div>
-
-
-  <div id="content">
-
-    <div class="loading">
-      <span class="spinner"></span>
-      Duke ngarkuar porositë...
-    </div>
+    <div id="orders" class="orders"></div>
 
   </div>
 
 </main>
 
 
-<div
-  class="toast"
-  id="toast"
-></div>
+<div id="toast" class="toast"></div>
 
 
 <script>
 
-  const API = "/api";
+const API = "/api";
 
-  let orders = [];
+let orders = [];
 
-  let currentFilter = "all";
+let currentFilter = "all";
 
-  let currentUser = null;
+let currentUser = null;
 
 
-  /*
-    AUTH
-  */
+function getToken(){
 
-  function getToken() {
+  return (
+    localStorage.getItem("shitblej_token") ||
+    localStorage.getItem("sabiAuthToken") ||
+    ""
+  );
 
-    return (
-      localStorage.getItem("shitblej_token") ||
-      localStorage.getItem("sabiAuthToken") ||
-      ""
+}
+
+
+function money(value){
+
+  return Number(value || 0)
+    .toLocaleString("sq-AL") + " ALL";
+
+}
+
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+function statusText(status){
+
+  const map = {
+
+    pending:"Në pritje",
+
+    confirmed:"Konfirmuar",
+
+    shipped:"Dërguar",
+
+    delivered:"Dorëzuar",
+
+    cancelled:"Anuluar",
+
+    canceled:"Anuluar"
+
+  };
+
+  return map[status] || status || "Në pritje";
+
+}
+
+
+function statusClass(status){
+
+  if(status === "canceled"){
+    status = "cancelled";
+  }
+
+  return status || "pending";
+
+}
+
+
+function showToast(message){
+
+  const toast =
+    document.getElementById("toast");
+
+  toast.textContent = message;
+
+  toast.classList.add("show");
+
+  setTimeout(() => {
+
+    toast.classList.remove("show");
+
+  },2500);
+
+}
+
+
+async function apiFetch(url, options = {}){
+
+  const token = getToken();
+
+  const headers = {
+    ...(options.headers || {})
+  };
+
+
+  if(token){
+
+    headers.Authorization =
+      "Bearer " + token;
+
+  }
+
+
+  if(
+    options.body &&
+    !headers["Content-Type"]
+  ){
+
+    headers["Content-Type"] =
+      "application/json";
+
+  }
+
+
+  const response =
+    await fetch(API + url,{
+      ...options,
+      headers
+    });
+
+
+  let data = {};
+
+  try{
+    data = await response.json();
+  }catch(e){}
+
+
+  if(!response.ok){
+
+    throw new Error(
+      data.message ||
+      data.error ||
+      "Kërkesa dështoi."
     );
 
   }
 
 
-  /*
-    ESCAPE HTML
-  */
+  return data;
 
-  function escapeHTML(value) {
+}
 
-    if (
-      value === null ||
-      value === undefined
-    ) {
-      return "";
-    }
 
-    return String(value)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+async function checkAuth(){
+
+  const token = getToken();
+
+  if(!token){
+
+    window.location.href =
+      "/login.html?next=/orders.html";
+
+    return false;
 
   }
 
 
-  /*
-    PRICE
-  */
+  try{
 
-  function formatPrice(price) {
-
-    return Number(price || 0)
-      .toLocaleString("sq-AL") + " L";
-
-  }
+    const data =
+      await apiFetch("/auth/me");
 
 
-  /*
-    DATE
-  */
+    currentUser =
+      data.user ||
+      data.account ||
+      data.data?.user ||
+      data;
 
-  function formatDate(date) {
 
-    if (!date) {
-      return "-";
-    }
+    if(!currentUser){
 
-    try {
-
-      return new Date(date)
-        .toLocaleString(
-          "sq-AL",
-          {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-          }
-        );
-
-    } catch {
-
-      return date;
+      throw new Error("Sesioni nuk është aktiv.");
 
     }
 
+
+    document.getElementById("userBadge").textContent =
+      currentUser.name ||
+      currentUser.email ||
+      "Përdorues";
+
+
+    const role =
+      String(currentUser.role || "").toLowerCase();
+
+
+    if(
+      role === "seller" ||
+      role === "admin"
+    ){
+
+      document.getElementById("subtitle").textContent =
+        role === "admin"
+          ? "Menaxho të gjitha porositë"
+          : "Menaxho porositë e produkteve të tua";
+
+    }
+
+
+    return true;
+
+
+  }catch(error){
+
+    console.error(error);
+
+    localStorage.removeItem("shitblej_token");
+    localStorage.removeItem("sabiAuthToken");
+
+    window.location.href =
+      "/login.html?next=/orders.html";
+
+    return false;
+
   }
 
+}
 
-  /*
-    STATUS
-  */
 
-  function statusText(status) {
+function normalizeOrders(data){
 
-    const map = {
-      pending: "Në pritje",
-      confirmed: "Konfirmuar",
-      shipped: "Dërguar",
-      delivered: "Dorëzuar",
-      cancelled: "Anuluar"
-    };
+  if(Array.isArray(data)){
+    return data;
+  }
 
-    return (
-      map[status] ||
-      status ||
-      "Në pritje"
+  if(Array.isArray(data.orders)){
+    return data.orders;
+  }
+
+  if(Array.isArray(data.results)){
+    return data.results;
+  }
+
+  if(Array.isArray(data.data)){
+    return data.data;
+  }
+
+  if(Array.isArray(data.data?.orders)){
+    return data.data.orders;
+  }
+
+  return [];
+
+}
+
+
+async function loadOrders(){
+
+  try{
+
+    const data =
+      await apiFetch("/orders");
+
+    orders =
+      normalizeOrders(data);
+
+    updateStats();
+
+    renderOrders();
+
+
+    document.getElementById("loading").style.display =
+      "none";
+
+    document.getElementById("content").style.display =
+      "block";
+
+
+  }catch(error){
+
+    console.error(error);
+
+    document.getElementById("loading").style.display =
+      "none";
+
+    const errorBox =
+      document.getElementById("error");
+
+    errorBox.textContent =
+      error.message ||
+      "Porositë nuk u ngarkuan.";
+
+    errorBox.style.display =
+      "block";
+
+  }
+
+}
+
+
+function getTotal(order){
+
+  if(order.total != null){
+    return Number(order.total);
+  }
+
+  if(order.order_total != null){
+    return Number(order.order_total);
+  }
+
+  const price =
+    Number(
+      order.price ||
+      order.product_price ||
+      0
     );
 
-  }
-
-
-  function statusClass(status) {
-
-    const allowed = [
-      "pending",
-      "confirmed",
-      "shipped",
-      "delivered",
-      "cancelled"
-    ];
-
-    return allowed.includes(status)
-      ? status
-      : "pending";
-
-  }
-
-
-  /*
-    TOAST
-  */
-
-  let toastTimer = null;
-
-  function showToast(text) {
-
-    const toast =
-      document.getElementById("toast");
-
-    toast.textContent = text;
-
-    toast.classList.add("show");
-
-    clearTimeout(toastTimer);
-
-    toastTimer =
-      setTimeout(() => {
-
-        toast.classList.remove("show");
-
-      }, 2500);
-
-  }
-
-
-  /*
-    CHECK LOGIN
-  */
-
-  async function checkLogin() {
-
-    const token =
-      getToken();
-
-
-    if (!token) {
-
-      showLoginRequired();
-
-      return false;
-
-    }
-
-
-    try {
-
-      const response =
-        await fetch(
-          API + "/auth/me",
-          {
-            headers: {
-              "Authorization":
-                "Bearer " + token
-            }
-          }
-        );
-
-
-      if (!response.ok) {
-
-        clearSession();
-
-        showLoginRequired();
-
-        return false;
-
-      }
-
-
-      const data =
-        await response.json();
-
-
-      currentUser =
-        data.user || null;
-
-
-      if (!currentUser) {
-
-        clearSession();
-
-        showLoginRequired();
-
-        return false;
-
-      }
-
-
-      updateUserBox();
-
-      return true;
-
-
-    } catch (error) {
-
-      console.error(
-        "AUTH ERROR:",
-        error
-      );
-
-      showError(
-        "Nuk u lidhëm me serverin."
-      );
-
-      return false;
-
-    }
-
-  }
-
-
-  /*
-    CLEAR SESSION
-  */
-
-  function clearSession() {
-
-    localStorage.removeItem(
-      "shitblej_token"
+  const quantity =
+    Number(
+      order.quantity ||
+      1
     );
 
-    localStorage.removeItem(
-      "sabiAuthToken"
+  return price * quantity;
+
+}
+
+
+function updateStats(){
+
+  const all =
+    orders.length;
+
+  const pending =
+    orders.filter(
+      o => String(o.status || "pending") === "pending"
+    ).length;
+
+  const delivered =
+    orders.filter(
+      o => String(o.status || "") === "delivered"
+    ).length;
+
+  const value =
+    orders.reduce(
+      (sum,o) => sum + getTotal(o),
+      0
     );
 
-    localStorage.removeItem(
-      "shitblej_user"
-    );
+
+  document.getElementById("allCount").textContent =
+    all;
+
+  document.getElementById("pendingCount").textContent =
+    pending;
+
+  document.getElementById("deliveredCount").textContent =
+    delivered;
+
+  document.getElementById("valueCount").textContent =
+    money(value);
+
+}
+
+
+function isSellerOrAdmin(){
+
+  const role =
+    String(currentUser?.role || "").toLowerCase();
+
+  return (
+    role === "seller" ||
+    role === "admin" ||
+    role === "owner"
+  );
+
+}
+
+
+function renderOrders(){
+
+  const container =
+    document.getElementById("orders");
+
+
+  let filtered =
+    orders;
+
+
+  if(currentFilter !== "all"){
+
+    filtered =
+      orders.filter(order => {
+
+        let status =
+          String(
+            order.status || "pending"
+          ).toLowerCase();
+
+        if(status === "canceled"){
+          status = "cancelled";
+        }
+
+        return status === currentFilter;
+
+      });
 
   }
 
 
-  /*
-    LOGIN REQUIRED
-  */
+  if(filtered.length === 0){
 
-  function showLoginRequired() {
-
-    document.getElementById(
-      "userName"
-    ).textContent =
-      "Duhet të hysh në llogari.";
-
-    document.getElementById(
-      "userEmail"
-    ).textContent =
-      "Hyr për të parë porositë.";
-
-    document.getElementById(
-      "userRole"
-    ).textContent = "";
-
-    document.getElementById(
-      "loginLink"
-    ).textContent =
-      "Hyr";
-
-    document.getElementById(
-      "content"
-    ).innerHTML = `
+    container.innerHTML = `
 
       <div class="empty">
 
-        <div class="empty-icon">
-          🔐
-        </div>
+        <div class="empty-icon">📦</div>
 
-        <h2>Hyr në llogari</h2>
+        <h2>Nuk ka porosi</h2>
 
         <p>
-          Duhet të jesh i identifikuar
-          për të parë porositë.
+          Nuk u gjetën porosi në këtë kategori.
         </p>
 
-        <a
-          href="/login.html?next=/orders.html"
-          class="green-btn"
-        >
-          Hyr tani
+        <a href="/">
+          SHIKO PRODUKTET
         </a>
 
       </div>
 
     `;
 
-  }
-
-
-  /*
-    USER BOX
-  */
-
-  function updateUserBox() {
-
-    if (!currentUser) {
-      return;
-    }
-
-
-    document.getElementById(
-      "userName"
-    ).textContent =
-      currentUser.name ||
-      "Përdorues";
-
-
-    document.getElementById(
-      "userEmail"
-    ).textContent =
-      currentUser.email ||
-      currentUser.phone ||
-      "";
-
-
-    const role =
-      currentUser.role ||
-      "customer";
-
-
-    const roleNames = {
-      customer: "Blerës",
-      seller: "Shitës",
-      admin: "Admin"
-    };
-
-
-    document.getElementById(
-      "userRole"
-    ).textContent =
-      roleNames[role] ||
-      role;
-
-
-    document.getElementById(
-      "loginLink"
-    ).textContent =
-      "Dil";
-
-
-    document.getElementById(
-      "loginLink"
-    ).href = "#";
-
-
-    document.getElementById(
-      "loginLink"
-    ).onclick = event => {
-
-      event.preventDefault();
-
-      logout();
-
-    };
+    return;
 
   }
 
 
-  /*
-    LOGOUT
-  */
+  container.innerHTML =
+    filtered.map(renderOrder).join("");
 
-  function logout() {
-
-    const token =
-      getToken();
+}
 
 
-    fetch(
-      API + "/auth/logout",
-      {
-        method: "POST",
-        headers: {
-          "Authorization":
-            "Bearer " + token
-        }
-      }
-    ).catch(() => {});
+function renderOrder(order){
+
+  const status =
+    String(
+      order.status || "pending"
+    ).toLowerCase();
 
 
-    clearSession();
-
-    window.location.href =
-      "/index.html";
-
-  }
+  const code =
+    order.code ||
+    order.order_code ||
+    ("SABI-" + order.id);
 
 
-  /*
-    LOAD ORDERS
-  */
-
-  async function loadOrders() {
-
-    const token =
-      getToken();
+  const title =
+    order.product_title ||
+    order.product_name ||
+    order.title ||
+    order.name ||
+    "Produkt";
 
 
-    try {
-
-      const response =
-        await fetch(
-          API + "/orders",
-          {
-            headers: {
-              "Authorization":
-                "Bearer " + token
-            }
-          }
-        );
+  const quantity =
+    Number(order.quantity || 1);
 
 
-      const data =
-        await response.json();
+  const total =
+    getTotal(order);
 
 
-      if (!response.ok) {
-
-        throw new Error(
-          data.error ||
-          "Nuk u ngarkuan porositë."
-        );
-
-      }
+  const created =
+    order.created_at ||
+    order.createdAt ||
+    "";
 
 
-      orders =
-        Array.isArray(data.orders)
-          ? data.orders
-          : [];
+  const seller =
+    order.seller_name ||
+    order.sellerName ||
+    order.seller ||
+    "";
 
 
-      updateStats();
-
-      renderOrders();
-
-
-    } catch (error) {
-
-      console.error(
-        "ORDERS ERROR:",
-        error
-      );
-
-      showError(
-        error.message ||
-        "Nuk u ngarkuan porositë."
-      );
-
-    }
-
-  }
+  const customer =
+    order.customer_name ||
+    order.customerName ||
+    order.buyer_name ||
+    "";
 
 
-  /*
-    ERROR
-  */
+  const phone =
+    order.customer_phone ||
+    order.customerPhone ||
+    order.phone ||
+    "";
 
-  function showError(text) {
 
-    document.getElementById(
-      "content"
-    ).innerHTML = `
+  const city =
+    order.customer_city ||
+    order.customerCity ||
+    order.city ||
+    "";
 
-      <div class="error">
-        ${escapeHTML(text)}
+
+  const address =
+    order.customer_address ||
+    order.customerAddress ||
+    order.address ||
+    "";
+
+
+  const image =
+    order.product_image ||
+    order.image_url ||
+    order.image ||
+    "";
+
+
+  let imageHTML = "";
+
+  if(image){
+
+    imageHTML = `
+      <div style="
+        width:65px;
+        height:65px;
+        border-radius:10px;
+        overflow:hidden;
+        background:#080d0a;
+        flex-shrink:0;
+      ">
+        <img
+          src="${escapeHTML(image)}"
+          style="width:100%;height:100%;object-fit:cover;"
+        >
       </div>
-
     `;
 
   }
 
 
-  /*
-    STATS
-  */
+  let actions = "";
 
-  function updateStats() {
 
-    document.getElementById(
-      "statTotal"
-    ).textContent =
-      orders.length;
+  if(isSellerOrAdmin()){
 
+    actions += `
 
-    document.getElementById(
-      "statPending"
-    ).textContent =
-      orders.filter(
-        o => o.status === "pending"
-      ).length;
-
-
-    document.getElementById(
-      "statShipped"
-    ).textContent =
-      orders.filter(
-        o => o.status === "shipped"
-      ).length;
-
-
-    document.getElementById(
-      "statDelivered"
-    ).textContent =
-      orders.filter(
-        o => o.status === "delivered"
-      ).length;
-
-  }
-
-
-  /*
-    FILTER
-  */
-
-  document
-    .querySelectorAll(".tab")
-    .forEach(tab => {
-
-      tab.addEventListener(
-        "click",
-        () => {
-
-          document
-            .querySelectorAll(".tab")
-            .forEach(t =>
-              t.classList.remove(
-                "active"
-              )
-            );
-
-          tab.classList.add(
-            "active"
-          );
-
-          currentFilter =
-            tab.dataset.filter;
-
-          renderOrders();
-
-        }
-      );
-
-    });
-
-
-  /*
-    RENDER
-  */
-
-  function renderOrders() {
-
-    const content =
-      document.getElementById(
-        "content"
-      );
-
-
-    let filtered =
-      [...orders];
-
-
-    if (
-      currentFilter !== "all"
-    ) {
-
-      filtered =
-        filtered.filter(
-          order =>
-            order.status ===
-            currentFilter
-        );
-
-    }
-
-
-    if (!filtered.length) {
-
-      content.innerHTML = `
-
-        <div class="empty">
-
-          <div class="empty-icon">
-            📦
-          </div>
-
-          <h2>
-            Nuk ka porosi
-          </h2>
-
-          <p>
-            Nuk ka porosi në këtë kategori.
-          </p>
-
-          <a
-            href="/index.html"
-            class="green-btn"
-          >
-            Shiko produktet
-          </a>
-
-        </div>
-
-      `;
-
-      return;
-
-    }
-
-
-    content.innerHTML = `
-
-      <div class="orders">
-
-        ${filtered
-          .map(order => renderOrder(order))
-          .join("")}
-
-      </div>
-
-    `;
-
-
-    attachOrderEvents();
-
-  }
-
-
-  /*
-    RENDER SINGLE ORDER
-  */
-
-  function renderOrder(order) {
-
-    const productName =
-      order.product_name ||
-      order.title ||
-      order.name ||
-      "Produkt";
-
-
-    const image =
-      order.image_url ||
-      order.image ||
-      "";
-
-
-    const price =
-      Number(
-        order.total_price ||
-        order.price ||
-        0
-      );
-
-
-    const quantity =
-      Number(
-        order.quantity ||
-        1
-      );
-
-
-    const status =
-      order.status ||
-      "pending";
-
-
-    const code =
-      order.order_code ||
-      order.code ||
-      ("ORDER-" + order.id);
-
-
-    const isSeller =
-      currentUser &&
-      (
-        currentUser.role === "seller" ||
-        currentUser.role === "admin"
-      );
-
-
-    const isAdmin =
-      currentUser &&
-      currentUser.role === "admin";
-
-
-    const isBuyer =
-      currentUser &&
-      currentUser.role === "customer";
-
-
-    const customerName =
-      order.customer_name ||
-      order.buyer_name ||
-      order.customerName ||
-      "";
-
-
-    const customerPhone =
-      order.customer_phone ||
-      order.buyer_phone ||
-      order.customerPhone ||
-      "";
-
-
-    const customerCity =
-      order.customer_city ||
-      order.buyer_city ||
-      "";
-
-
-    const customerAddress =
-      order.customer_address ||
-      order.buyer_address ||
-      "";
-
-
-    let actions = "";
-
-
-    /*
-      SELLER / ADMIN ACTIONS
-    */
-
-    if (
-      isSeller &&
-      status !== "cancelled" &&
-      status !== "delivered"
-    ) {
-
-      actions += `
-
-        <select
-          class="status-select"
-          data-order-id="${order.id}"
-        >
-
-          <option
-            value="pending"
-            ${status === "pending" ? "selected" : ""}
-          >
-            Në pritje
-          </option>
-
-          <option
-            value="confirmed"
-            ${status === "confirmed" ? "selected" : ""}
-          >
-            Konfirmuar
-          </option>
-
-          <option
-            value="shipped"
-            ${status === "shipped" ? "selected" : ""}
-          >
-            Dërguar
-          </option>
-
-          <option
-            value="delivered"
-            ${status === "delivered" ? "selected" : ""}
-          >
-            Dorëzuar
-          </option>
-
-          <option
-            value="cancelled"
-            ${status === "cancelled" ? "selected" : ""}
-          >
-            Anuluar
-          </option>
-
-        </select>
-
-      `;
-
-    }
-
-
-    /*
-      BUYER CANCEL
-    */
-
-    if (
-      isBuyer &&
-      (
-        status === "pending" ||
-        status === "confirmed"
-      )
-    ) {
-
-      actions += `
-
-        <button
-          class="action cancel"
-          data-cancel-id="${order.id}"
-        >
-          Anulo porosinë
-        </button>
-
-      `;
-
-    }
-
-
-    /*
-      CALL CUSTOMER
-    */
-
-    if (
-      isSeller &&
-      customerPhone
-    ) {
-
-      actions += `
-
-        <button
-          class="action"
-          data-call="${escapeHTML(customerPhone)}"
-        >
-          ☎ Telefono
-        </button>
-
-        <button
-          class="action"
-          data-whatsapp="${escapeHTML(customerPhone)}"
-        >
-          WhatsApp
-        </button>
-
-      `;
-
-    }
-
-
-    return `
-
-      <article
-        class="order-card"
-        data-order-card="${order.id}"
+      <select
+        onchange="changeStatus(${Number(order.id)},this.value)"
       >
 
-        <div class="order-head">
+        <option value="pending"
+          ${status==="pending"?"selected":""}>
+          Në pritje
+        </option>
 
-          <div>
+        <option value="confirmed"
+          ${status==="confirmed"?"selected":""}>
+          Konfirmuar
+        </option>
 
-            <div class="order-code">
-              ${escapeHTML(code)}
-            </div>
+        <option value="shipped"
+          ${status==="shipped"?"selected":""}>
+          Dërguar
+        </option>
 
-            <div class="order-date">
-              ${formatDate(
-                order.created_at ||
-                order.createdAt
-              )}
-            </div>
+        <option value="delivered"
+          ${status==="delivered"?"selected":""}>
+          Dorëzuar
+        </option>
 
+        <option value="cancelled"
+          ${status==="cancelled"?"selected":""}>
+          Anuluar
+        </option>
+
+      </select>
+
+    `;
+
+  }
+
+
+  if(phone){
+
+    const cleanPhone =
+      phone.replace(/\s+/g,"");
+
+
+    actions += `
+
+      <a href="tel:${escapeHTML(cleanPhone)}">
+        📞 Telefon
+      </a>
+
+      <a
+        href="https://wa.me/${cleanPhone.replace(/\D/g,"")}"
+        target="_blank"
+      >
+        💬 WhatsApp
+      </a>
+
+    `;
+
+  }
+
+
+  if(
+    !isSellerOrAdmin() &&
+    (
+      status === "pending" ||
+      status === "confirmed"
+    )
+  ){
+
+    actions += `
+
+      <button
+        class="cancel-btn"
+        onclick="cancelOrder(${Number(order.id)})"
+      >
+        ✕ Anulo porosinë
+      </button>
+
+    `;
+
+  }
+
+
+  return `
+
+    <div class="order">
+
+      <div class="order-head">
+
+        <div>
+
+          <div class="order-code">
+            ${escapeHTML(code)}
           </div>
 
-          <span
-            class="status ${statusClass(status)}"
-          >
-            ${escapeHTML(
-              statusText(status)
-            )}
-          </span>
+          <div class="date">
+            ${escapeHTML(created)}
+          </div>
 
         </div>
 
-
-        <div class="product-row">
-
-          <div class="product-image">
-
-            ${
-              image
-                ? `
-                  <img
-                    src="${escapeHTML(image)}"
-                    alt="${escapeHTML(productName)}"
-                    onerror="this.style.display='none';"
-                  >
-                `
-                : "S"
-            }
-
-          </div>
-
-
-          <div>
-
-            <div class="product-title">
-              ${escapeHTML(productName)}
-            </div>
-
-            <div class="product-meta">
-
-              Sasia:
-              <strong>
-                ${quantity}
-              </strong>
-
-              <br>
-
-              Çmimi:
-              ${formatPrice(
-                order.price ||
-                order.unit_price ||
-                (
-                  quantity
-                    ? price / quantity
-                    : price
-                )
-              )}
-
-            </div>
-
-          </div>
-
-
-          <div class="total">
-
-            <div class="total-label">
-              TOTAL
-            </div>
-
-            <div class="total-price">
-              ${formatPrice(price)}
-            </div>
-
-          </div>
-
+        <div class="status ${statusClass(status)}">
+          ${escapeHTML(statusText(status))}
         </div>
 
+      </div>
 
-        ${
-          isSeller &&
-          customerName
+
+      <div class="order-body">
+
+        <div>
+
+          <div style="
+            display:flex;
+            gap:12px;
+            align-items:center;
+          ">
+
+            ${imageHTML}
+
+            <div>
+
+              <div class="product-name">
+                ${escapeHTML(title)}
+              </div>
+
+              <div class="details">
+
+                Sasia:
+                <strong>${quantity}</strong>
+
+                &nbsp;•&nbsp;
+
+                Shitësi:
+                <strong>${escapeHTML(seller || "—")}</strong>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          ${
+            isSellerOrAdmin()
             ? `
 
               <div class="customer-box">
 
                 <div class="customer-title">
-                  TË DHËNAT E KLIENTIT
+                  Të dhënat e blerësit
                 </div>
 
-                <div class="customer-name">
-                  ${escapeHTML(customerName)}
+                <div>
+                  👤 ${escapeHTML(customer || "—")}
                 </div>
 
-                <div class="customer-info">
+                <div>
+                  📞 ${escapeHTML(phone || "—")}
+                </div>
 
-                  ${
-                    customerPhone
-                      ? "📞 " +
-                        escapeHTML(customerPhone)
-                      : ""
-                  }
+                <div>
+                  📍 ${escapeHTML(city || "—")}
+                </div>
 
-                  ${
-                    customerCity
-                      ? "<br>📍 " +
-                        escapeHTML(customerCity)
-                      : ""
-                  }
-
-                  ${
-                    customerAddress
-                      ? "<br>🏠 " +
-                        escapeHTML(customerAddress)
-                      : ""
-                  }
-
+                <div>
+                  🏠 ${escapeHTML(address || "—")}
                 </div>
 
               </div>
 
             `
             : ""
-        }
-
-
-        ${
-          actions
-            ? `
-              <div class="actions">
-                ${actions}
-              </div>
-            `
-            : ""
-        }
-
-      </article>
-
-    `;
-
-  }
-
-
-  /*
-    ATTACH EVENTS
-  */
-
-  function attachOrderEvents() {
-
-
-    /*
-      STATUS CHANGE
-    */
-
-    document
-      .querySelectorAll(".status-select")
-      .forEach(select => {
-
-        select.addEventListener(
-          "change",
-          async () => {
-
-            const orderId =
-              select.dataset.orderId;
-
-            const status =
-              select.value;
-
-
-            await updateOrderStatus(
-              orderId,
-              status
-            );
-
           }
-        );
-
-      });
 
 
-    /*
-      CANCEL
-    */
+          <div class="actions">
+            ${actions}
+          </div>
 
-    document
-      .querySelectorAll(
-        "[data-cancel-id]"
-      )
-      .forEach(button => {
-
-        button.addEventListener(
-          "click",
-          async () => {
-
-            const orderId =
-              button.dataset.cancelId;
+        </div>
 
 
-            const yes =
-              confirm(
-                "A je i sigurt që do ta anulosh porosinë?"
-              );
+        <div class="total">
+
+          <div class="total-label">
+            TOTAL
+          </div>
+
+          <div class="total-value">
+            ${money(total)}
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
 
 
-            if (!yes) {
-              return;
-            }
+async function changeStatus(id,status){
+
+  if(!id) return;
 
 
-            await updateOrderStatus(
-              orderId,
-              "cancelled"
-            );
+  try{
 
-          }
-        );
+    await apiFetch(
+      "/orders/" + encodeURIComponent(id),
+      {
+        method:"PUT",
 
-      });
-
-
-    /*
-      CALL
-    */
-
-    document
-      .querySelectorAll(
-        "[data-call]"
-      )
-      .forEach(button => {
-
-        button.addEventListener(
-          "click",
-          () => {
-
-            const phone =
-              button.dataset.call;
-
-            window.location.href =
-              "tel:" + phone;
-
-          }
-        );
-
-      });
-
-
-    /*
-      WHATSAPP
-    */
-
-    document
-      .querySelectorAll(
-        "[data-whatsapp]"
-      )
-      .forEach(button => {
-
-        button.addEventListener(
-          "click",
-          () => {
-
-            let phone =
-              button.dataset.whatsapp
-                .replace(
-                  /[^0-9+]/g,
-                  ""
-                );
-
-
-            if (
-              phone.startsWith("0")
-            ) {
-
-              phone =
-                "355" +
-                phone.substring(1);
-
-            }
-
-            if (
-              phone.startsWith("+")
-            ) {
-
-              phone =
-                phone.substring(1);
-
-            }
-
-
-            window.open(
-              "https://wa.me/" + phone,
-              "_blank"
-            );
-
-          }
-        );
-
-      });
-
-  }
-
-
-  /*
-    UPDATE ORDER STATUS
-  */
-
-  async function updateOrderStatus(
-    orderId,
-    status
-  ) {
-
-    const token =
-      getToken();
-
-
-    try {
-
-      const response =
-        await fetch(
-          API +
-          "/orders/" +
-          encodeURIComponent(orderId),
-          {
-            method: "PUT",
-
-            headers: {
-              "Content-Type":
-                "application/json",
-
-              "Authorization":
-                "Bearer " + token
-            },
-
-            body: JSON.stringify({
-              status
-            })
-          }
-        );
-
-
-      const data =
-        await response.json();
-
-
-      if (!response.ok) {
-
-        throw new Error(
-          data.error ||
-          "Statusi nuk u ndryshua."
-        );
-
+        body:JSON.stringify({
+          status:status
+        })
       }
+    );
 
 
-      showToast(
-        "Statusi u ndryshua me sukses."
-      );
-
-
-      await loadOrders();
-
-
-    } catch (error) {
-
-      console.error(
-        "STATUS ERROR:",
-        error
-      );
-
-      showToast(
-        error.message ||
-        "Gabim gjatë ndryshimit të statusit."
-      );
-
-
-      await loadOrders();
-
-    }
-
-  }
-
-
-  /*
-    START
-  */
-
-  async function init() {
-
-    const loggedIn =
-      await checkLogin();
-
-
-    if (!loggedIn) {
-      return;
-    }
-
+    showToast("Statusi u ndryshua.");
 
     await loadOrders();
 
+
+  }catch(error){
+
+    alert(
+      error.message ||
+      "Statusi nuk u ndryshua."
+    );
+
+  }
+
+}
+
+
+async function cancelOrder(id){
+
+  if(!confirm("Je i sigurt që dëshiron ta anulosh porosinë?")){
+    return;
   }
 
 
-  init();
+  try{
+
+    await apiFetch(
+      "/orders/" + encodeURIComponent(id),
+      {
+        method:"PUT",
+
+        body:JSON.stringify({
+          status:"cancelled"
+        })
+      }
+    );
+
+
+    showToast("Porosia u anulua.");
+
+    await loadOrders();
+
+
+  }catch(error){
+
+    alert(
+      error.message ||
+      "Porosia nuk u anulua."
+    );
+
+  }
+
+}
+
+
+document.querySelectorAll(".filter")
+  .forEach(button => {
+
+    button.addEventListener("click",function(){
+
+      document
+        .querySelectorAll(".filter")
+        .forEach(b =>
+          b.classList.remove("active")
+        );
+
+      this.classList.add("active");
+
+      currentFilter =
+        this.dataset.filter;
+
+      renderOrders();
+
+    });
+
+  });
+
+
+(async function(){
+
+  const authenticated =
+    await checkAuth();
+
+  if(!authenticated){
+    return;
+  }
+
+  await loadOrders();
+
+})();
 
 </script>
 
