@@ -3,647 +3,487 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#050505">
-
-  <title>Admin | SHIT.BLEJ</title>
+  <title>Admin — SHIT.BLEJ PRO</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+      font-family:Arial,Helvetica,sans-serif;
     }
 
-    :root {
-      --bg: #050505;
-      --card: #101010;
-      --card2: #151515;
-      --border: #292929;
-      --green: #00ff88;
-      --text: #fff;
-      --muted: #888;
-      --red: #ff5555;
-      --yellow: #ffd84d;
-      --blue: #55aaff;
+    body{
+      background:#070b09;
+      color:#fff;
+      min-height:100vh;
     }
 
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(
-          circle at 50% -10%,
-          rgba(0,255,136,.10),
-          transparent 35%
-        ),
-        var(--bg);
-      color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
+    header{
+      height:64px;
+      background:#0b100d;
+      border-bottom:1px solid #1b2821;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 18px;
+      position:sticky;
+      top:0;
+      z-index:30;
     }
 
-    header {
-      height: 68px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(5,5,5,.96);
-      backdrop-filter: blur(15px);
-      border-bottom: 1px solid var(--border);
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      padding: 0 22px;
+    .logo{
+      color:#fff;
+      text-decoration:none;
+      font-size:25px;
+      font-weight:900;
     }
 
-    .logo {
-      color: var(--green);
-      text-decoration: none;
-      font-size: 24px;
-      font-weight: 900;
-      letter-spacing: -1px;
+    .logo span{
+      color:#00ff88;
     }
 
-    .admin-label {
-      color: #777;
-      font-size: 11px;
-      margin-left: 8px;
+    .nav{
+      display:flex;
+      gap:7px;
+      align-items:center;
     }
 
-    .header-right {
-      display: flex;
-      gap: 8px;
-      align-items: center;
+    .nav a,
+    .nav button{
+      color:#cbd4ce;
+      text-decoration:none;
+      background:none;
+      border:0;
+      padding:9px 10px;
+      border-radius:9px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
     }
 
-    .header-btn {
-      height: 38px;
-      padding: 0 13px;
-      border-radius: 9px;
-      border: 1px solid #303030;
-      background: #111;
-      color: #ddd;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
+    .nav a:hover,
+    .nav button:hover{
+      background:#142019;
+      color:#00ff88;
     }
 
-    .header-btn:hover {
-      border-color: var(--green);
-      color: var(--green);
+    .container{
+      max-width:1250px;
+      margin:auto;
+      padding:25px 15px 60px;
     }
 
-    main {
-      max-width: 1250px;
-      margin: auto;
-      padding: 28px 18px 70px;
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:15px;
+      margin-bottom:20px;
     }
 
-    .page-title {
-      margin-bottom: 24px;
+    h1{
+      font-size:29px;
     }
 
-    .page-title h1 {
-      font-size: 30px;
-      margin-bottom: 7px;
+    .subtitle{
+      color:#7d8a82;
+      font-size:13px;
+      margin-top:5px;
     }
 
-    .page-title p {
-      color: var(--muted);
-      font-size: 14px;
+    .admin-badge{
+      color:#00ff88;
+      background:#0c1911;
+      border:1px solid #1b402b;
+      border-radius:10px;
+      padding:9px 12px;
+      font-size:12px;
+      font-weight:900;
     }
 
-    /* STATS */
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 25px;
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:10px;
+      margin-bottom:20px;
     }
 
-    .stat {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      padding: 18px;
+    .stat{
+      background:#0d1310;
+      border:1px solid #1b2821;
+      border-radius:14px;
+      padding:16px;
     }
 
-    .stat-label {
-      color: #777;
-      font-size: 11px;
-      text-transform: uppercase;
-      margin-bottom: 8px;
+    .stat-label{
+      color:#718077;
+      font-size:10px;
+      font-weight:800;
+      margin-bottom:7px;
     }
 
-    .stat-value {
-      font-size: 27px;
-      font-weight: 900;
+    .stat-value{
+      font-size:21px;
+      font-weight:900;
     }
 
-    .green {
-      color: var(--green);
+    .tabs{
+      display:flex;
+      gap:7px;
+      overflow-x:auto;
+      padding-bottom:7px;
+      margin-bottom:18px;
     }
 
-    /* NAV */
-
-    .admin-nav {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      margin-bottom: 20px;
-      padding-bottom: 3px;
+    .tab{
+      flex-shrink:0;
+      background:#0d1310;
+      color:#aeb9b2;
+      border:1px solid #26342c;
+      padding:10px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:12px;
+      font-weight:900;
     }
 
-    .nav-btn {
-      flex: 0 0 auto;
-      height: 43px;
-      padding: 0 16px;
-      background: #101010;
-      border: 1px solid #292929;
-      border-radius: 10px;
-      color: #999;
-      font-weight: 800;
-      cursor: pointer;
+    .tab.active{
+      background:#00ff88;
+      color:#001a0d;
+      border-color:#00ff88;
     }
 
-    .nav-btn.active {
-      background: var(--green);
-      color: #000;
-      border-color: var(--green);
+    .section{
+      display:none;
     }
 
-    /* SECTIONS */
-
-    .section {
-      display: none;
+    .section.active{
+      display:block;
     }
 
-    .section.active {
-      display: block;
+    .toolbar{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:14px;
     }
 
-    .section-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      margin-bottom: 15px;
+    .search{
+      flex:1;
+      min-width:220px;
+      padding:12px;
+      background:#0d1310;
+      border:1px solid #24342b;
+      border-radius:10px;
+      color:#fff;
+      outline:none;
     }
 
-    .section-head h2 {
-      font-size: 20px;
+    .search:focus{
+      border-color:#00ff88;
     }
 
-    .refresh-btn {
-      height: 38px;
-      padding: 0 13px;
-      background: #111;
-      border: 1px solid #303030;
-      color: #ddd;
-      border-radius: 9px;
-      cursor: pointer;
-      font-weight: 700;
+    .refresh{
+      background:#141c17;
+      color:#fff;
+      border:1px solid #29372f;
+      border-radius:10px;
+      padding:11px 14px;
+      font-weight:800;
+      cursor:pointer;
     }
 
-    .refresh-btn:hover {
-      border-color: var(--green);
-      color: var(--green);
+    .refresh:hover{
+      border-color:#00ff88;
+      color:#00ff88;
     }
 
-    /* TABLE */
-
-    .table-wrap {
-      overflow-x: auto;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 15px;
+    .table-wrap{
+      width:100%;
+      overflow-x:auto;
+      background:#0d1310;
+      border:1px solid #1b2821;
+      border-radius:15px;
     }
 
-    table {
-      width: 100%;
-      min-width: 750px;
-      border-collapse: collapse;
+    table{
+      width:100%;
+      min-width:800px;
+      border-collapse:collapse;
     }
 
     th,
-    td {
-      padding: 14px;
-      border-bottom: 1px solid #222;
-      text-align: left;
-      font-size: 12px;
-      vertical-align: middle;
+    td{
+      padding:13px 12px;
+      border-bottom:1px solid #19251f;
+      text-align:left;
+      font-size:12px;
     }
 
-    th {
-      color: #777;
-      font-size: 10px;
-      text-transform: uppercase;
-      background: #0b0b0b;
+    th{
+      color:#718077;
+      font-size:10px;
+      text-transform:uppercase;
     }
 
-    tr:last-child td {
-      border-bottom: 0;
+    td{
+      color:#cbd4ce;
     }
 
-    td {
-      color: #ddd;
+    tr:last-child td{
+      border-bottom:0;
     }
 
-    .product-mini {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .product-name{
+      color:#fff;
+      font-weight:900;
     }
 
-    .product-img {
-      width: 48px;
-      height: 48px;
-      border-radius: 8px;
-      background: #080808;
-      border: 1px solid #292929;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #555;
-      font-weight: 900;
+    .price{
+      color:#00ff88;
+      font-weight:900;
     }
 
-    .product-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .status{
+      display:inline-block;
+      padding:6px 8px;
+      border-radius:7px;
+      font-size:9px;
+      font-weight:900;
     }
 
-    .product-name {
-      font-weight: 800;
-      color: white;
+    .pending{
+      background:#30280e;
+      color:#ffd76a;
     }
 
-    .product-category {
-      color: #777;
-      font-size: 10px;
-      margin-top: 3px;
+    .confirmed{
+      background:#0d2635;
+      color:#6ac7ff;
     }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 5px 9px;
-      border-radius: 20px;
-      font-size: 10px;
-      font-weight: 900;
-      white-space: nowrap;
+    .shipped{
+      background:#211232;
+      color:#c18cff;
     }
 
-    .badge-green {
-      background: rgba(0,255,136,.08);
-      color: var(--green);
-      border: 1px solid rgba(0,255,136,.2);
+    .delivered{
+      background:#0c2b1d;
+      color:#00ff88;
     }
 
-    .badge-yellow {
-      background: rgba(255,216,77,.08);
-      color: var(--yellow);
-      border: 1px solid rgba(255,216,77,.2);
+    .cancelled,
+    .blocked{
+      background:#321515;
+      color:#ff8888;
     }
 
-    .badge-red {
-      background: rgba(255,85,85,.08);
-      color: #ff7777;
-      border: 1px solid rgba(255,85,85,.2);
+    .active-status{
+      background:#0c2b1d;
+      color:#00ff88;
     }
 
-    .badge-blue {
-      background: rgba(85,170,255,.08);
-      color: var(--blue);
-      border: 1px solid rgba(85,170,255,.2);
+    .actions{
+      display:flex;
+      gap:5px;
+      flex-wrap:wrap;
     }
 
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
+    .actions button{
+      border:1px solid #29372f;
+      background:#141c17;
+      color:#fff;
+      border-radius:7px;
+      padding:7px 8px;
+      cursor:pointer;
+      font-size:10px;
+      font-weight:800;
     }
 
-    .action {
-      height: 34px;
-      padding: 0 9px;
-      border-radius: 7px;
-      background: #111;
-      border: 1px solid #303030;
-      color: #ddd;
-      cursor: pointer;
-      font-size: 10px;
-      font-weight: 800;
+    .actions button:hover{
+      border-color:#00ff88;
+      color:#00ff88;
     }
 
-    .action:hover {
-      border-color: var(--green);
-      color: var(--green);
+    .actions .danger{
+      color:#ff8585;
     }
 
-    .action.danger {
-      color: #ff7777;
-      border-color: rgba(255,85,85,.2);
+    .actions .danger:hover{
+      border-color:#ff8585;
+      color:#ff8585;
     }
 
-    .action.danger:hover {
-      border-color: var(--red);
-      background: rgba(255,85,85,.05);
+    select{
+      background:#080d0a;
+      border:1px solid #29372f;
+      color:#fff;
+      border-radius:7px;
+      padding:7px;
+      font-size:10px;
+      outline:none;
     }
 
-    /* SEARCH */
-
-    .search-box {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 15px;
+    .empty{
+      padding:55px 20px;
+      text-align:center;
+      color:#718077;
     }
 
-    .search-box input {
-      flex: 1;
-      min-width: 0;
-      height: 44px;
-      padding: 0 13px;
-      border-radius: 9px;
-      border: 1px solid #303030;
-      background: #101010;
-      color: white;
-      outline: none;
+    .settings{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:15px;
     }
 
-    .search-box input:focus {
-      border-color: var(--green);
+    .settings-card{
+      background:#0d1310;
+      border:1px solid #1b2821;
+      border-radius:15px;
+      padding:20px;
     }
 
-    /* ORDERS */
-
-    .order-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      padding: 17px;
-      margin-bottom: 12px;
+    .settings-card h2{
+      font-size:17px;
+      margin-bottom:6px;
     }
 
-    .order-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 15px;
-      margin-bottom: 14px;
+    .settings-card p{
+      color:#748078;
+      font-size:12px;
+      line-height:1.5;
+      margin-bottom:15px;
     }
 
-    .order-code {
-      color: var(--green);
-      font-weight: 900;
-      font-size: 14px;
+    label{
+      display:block;
+      color:#c4cec8;
+      font-size:11px;
+      font-weight:800;
+      margin:12px 0 6px;
     }
 
-    .order-date {
-      color: #666;
-      font-size: 10px;
-      margin-top: 5px;
+    input,
+    textarea{
+      width:100%;
+      padding:12px;
+      background:#080d0a;
+      color:#fff;
+      border:1px solid #29372f;
+      border-radius:9px;
+      outline:none;
     }
 
-    .order-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 12px;
+    input:focus,
+    textarea:focus{
+      border-color:#00ff88;
     }
 
-    .order-info {
-      background: #0b0b0b;
-      border: 1px solid #222;
-      border-radius: 10px;
-      padding: 12px;
+    .save-settings{
+      margin-top:15px;
+      background:#00ff88;
+      color:#001a0d;
+      border:0;
+      padding:12px 15px;
+      border-radius:9px;
+      font-weight:900;
+      cursor:pointer;
     }
 
-    .order-info-label {
-      color: #666;
-      font-size: 9px;
-      text-transform: uppercase;
-      margin-bottom: 5px;
+    .finance{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+      margin-bottom:15px;
     }
 
-    .order-info-value {
-      color: white;
-      font-size: 12px;
-      font-weight: 700;
-      line-height: 1.5;
-      word-break: break-word;
+    .finance-card{
+      background:#0d1310;
+      border:1px solid #1b2821;
+      border-radius:14px;
+      padding:17px;
     }
 
-    .order-bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid #222;
+    .finance-label{
+      color:#718077;
+      font-size:10px;
+      font-weight:800;
+      margin-bottom:6px;
     }
 
-    .order-total {
-      color: var(--green);
-      font-size: 19px;
-      font-weight: 900;
+    .finance-value{
+      color:#00ff88;
+      font-size:22px;
+      font-weight:900;
     }
 
-    select {
-      height: 36px;
-      background: #111;
-      color: white;
-      border: 1px solid #303030;
-      border-radius: 8px;
-      padding: 0 8px;
-      outline: none;
+    .notice{
+      display:none;
+      margin-bottom:14px;
+      padding:12px;
+      border-radius:9px;
+      background:#351313;
+      border:1px solid #652626;
+      color:#ff9d9d;
+      font-size:12px;
     }
 
-    select:focus {
-      border-color: var(--green);
+    .success{
+      display:none;
+      margin-bottom:14px;
+      padding:12px;
+      border-radius:9px;
+      background:#0b2619;
+      border:1px solid #175c39;
+      color:#00ff88;
+      font-size:12px;
     }
 
-    /* EMPTY */
+    @media(max-width:950px){
 
-    .empty {
-      padding: 60px 20px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      text-align: center;
-      color: #777;
-    }
-
-    .empty-icon {
-      font-size: 45px;
-      margin-bottom: 10px;
-    }
-
-    /* LOADING */
-
-    .loading {
-      padding: 50px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: var(--green);
-      font-weight: 700;
-    }
-
-    .spinner {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      border: 3px solid #222;
-      border-top-color: var(--green);
-      animation: spin .7s linear infinite;
-      margin-right: 10px;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* SETTINGS */
-
-    .settings-card {
-      max-width: 650px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      padding: 20px;
-    }
-
-    .field {
-      margin-bottom: 16px;
-    }
-
-    .field label {
-      display: block;
-      color: #888;
-      font-size: 11px;
-      margin-bottom: 7px;
-    }
-
-    .field input,
-    .field textarea {
-      width: 100%;
-      background: #0b0b0b;
-      border: 1px solid #303030;
-      color: white;
-      border-radius: 9px;
-      padding: 12px;
-      outline: none;
-      font-family: inherit;
-    }
-
-    .field textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    .field input:focus,
-    .field textarea:focus {
-      border-color: var(--green);
-    }
-
-    /* TOAST */
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 22px;
-      transform: translateX(-50%) translateY(100px);
-      opacity: 0;
-      transition: .25s;
-      z-index: 999;
-      background: #151515;
-      border: 1px solid #333;
-      border-radius: 11px;
-      padding: 13px 17px;
-      font-size: 13px;
-      max-width: calc(100% - 30px);
-      text-align: center;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .error {
-      padding: 15px;
-      border-radius: 10px;
-      background: rgba(255,85,85,.08);
-      border: 1px solid rgba(255,85,85,.25);
-      color: #ff8585;
-    }
-
-    @media (max-width: 800px) {
-
-      .stats {
-        grid-template-columns: repeat(2, 1fr);
+      .stats{
+        grid-template-columns:repeat(3,1fr);
       }
 
-      .order-grid {
-        grid-template-columns: 1fr;
+      .settings{
+        grid-template-columns:1fr;
       }
 
     }
 
-    @media (max-width: 500px) {
+    @media(max-width:650px){
 
-      header {
-        padding: 0 13px;
+      header{
+        padding:0 10px;
       }
 
-      .logo {
-        font-size: 21px;
+      .nav a:nth-child(2){
+        display:none;
       }
 
-      .admin-label {
-        display: none;
+      .top{
+        align-items:flex-start;
+        flex-direction:column;
       }
 
-      main {
-        padding: 22px 12px 55px;
+      .stats{
+        grid-template-columns:1fr 1fr;
       }
 
-      .page-title h1 {
-        font-size: 26px;
-      }
-
-      .stats {
-        gap: 8px;
-      }
-
-      .stat {
-        padding: 14px;
-      }
-
-      .stat-value {
-        font-size: 22px;
-      }
-
-      .order-top {
-        flex-direction: column;
-      }
-
-      .order-bottom {
-        align-items: flex-start;
-        flex-direction: column;
+      .finance{
+        grid-template-columns:1fr;
       }
 
     }
 
+    @media(max-width:400px){
+
+      .stats{
+        grid-template-columns:1fr;
+      }
+
+    }
   </style>
 </head>
 
@@ -651,2504 +491,2110 @@
 
 <header>
 
-  <a
-    href="/index.html"
-    class="logo"
-  >
-    SHIT.BLEJ
-    <span class="admin-label">
-      ADMIN
-    </span>
+  <a href="/" class="logo">
+    SHIT<span>.</span>BLEJ
   </a>
 
-  <div class="header-right">
-
-    <a
-      href="/index.html"
-      class="header-btn"
-    >
-      🏠 Faqja
-    </a>
-
-    <button
-      class="header-btn"
-      id="logoutBtn"
-    >
-      Dil
-    </button>
-
+  <div class="nav">
+    <a href="/">Kryefaqja</a>
+    <a href="/seller.html">Shitësi</a>
+    <a href="/orders.html">Porositë</a>
+    <button onclick="logout()">Dil</button>
   </div>
 
 </header>
 
 
-<main>
+<main class="container">
 
-  <div class="page-title">
+  <div class="top">
 
-    <h1>
-      Paneli Admin
-    </h1>
-
-    <p>
-      Menaxho SHIT.BLEJ nga një vend.
-    </p>
-
-  </div>
-
-
-  <!-- STATS -->
-
-  <div class="stats">
-
-    <div class="stat">
-
-      <div class="stat-label">
-        Përdorues
+    <div>
+      <h1>Admin Panel</h1>
+      <div class="subtitle">
+        Menaxho SHIT.BLEJ PRO
       </div>
-
-      <div
-        class="stat-value green"
-        id="statUsers"
-      >
-        0
-      </div>
-
     </div>
 
-
-    <div class="stat">
-
-      <div class="stat-label">
-        Produkte
-      </div>
-
-      <div
-        class="stat-value green"
-        id="statProducts"
-      >
-        0
-      </div>
-
-    </div>
-
-
-    <div class="stat">
-
-      <div class="stat-label">
-        Porosi
-      </div>
-
-      <div
-        class="stat-value green"
-        id="statOrders"
-      >
-        0
-      </div>
-
-    </div>
-
-
-    <div class="stat">
-
-      <div class="stat-label">
-        Në pritje
-      </div>
-
-      <div
-        class="stat-value"
-        id="statPending"
-      >
-        0
-      </div>
-
+    <div class="admin-badge" id="adminName">
+      ADMIN
     </div>
 
   </div>
 
 
-  <!-- NAV -->
+  <div id="notice" class="notice"></div>
+  <div id="success" class="success"></div>
 
-  <div class="admin-nav">
 
-    <button
-      class="nav-btn active"
-      data-section="dashboard"
-    >
-      📊 Dashboard
-    </button>
-
-    <button
-      class="nav-btn"
-      data-section="orders"
-    >
-      📦 Porositë
-    </button>
-
-    <button
-      class="nav-btn"
-      data-section="products"
-    >
-      🛍️ Produktet
-    </button>
-
-    <button
-      class="nav-btn"
-      data-section="users"
-    >
-      👤 Përdoruesit
-    </button>
-
-    <button
-      class="nav-btn"
-      data-section="settings"
-    >
-      ⚙️ Settings
-    </button>
-
+  <div id="loading" style="
+    text-align:center;
+    padding:60px;
+    color:#89968e;
+  ">
+    Po ngarkohet admin paneli...
   </div>
 
 
-  <!-- DASHBOARD -->
+  <div id="app" style="display:none;">
 
-  <section
-    class="section active"
-    id="section-dashboard"
-  >
+    <div class="stats">
 
-    <div class="section-head">
+      <div class="stat">
+        <div class="stat-label">PËRDORUES</div>
+        <div class="stat-value" id="usersCount">0</div>
+      </div>
 
-      <h2>
-        Përmbledhje
-      </h2>
+      <div class="stat">
+        <div class="stat-label">PRODUKTE</div>
+        <div class="stat-value" id="productsCount">0</div>
+      </div>
 
-      <button
-        class="refresh-btn"
-        onclick="loadAll()"
-      >
-        ↻ Rifresko
+      <div class="stat">
+        <div class="stat-label">POROSI</div>
+        <div class="stat-value" id="ordersCount">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">SHITJE</div>
+        <div class="stat-value" id="salesCount">0 ALL</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">KOMISIONI</div>
+        <div class="stat-value" id="commissionCount">0 ALL</div>
+      </div>
+
+    </div>
+
+
+    <div class="tabs">
+
+      <button class="tab active" data-section="dashboard">
+        📊 Dashboard
+      </button>
+
+      <button class="tab" data-section="orders">
+        📦 Porositë
+      </button>
+
+      <button class="tab" data-section="products">
+        🛍 Produktet
+      </button>
+
+      <button class="tab" data-section="users">
+        👥 Përdoruesit
+      </button>
+
+      <button class="tab" data-section="finance">
+        💰 Financat
+      </button>
+
+      <button class="tab" data-section="settings">
+        ⚙️ Cilësimet
       </button>
 
     </div>
 
 
-    <div id="dashboardContent">
+    <!-- DASHBOARD -->
 
-      <div class="loading">
+    <section id="dashboard" class="section active">
 
-        <span class="spinner"></span>
+      <div class="finance">
 
-        Duke ngarkuar...
+        <div class="finance-card">
 
-      </div>
+          <div class="finance-label">
+            SHITJE TË PËRGJITHSHME
+          </div>
 
-    </div>
+          <div class="finance-value" id="dashSales">
+            0 ALL
+          </div>
 
-  </section>
+        </div>
 
+        <div class="finance-card">
 
-  <!-- ORDERS -->
+          <div class="finance-label">
+            KOMISIONE
+          </div>
 
-  <section
-    class="section"
-    id="section-orders"
-  >
+          <div class="finance-value" id="dashCommission">
+            0 ALL
+          </div>
 
-    <div class="section-head">
+        </div>
 
-      <h2>
-        Të gjitha porositë
-      </h2>
+        <div class="finance-card">
 
-      <button
-        class="refresh-btn"
-        onclick="loadOrders()"
-      >
-        ↻ Rifresko
-      </button>
+          <div class="finance-label">
+            FITIMI I SHITËSVE
+          </div>
 
-    </div>
+          <div class="finance-value" id="dashSeller">
+            0 ALL
+          </div>
 
-
-    <div
-      id="ordersContent"
-    >
-
-      <div class="loading">
-
-        <span class="spinner"></span>
-
-        Duke ngarkuar...
+        </div>
 
       </div>
 
-    </div>
+      <div class="table-wrap">
 
-  </section>
+        <table>
 
+          <thead>
 
-  <!-- PRODUCTS -->
+            <tr>
+              <th>Porosia</th>
+              <th>Produkti</th>
+              <th>Statusi</th>
+              <th>Total</th>
+              <th>Data</th>
+            </tr>
 
-  <section
-    class="section"
-    id="section-products"
-  >
+          </thead>
 
-    <div class="section-head">
+          <tbody id="dashboardOrders"></tbody>
 
-      <h2>
-        Produktet
-      </h2>
-
-      <button
-        class="refresh-btn"
-        onclick="loadProducts()"
-      >
-        ↻ Rifresko
-      </button>
-
-    </div>
-
-
-    <div class="search-box">
-
-      <input
-        id="productSearch"
-        type="search"
-        placeholder="Kërko produkt..."
-      >
-
-    </div>
-
-
-    <div
-      id="productsContent"
-    >
-
-      <div class="loading">
-
-        <span class="spinner"></span>
-
-        Duke ngarkuar...
+        </table>
 
       </div>
 
-    </div>
-
-  </section>
+    </section>
 
 
-  <!-- USERS -->
+    <!-- ORDERS -->
 
-  <section
-    class="section"
-    id="section-users"
-  >
+    <section id="orders" class="section">
 
-    <div class="section-head">
-
-      <h2>
-        Përdoruesit
-      </h2>
-
-      <button
-        class="refresh-btn"
-        onclick="loadUsers()"
-      >
-        ↻ Rifresko
-      </button>
-
-    </div>
-
-
-    <div class="search-box">
-
-      <input
-        id="userSearch"
-        type="search"
-        placeholder="Kërko emër, email, telefon..."
-      >
-
-    </div>
-
-
-    <div
-      id="usersContent"
-    >
-
-      <div class="loading">
-
-        <span class="spinner"></span>
-
-        Duke ngarkuar...
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- SETTINGS -->
-
-  <section
-    class="section"
-    id="section-settings"
-  >
-
-    <div class="section-head">
-
-      <h2>
-        Settings
-      </h2>
-
-    </div>
-
-
-    <div class="settings-card">
-
-      <div class="field">
-
-        <label>
-          Emri i marketplace
-        </label>
+      <div class="toolbar">
 
         <input
-          id="settingName"
-          placeholder="SHIT.BLEJ"
+          id="orderSearch"
+          class="search"
+          placeholder="Kërko porosi, emër, telefon..."
+          oninput="renderOrders()"
         >
 
-      </div>
-
-
-      <div class="field">
-
-        <label>
-          Përshkrimi
-        </label>
-
-        <textarea
-          id="settingDescription"
-          placeholder="Marketplace shqiptar..."
-        ></textarea>
+        <button class="refresh" onclick="loadAll()">
+          ↻ Rifresko
+        </button>
 
       </div>
 
 
-      <div class="field">
+      <div class="table-wrap">
 
-        <label>
-          Telefoni i kontaktit
-        </label>
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Kodi</th>
+              <th>Produkti</th>
+              <th>Blerësi</th>
+              <th>Telefon</th>
+              <th>Total</th>
+              <th>Statusi</th>
+              <th>Veprime</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="ordersTable"></tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+    <!-- PRODUCTS -->
+
+    <section id="products" class="section">
+
+      <div class="toolbar">
 
         <input
-          id="settingPhone"
-          placeholder="+355..."
+          id="productSearch"
+          class="search"
+          placeholder="Kërko produkt..."
+          oninput="renderProducts()"
         >
+
+        <button class="refresh" onclick="loadAll()">
+          ↻ Rifresko
+        </button>
 
       </div>
 
 
-      <div class="field">
+      <div class="table-wrap">
 
-        <label>
-          Email
-        </label>
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>ID</th>
+              <th>Produkti</th>
+              <th>Shitësi</th>
+              <th>Kategoria</th>
+              <th>Çmimi</th>
+              <th>Statusi</th>
+              <th>Veprime</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="productsTable"></tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+    <!-- USERS -->
+
+    <section id="users" class="section">
+
+      <div class="toolbar">
 
         <input
-          id="settingEmail"
-          placeholder="contact@example.com"
+          id="userSearch"
+          class="search"
+          placeholder="Kërko përdorues..."
+          oninput="renderUsers()"
         >
+
+        <button class="refresh" onclick="loadAll()">
+          ↻ Rifresko
+        </button>
 
       </div>
 
 
-      <button
-        class="green-btn"
-        onclick="saveSettings()"
-      >
-        Ruaj ndryshimet
-      </button>
+      <div class="table-wrap">
 
-    </div>
+        <table>
 
-  </section>
+          <thead>
+
+            <tr>
+              <th>ID</th>
+              <th>Emri</th>
+              <th>Email</th>
+              <th>Telefon</th>
+              <th>Roli</th>
+              <th>Statusi</th>
+              <th>Veprime</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="usersTable"></tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+    <!-- FINANCE -->
+
+    <section id="finance" class="section">
+
+      <div class="finance">
+
+        <div class="finance-card">
+
+          <div class="finance-label">
+            TOTAL SHITJE
+          </div>
+
+          <div class="finance-value" id="financeSales">
+            0 ALL
+          </div>
+
+        </div>
+
+        <div class="finance-card">
+
+          <div class="finance-label">
+            KOMISION 5%
+          </div>
+
+          <div class="finance-value" id="financeCommission">
+            0 ALL
+          </div>
+
+        </div>
+
+        <div class="finance-card">
+
+          <div class="finance-label">
+            PËRFITIMI SHITËSVE
+          </div>
+
+          <div class="finance-value" id="financeSeller">
+            0 ALL
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="settings-card">
+
+        <h2>Modeli i fitimit</h2>
+
+        <p>
+          SHIT.BLEJ mund të marrë komision nga shitjet
+          e përfunduara dhe të ardhura nga promovimet.
+        </p>
+
+        <div style="
+          color:#00ff88;
+          font-size:28px;
+          font-weight:900;
+        ">
+          5%
+        </div>
+
+        <p style="margin-top:7px;">
+          Komisioni aktual i platformës.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- SETTINGS -->
+
+    <section id="settings" class="section">
+
+      <div class="settings">
+
+        <div class="settings-card">
+
+          <h2>Komisioni</h2>
+
+          <p>
+            Vendos përqindjen që platforma merr nga
+            porositë e dorëzuara.
+          </p>
+
+          <label>
+            Komisioni %
+          </label>
+
+          <input
+            id="commissionRate"
+            type="number"
+            min="0"
+            max="100"
+            step="0.1"
+            value="5"
+          >
+
+          <button
+            class="save-settings"
+            onclick="saveSettings()"
+          >
+            RUAJ KOMISIONIN
+          </button>
+
+        </div>
+
+
+        <div class="settings-card">
+
+          <h2>Promovimet</h2>
+
+          <p>
+            Paketat e promovimit të produkteve.
+          </p>
+
+          <label>
+            1 ditë — ALL
+          </label>
+
+          <input
+            id="promo1"
+            type="number"
+            value="100"
+          >
+
+          <label>
+            7 ditë — ALL
+          </label>
+
+          <input
+            id="promo7"
+            type="number"
+            value="300"
+          >
+
+          <label>
+            30 ditë — ALL
+          </label>
+
+          <input
+            id="promo30"
+            type="number"
+            value="700"
+          >
+
+          <button
+            class="save-settings"
+            onclick="saveSettings()"
+          >
+            RUAJ PROMOVIMET
+          </button>
+
+        </div>
+
+
+        <div class="settings-card">
+
+          <h2>VIP</h2>
+
+          <p>
+            Paketë VIP për shitësit.
+          </p>
+
+          <label>
+            7 ditë — ALL
+          </label>
+
+          <input
+            id="vip7"
+            type="number"
+            value="500"
+          >
+
+          <button
+            class="save-settings"
+            onclick="saveSettings()"
+          >
+            RUAJ VIP
+          </button>
+
+        </div>
+
+
+        <div class="settings-card">
+
+          <h2>Platforma</h2>
+
+          <p>
+            Këto cilësime ruhen në backend kur endpoint-i
+            i administrimit është aktiv.
+          </p>
+
+          <label>
+            Emri i platformës
+          </label>
+
+          <input
+            id="platformName"
+            value="SHIT.BLEJ"
+          >
+
+          <label>
+            Email administratori
+          </label>
+
+          <input
+            id="adminEmail"
+            type="email"
+            placeholder="admin@example.com"
+          >
+
+          <button
+            class="save-settings"
+            onclick="saveSettings()"
+          >
+            RUAJ
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
 
 </main>
 
 
-<div
-  class="toast"
-  id="toast"
-></div>
-
-
 <script>
 
-  const API = "/api";
+const API = "/api";
 
-  let token = "";
-
-  let currentUser = null;
-
-  let allProducts = [];
-
-  let allUsers = [];
-
-  let allOrders = [];
+let currentUser = null;
+let allOrders = [];
+let allProducts = [];
+let allUsers = [];
+let settings = {};
 
 
-  /* =========================
-     HELPERS
-  ========================= */
+function getToken(){
 
-  function getToken() {
+  return (
+    localStorage.getItem("shitblej_token") ||
+    localStorage.getItem("sabiAuthToken") ||
+    ""
+  );
 
-    return (
-      localStorage.getItem(
-        "shitblej_token"
-      ) ||
-      localStorage.getItem(
-        "sabiAuthToken"
-      ) ||
-      ""
+}
+
+
+function money(value){
+
+  return Number(value || 0)
+    .toLocaleString("sq-AL") + " ALL";
+
+}
+
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+function showNotice(message){
+
+  const box =
+    document.getElementById("notice");
+
+  box.textContent =
+    message;
+
+  box.style.display =
+    "block";
+
+  document.getElementById("success")
+    .style.display =
+    "none";
+
+}
+
+
+function showSuccess(message){
+
+  const box =
+    document.getElementById("success");
+
+  box.textContent =
+    message;
+
+  box.style.display =
+    "block";
+
+  document.getElementById("notice")
+    .style.display =
+    "none";
+
+  setTimeout(() => {
+
+    box.style.display =
+      "none";
+
+  },3000);
+
+}
+
+
+async function apiFetch(url,options={}){
+
+  const token =
+    getToken();
+
+
+  const headers = {
+    ...(options.headers || {})
+  };
+
+
+  if(token){
+
+    headers.Authorization =
+      "Bearer " + token;
+
+  }
+
+
+  if(
+    options.body &&
+    !headers["Content-Type"]
+  ){
+
+    headers["Content-Type"] =
+      "application/json";
+
+  }
+
+
+  const response =
+    await fetch(API + url,{
+      ...options,
+      headers
+    });
+
+
+  let data = {};
+
+  try{
+    data = await response.json();
+  }catch(e){}
+
+
+  if(!response.ok){
+
+    throw new Error(
+      data.message ||
+      data.error ||
+      "Kërkesa dështoi."
     );
 
   }
 
 
-  function escapeHTML(value) {
+  return data;
 
-    if (
-      value === null ||
-      value === undefined
-    ) {
-      return "";
-    }
-
-    return String(value)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-
-  }
+}
 
 
-  function price(value) {
+async function checkAdmin(){
 
-    return Number(value || 0)
-      .toLocaleString("sq-AL") + " L";
+  const token =
+    getToken();
+
+
+  if(!token){
+
+    window.location.href =
+      "/login.html?next=/admin.html";
+
+    return false;
 
   }
 
 
-  function date(value) {
+  try{
 
-    if (!value) {
-      return "-";
-    }
-
-    try {
-
-      return new Date(value)
-        .toLocaleString(
-          "sq-AL",
-          {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-          }
-        );
-
-    } catch {
-
-      return value;
-
-    }
-
-  }
+    const data =
+      await apiFetch("/auth/me");
 
 
-  function statusText(status) {
-
-    const map = {
-
-      pending:
-        "Në pritje",
-
-      confirmed:
-        "Konfirmuar",
-
-      shipped:
-        "Dërguar",
-
-      delivered:
-        "Dorëzuar",
-
-      cancelled:
-        "Anuluar"
-
-    };
-
-    return (
-      map[status] ||
-      status ||
-      "Në pritje"
-    );
-
-  }
+    currentUser =
+      data.user ||
+      data.account ||
+      data.data?.user ||
+      data;
 
 
-  function statusClass(status) {
-
-    if (status === "delivered") {
-      return "badge-green";
-    }
-
-    if (status === "shipped") {
-      return "badge-blue";
-    }
-
-    if (status === "confirmed") {
-      return "badge-blue";
-    }
-
-    if (status === "cancelled") {
-      return "badge-red";
-    }
-
-    return "badge-yellow";
-
-  }
+    const role =
+      String(currentUser?.role || "")
+        .toLowerCase();
 
 
-  function toast(message) {
+    if(
+      role !== "admin" &&
+      role !== "owner"
+    ){
 
-    const el =
-      document.getElementById(
-        "toast"
+      showNotice(
+        "Nuk ke akses në panelin e administratorit."
       );
 
-    el.textContent = message;
+      return false;
 
-    el.classList.add("show");
+    }
 
-    setTimeout(() => {
 
-      el.classList.remove("show");
+    document.getElementById("adminName")
+      .textContent =
+      currentUser.name ||
+      currentUser.email ||
+      "ADMIN";
 
-    }, 2500);
+
+    return true;
+
+  }catch(error){
+
+    console.error(error);
+
+    localStorage.removeItem("shitblej_token");
+    localStorage.removeItem("sabiAuthToken");
+
+    window.location.href =
+      "/login.html?next=/admin.html";
+
+    return false;
 
   }
 
+}
 
-  function errorBox(message) {
 
-    return `
+function normalize(data,type){
 
-      <div class="error">
-        ${escapeHTML(message)}
-      </div>
+  if(Array.isArray(data)){
+    return data;
+  }
 
+  if(Array.isArray(data[type])){
+    return data[type];
+  }
+
+  if(Array.isArray(data.results)){
+    return data.results;
+  }
+
+  if(Array.isArray(data.data)){
+    return data.data;
+  }
+
+  if(Array.isArray(data.data?.[type])){
+    return data.data[type];
+  }
+
+  return [];
+
+}
+
+
+async function loadStats(){
+
+  try{
+
+    const data =
+      await apiFetch("/admin/stats");
+
+
+    const stats =
+      data.stats ||
+      data.data ||
+      data;
+
+
+    const users =
+      Number(
+        stats.users ??
+        stats.total_users ??
+        stats.user_count ??
+        allUsers.length
+      );
+
+
+    const products =
+      Number(
+        stats.products ??
+        stats.total_products ??
+        stats.product_count ??
+        allProducts.length
+      );
+
+
+    const orders =
+      Number(
+        stats.orders ??
+        stats.total_orders ??
+        stats.order_count ??
+        allOrders.length
+      );
+
+
+    const sales =
+      Number(
+        stats.sales ??
+        stats.total_sales ??
+        stats.revenue ??
+        calculateSales()
+      );
+
+
+    const commission =
+      Number(
+        stats.commission ??
+        stats.platform_fee ??
+        calculateCommission()
+      );
+
+
+    document.getElementById("usersCount")
+      .textContent = users;
+
+    document.getElementById("productsCount")
+      .textContent = products;
+
+    document.getElementById("ordersCount")
+      .textContent = orders;
+
+    document.getElementById("salesCount")
+      .textContent = money(sales);
+
+    document.getElementById("commissionCount")
+      .textContent = money(commission);
+
+    document.getElementById("dashSales")
+      .textContent = money(sales);
+
+    document.getElementById("dashCommission")
+      .textContent = money(commission);
+
+    document.getElementById("dashSeller")
+      .textContent =
+      money(
+        Math.max(0,sales-commission)
+      );
+
+    document.getElementById("financeSales")
+      .textContent = money(sales);
+
+    document.getElementById("financeCommission")
+      .textContent = money(commission);
+
+    document.getElementById("financeSeller")
+      .textContent =
+      money(
+        Math.max(0,sales-commission)
+      );
+
+
+  }catch(error){
+
+    console.warn("Stats:",error);
+
+    updateLocalStats();
+
+  }
+
+}
+
+
+function calculateSales(){
+
+  return allOrders
+    .filter(o => {
+
+      const status =
+        String(o.status || "")
+          .toLowerCase();
+
+      return (
+        status !== "cancelled" &&
+        status !== "canceled"
+      );
+
+    })
+    .reduce((sum,o) => {
+
+      return sum + Number(
+        o.total ??
+        o.order_total ??
+        (
+          Number(o.price || 0) *
+          Number(o.quantity || 1)
+        )
+      );
+
+    },0);
+
+}
+
+
+function calculateCommission(){
+
+  const rate =
+    Number(
+      settings.commission_rate ??
+      settings.commissionRate ??
+      5
+    );
+
+  return calculateSales() * rate / 100;
+
+}
+
+
+function updateLocalStats(){
+
+  const sales =
+    calculateSales();
+
+  const commission =
+    calculateCommission();
+
+
+  document.getElementById("usersCount")
+    .textContent =
+    allUsers.length;
+
+  document.getElementById("productsCount")
+    .textContent =
+    allProducts.length;
+
+  document.getElementById("ordersCount")
+    .textContent =
+    allOrders.length;
+
+  document.getElementById("salesCount")
+    .textContent =
+    money(sales);
+
+  document.getElementById("commissionCount")
+    .textContent =
+    money(commission);
+
+  document.getElementById("dashSales")
+    .textContent =
+    money(sales);
+
+  document.getElementById("dashCommission")
+    .textContent =
+    money(commission);
+
+  document.getElementById("dashSeller")
+    .textContent =
+    money(
+      Math.max(0,sales-commission)
+    );
+
+  document.getElementById("financeSales")
+    .textContent =
+    money(sales);
+
+  document.getElementById("financeCommission")
+    .textContent =
+    money(commission);
+
+  document.getElementById("financeSeller")
+    .textContent =
+    money(
+      Math.max(0,sales-commission)
+    );
+
+}
+
+
+async function loadAll(){
+
+  try{
+
+    const [
+      ordersData,
+      productsData,
+      usersData
+    ] = await Promise.all([
+
+      apiFetch("/orders"),
+
+      apiFetch("/products"),
+
+      apiFetch("/users/all")
+
+    ]);
+
+
+    allOrders =
+      normalize(ordersData,"orders");
+
+    allProducts =
+      normalize(productsData,"products");
+
+    allUsers =
+      normalize(usersData,"users");
+
+
+    await loadSettings();
+
+    await loadStats();
+
+    renderDashboardOrders();
+    renderOrders();
+    renderProducts();
+    renderUsers();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showNotice(
+      error.message ||
+      "Të dhënat nuk u ngarkuan."
+    );
+
+  }
+
+}
+
+
+function renderDashboardOrders(){
+
+  const tbody =
+    document.getElementById("dashboardOrders");
+
+
+  const recent =
+    [...allOrders]
+      .sort(
+        (a,b) =>
+          Number(b.id || 0) -
+          Number(a.id || 0)
+      )
+      .slice(0,10);
+
+
+  if(recent.length === 0){
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="empty">
+          Nuk ka porosi.
+        </td>
+      </tr>
     `;
 
-  }
-
-
-  /* =========================
-     API
-  ========================= */
-
-  async function api(
-    endpoint,
-    options = {}
-  ) {
-
-    const headers = {
-
-      ...(options.headers || {}),
-
-      "Authorization":
-        "Bearer " + token
-
-    };
-
-
-    if (
-      options.body &&
-      !headers["Content-Type"]
-    ) {
-
-      headers["Content-Type"] =
-        "application/json";
-
-    }
-
-
-    const response =
-      await fetch(
-        API + endpoint,
-        {
-          ...options,
-          headers
-        }
-      );
-
-
-    let data = {};
-
-    try {
-
-      data =
-        await response.json();
-
-    } catch {
-
-      data = {};
-
-    }
-
-
-    if (
-      response.status === 401 ||
-      response.status === 403
-    ) {
-
-      throw new Error(
-        data.error ||
-        "Nuk ke akses."
-      );
-
-    }
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        data.error ||
-        "Gabim në server."
-      );
-
-    }
-
-
-    return data;
+    return;
 
   }
 
 
-  /* =========================
-     AUTH
-  ========================= */
+  tbody.innerHTML =
+    recent.map(order => {
 
-  async function checkAdmin() {
-
-    token =
-      getToken();
-
-
-    if (!token) {
-
-      window.location.href =
-        "/login.html?next=/admin.html";
-
-      return false;
-
-    }
+      const status =
+        String(
+          order.status || "pending"
+        ).toLowerCase();
 
 
-    try {
+      return `
 
-      const data =
-        await api(
-          "/auth/me"
-        );
+        <tr>
 
+          <td>
+            ${escapeHTML(
+              order.code ||
+              order.order_code ||
+              ("SABI-"+order.id)
+            )}
+          </td>
 
-      currentUser =
-        data.user ||
-        null;
+          <td class="product-name">
+            ${escapeHTML(
+              order.product_title ||
+              order.product_name ||
+              order.title ||
+              "Produkt"
+            )}
+          </td>
 
+          <td>
+            <span class="status ${statusClass(status)}">
+              ${escapeHTML(statusText(status))}
+            </span>
+          </td>
 
-      if (
-        !currentUser ||
-        currentUser.role !== "admin"
-      ) {
+          <td class="price">
+            ${money(
+              order.total ??
+              order.order_total ??
+              (
+                Number(order.price || 0) *
+                Number(order.quantity || 1)
+              )
+            )}
+          </td>
 
-        document.body.innerHTML = `
+          <td>
+            ${escapeHTML(
+              order.created_at ||
+              ""
+            )}
+          </td>
 
-          <div style="
-            min-height:100vh;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            background:#050505;
-            color:white;
-            font-family:Arial;
-            padding:20px;
-            text-align:center;
-          ">
+        </tr>
 
-            <div>
+      `;
 
-              <div style="
-                font-size:60px;
-                margin-bottom:15px;
-              ">
-                🔒
-              </div>
+    }).join("");
 
-              <h1>
-                Nuk ke akses
-              </h1>
-
-              <p style="
-                color:#777;
-                margin:10px 0 20px;
-              ">
-                Kjo faqe është vetëm për administratorin.
-              </p>
-
-              <a
-                href="/index.html"
-                style="
-                  display:inline-flex;
-                  height:45px;
-                  padding:0 18px;
-                  align-items:center;
-                  justify-content:center;
-                  background:#00ff88;
-                  color:#000;
-                  border-radius:10px;
-                  text-decoration:none;
-                  font-weight:900;
-                "
-              >
-                Kthehu
-              </a>
-
-            </div>
-
-          </div>
-
-        `;
-
-        return false;
-
-      }
+}
 
 
-      return true;
+function statusText(status){
 
-    } catch (error) {
+  const map = {
 
-      console.error(error);
+    pending:"Në pritje",
+    confirmed:"Konfirmuar",
+    shipped:"Dërguar",
+    delivered:"Dorëzuar",
+    cancelled:"Anuluar",
+    canceled:"Anuluar"
 
-      localStorage.removeItem(
-        "shitblej_token"
-      );
+  };
 
-      localStorage.removeItem(
-        "sabiAuthToken"
-      );
+  return map[status] ||
+    status ||
+    "Në pritje";
 
-      window.location.href =
-        "/login.html?next=/admin.html";
+}
 
-      return false;
 
-    }
+function statusClass(status){
 
+  if(status === "canceled"){
+    return "cancelled";
   }
 
+  return status || "pending";
 
-  /* =========================
-     NAVIGATION
-  ========================= */
-
-  document
-    .querySelectorAll(".nav-btn")
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          document
-            .querySelectorAll(".nav-btn")
-            .forEach(
-              b =>
-                b.classList.remove(
-                  "active"
-                )
-            );
-
-          document
-            .querySelectorAll(".section")
-            .forEach(
-              s =>
-                s.classList.remove(
-                  "active"
-                )
-            );
+}
 
 
-          button.classList.add(
-            "active"
-          );
+function renderOrders(){
+
+  const tbody =
+    document.getElementById("ordersTable");
 
 
-          const name =
-            button.dataset.section;
+  const search =
+    document.getElementById("orderSearch")
+      .value
+      .trim()
+      .toLowerCase();
 
 
-          document
-            .getElementById(
-              "section-" + name
-            )
-            .classList.add(
-              "active"
-            );
+  const filtered =
+    allOrders.filter(order => {
+
+      const text = [
+
+        order.code,
+        order.order_code,
+        order.product_title,
+        order.product_name,
+        order.customer_name,
+        order.customer_phone,
+        order.seller_name
+
+      ].join(" ").toLowerCase();
 
 
-          if (name === "orders") {
-            loadOrders();
-          }
-
-          if (name === "products") {
-            loadProducts();
-          }
-
-          if (name === "users") {
-            loadUsers();
-          }
-
-          if (name === "settings") {
-            loadSettings();
-          }
-
-        }
-      );
+      return text.includes(search);
 
     });
 
 
-  /* =========================
-     STATS
-  ========================= */
+  if(filtered.length === 0){
 
-  async function loadStats() {
-
-    try {
-
-      const data =
-        await api(
-          "/admin/stats"
-        );
-
-
-      const stats =
-        data.stats ||
-        data ||
-        {};
-
-
-      document.getElementById(
-        "statUsers"
-      ).textContent =
-        stats.users ??
-        stats.total_users ??
-        0;
-
-
-      document.getElementById(
-        "statProducts"
-      ).textContent =
-        stats.products ??
-        stats.total_products ??
-        0;
-
-
-      document.getElementById(
-        "statOrders"
-      ).textContent =
-        stats.orders ??
-        stats.total_orders ??
-        0;
-
-
-      document.getElementById(
-        "statPending"
-      ).textContent =
-        stats.pending_orders ??
-        stats.pending ??
-        0;
-
-
-    } catch (error) {
-
-      console.error(
-        "STATS:",
-        error
-      );
-
-    }
-
-  }
-
-
-  /* =========================
-     PRODUCTS
-  ========================= */
-
-  async function loadProducts() {
-
-    const box =
-      document.getElementById(
-        "productsContent"
-      );
-
-
-    box.innerHTML = `
-
-      <div class="loading">
-
-        <span class="spinner"></span>
-
-        Duke ngarkuar produktet...
-
-      </div>
-
-    `;
-
-
-    try {
-
-      const data =
-        await api(
-          "/products"
-        );
-
-
-      allProducts =
-        Array.isArray(data)
-          ? data
-          : (
-            data.products ||
-            []
-          );
-
-
-      renderProducts(
-        allProducts
-      );
-
-
-    } catch (error) {
-
-      box.innerHTML =
-        errorBox(
-          error.message
-        );
-
-    }
-
-  }
-
-
-  function renderProducts(
-    products
-  ) {
-
-    const box =
-      document.getElementById(
-        "productsContent"
-      );
-
-
-    if (!products.length) {
-
-      box.innerHTML = `
-
-        <div class="empty">
-
-          <div class="empty-icon">
-            🛍️
-          </div>
-
-          Nuk ka produkte.
-
-        </div>
-
-      `;
-
-      return;
-
-    }
-
-
-    box.innerHTML = `
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-
-            <tr>
-
-              <th>
-                Produkti
-              </th>
-
-              <th>
-                Çmimi
-              </th>
-
-              <th>
-                Shitësi
-              </th>
-
-              <th>
-                Kategoria
-              </th>
-
-              <th>
-                Data
-              </th>
-
-              <th>
-                Veprime
-              </th>
-
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            ${products
-              .map(
-                product =>
-                  productRow(
-                    product
-                  )
-              )
-              .join("")}
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    `;
-
-  }
-
-
-  function productRow(
-    product
-  ) {
-
-    const name =
-      product.title ||
-      product.name ||
-      "Produkt";
-
-
-    const image =
-      product.image_url ||
-      product.image ||
-      "";
-
-
-    const seller =
-      product.sellerName ||
-      product.seller ||
-      product.seller_name ||
-      "-";
-
-
-    return `
-
+    tbody.innerHTML = `
       <tr>
-
-        <td>
-
-          <div class="product-mini">
-
-            <div class="product-img">
-
-              ${
-                image
-                  ? `
-                    <img
-                      src="${escapeHTML(image)}"
-                      alt=""
-                      onerror="this.style.display='none'"
-                    >
-                  `
-                  : "S"
-              }
-
-            </div>
-
-            <div>
-
-              <div class="product-name">
-
-                ${escapeHTML(name)}
-
-              </div>
-
-              <div class="product-category">
-
-                ${escapeHTML(
-                  product.category ||
-                  "Të tjera"
-                )}
-
-              </div>
-
-            </div>
-
-          </div>
-
+        <td colspan="7" class="empty">
+          Nuk u gjetën porosi.
         </td>
-
-
-        <td>
-          <strong>
-            ${price(product.price)}
-          </strong>
-        </td>
-
-
-        <td>
-          ${escapeHTML(seller)}
-        </td>
-
-
-        <td>
-          ${escapeHTML(
-            product.category ||
-            "-"
-          )}
-        </td>
-
-
-        <td>
-          ${date(
-            product.created_at
-          )}
-        </td>
-
-
-        <td>
-
-          <div class="actions">
-
-            <button
-              class="action"
-              onclick="openProduct(${product.id})"
-            >
-              Shiko
-            </button>
-
-            <button
-              class="action danger"
-              onclick="deleteProduct(${product.id})"
-            >
-              Fshi
-            </button>
-
-            <button
-              class="action danger"
-              onclick="blockProduct(${product.id})"
-            >
-              Blloko
-            </button>
-
-          </div>
-
-        </td>
-
       </tr>
-
     `;
 
-  }
-
-
-  async function deleteProduct(
-    id
-  ) {
-
-    const yes =
-      confirm(
-        "A je i sigurt që do ta fshish këtë produkt?"
-      );
-
-
-    if (!yes) {
-      return;
-    }
-
-
-    try {
-
-      await api(
-        "/products/" +
-        encodeURIComponent(id),
-        {
-          method: "DELETE"
-        }
-      );
-
-
-      toast(
-        "Produkti u fshi."
-      );
-
-
-      await loadProducts();
-
-      await loadStats();
-
-
-    } catch (error) {
-
-      toast(
-        error.message
-      );
-
-    }
+    return;
 
   }
 
 
-  async function blockProduct(
-    id
-  ) {
+  tbody.innerHTML =
+    filtered.map(order => {
 
-    const yes =
-      confirm(
-        "A do ta bllokosh këtë produkt?"
-      );
+      const status =
+        String(
+          order.status || "pending"
+        ).toLowerCase();
 
 
-    if (!yes) {
-      return;
-    }
+      const id =
+        Number(order.id);
 
 
-    try {
+      return `
 
-      await api(
-        "/api/products/" +
-        encodeURIComponent(id) +
-        "/block",
-        {
-          method: "POST"
-        }
-      );
+        <tr>
 
-
-      toast(
-        "Produkti u bllokua."
-      );
-
-
-      await loadProducts();
-
-
-    } catch (error) {
-
-      /*
-        Nëse worker përdor:
-        /api/products/:id/block
-        provo endpoint-in korrekt.
-      */
-
-      try {
-
-        await api(
-          "/products/" +
-          encodeURIComponent(id) +
-          "/block",
-          {
-            method: "POST"
-          }
-        );
-
-
-        toast(
-          "Produkti u bllokua."
-        );
-
-
-        await loadProducts();
-
-      } catch (secondError) {
-
-        toast(
-          secondError.message
-        );
-
-      }
-
-    }
-
-  }
-
-
-  function openProduct(
-    id
-  ) {
-
-    window.location.href =
-      "/products.html?id=" +
-      encodeURIComponent(id);
-
-  }
-
-
-  /* =========================
-     PRODUCT SEARCH
-  ========================= */
-
-  document
-    .getElementById(
-      "productSearch"
-    )
-    .addEventListener(
-      "input",
-      event => {
-
-        const q =
-          event.target.value
-            .trim()
-            .toLowerCase();
-
-
-        const filtered =
-          allProducts.filter(
-            product => {
-
-              const text =
-                [
-                  product.title,
-                  product.name,
-                  product.category,
-                  product.seller,
-                  product.sellerName
-                ]
-                .filter(Boolean)
-                .join(" ")
-                .toLowerCase();
-
-
-              return text.includes(q);
-
-            }
-          );
-
-
-        renderProducts(
-          filtered
-        );
-
-      }
-    );
-
-
-  /* =========================
-     USERS
-  ========================= */
-
-  async function loadUsers() {
-
-    const box =
-      document.getElementById(
-        "usersContent"
-      );
-
-
-    box.innerHTML = `
-
-      <div class="loading">
-
-        <span class="spinner"></span>
-
-        Duke ngarkuar përdoruesit...
-
-      </div>
-
-    `;
-
-
-    try {
-
-      const data =
-        await api(
-          "/users/all"
-        );
-
-
-      allUsers =
-        Array.isArray(data)
-          ? data
-          : (
-            data.users ||
-            []
-          );
-
-
-      renderUsers(
-        allUsers
-      );
-
-
-    } catch (error) {
-
-      box.innerHTML =
-        errorBox(
-          error.message
-        );
-
-    }
-
-  }
-
-
-  function renderUsers(
-    users
-  ) {
-
-    const box =
-      document.getElementById(
-        "usersContent"
-      );
-
-
-    if (!users.length) {
-
-      box.innerHTML = `
-
-        <div class="empty">
-
-          <div class="empty-icon">
-            👤
-          </div>
-
-          Nuk ka përdorues.
-
-        </div>
-
-      `;
-
-      return;
-
-    }
-
-
-    box.innerHTML = `
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-
-            <tr>
-
-              <th>
-                Përdoruesi
-              </th>
-
-              <th>
-                Email
-              </th>
-
-              <th>
-                Telefon
-              </th>
-
-              <th>
-                Roli
-              </th>
-
-              <th>
-                Data
-              </th>
-
-              <th>
-                Veprime
-              </th>
-
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            ${users
-              .map(
-                user =>
-                  userRow(
-                    user
-                  )
-              )
-              .join("")}
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    `;
-
-  }
-
-
-  function userRow(
-    user
-  ) {
-
-    const role =
-      user.role ||
-      "customer";
-
-
-    return `
-
-      <tr>
-
-        <td>
-
-          <strong>
-            ${escapeHTML(
-              user.name ||
-              "Pa emër"
-            )}
-          </strong>
-
-        </td>
-
-
-        <td>
-
-          ${escapeHTML(
-            user.email ||
-            "-"
-          )}
-
-        </td>
-
-
-        <td>
-
-          ${escapeHTML(
-            user.phone ||
-            "-"
-          )}
-
-        </td>
-
-
-        <td>
-
-          <span
-            class="badge ${
-              role === "admin"
-                ? "badge-green"
-                : role === "seller"
-                  ? "badge-blue"
-                  : "badge-yellow"
-            }"
-          >
-
-            ${escapeHTML(role)}
-
-          </span>
-
-        </td>
-
-
-        <td>
-
-          ${date(
-            user.created_at
-          )}
-
-        </td>
-
-
-        <td>
-
-          <div class="actions">
-
-            ${
-              role !== "admin"
-                ? `
-
-                  <button
-                    class="action danger"
-                    onclick="blockUser(${user.id})"
-                  >
-                    Blloko
-                  </button>
-
-                `
-                : ""
-            }
-
-          </div>
-
-        </td>
-
-      </tr>
-
-    `;
-
-  }
-
-
-  async function blockUser(
-    id
-  ) {
-
-    const yes =
-      confirm(
-        "A do ta bllokosh këtë përdorues?"
-      );
-
-
-    if (!yes) {
-      return;
-    }
-
-
-    try {
-
-      await api(
-        "/users/" +
-        encodeURIComponent(id) +
-        "/block",
-        {
-          method: "POST"
-        }
-      );
-
-
-      toast(
-        "Përdoruesi u bllokua."
-      );
-
-
-      await loadUsers();
-
-
-    } catch (error) {
-
-      toast(
-        error.message
-      );
-
-    }
-
-  }
-
-
-  /* =========================
-     USER SEARCH
-  ========================= */
-
-  document
-    .getElementById(
-      "userSearch"
-    )
-    .addEventListener(
-      "input",
-      event => {
-
-        const q =
-          event.target.value
-            .trim()
-            .toLowerCase();
-
-
-        const filtered =
-          allUsers.filter(
-            user => {
-
-              const text =
-                [
-                  user.name,
-                  user.email,
-                  user.phone,
-                  user.role
-                ]
-                .filter(Boolean)
-                .join(" ")
-                .toLowerCase();
-
-
-              return text.includes(q);
-
-            }
-          );
-
-
-        renderUsers(
-          filtered
-        );
-
-      }
-    );
-
-
-  /* =========================
-     ORDERS
-  ========================= */
-
-  async function loadOrders() {
-
-    const box =
-      document.getElementById(
-        "ordersContent"
-      );
-
-
-    box.innerHTML = `
-
-      <div class="loading">
-
-        <span class="spinner"></span>
-
-        Duke ngarkuar porositë...
-
-      </div>
-
-    `;
-
-
-    try {
-
-      const data =
-        await api(
-          "/orders"
-        );
-
-
-      allOrders =
-        Array.isArray(data)
-          ? data
-          : (
-            data.orders ||
-            []
-          );
-
-
-      renderOrders(
-        allOrders
-      );
-
-
-    } catch (error) {
-
-      box.innerHTML =
-        errorBox(
-          error.message
-        );
-
-    }
-
-  }
-
-
-  function renderOrders(
-    orders
-  ) {
-
-    const box =
-      document.getElementById(
-        "ordersContent"
-      );
-
-
-    if (!orders.length) {
-
-      box.innerHTML = `
-
-        <div class="empty">
-
-          <div class="empty-icon">
-            📦
-          </div>
-
-          Nuk ka porosi.
-
-        </div>
-
-      `;
-
-      return;
-
-    }
-
-
-    box.innerHTML =
-      orders
-        .map(
-          order =>
-            renderOrder(
-              order
-            )
-        )
-        .join("");
-
-  }
-
-
-  function renderOrder(
-    order
-  ) {
-
-    const product =
-      order.product_name ||
-      order.product_title ||
-      order.title ||
-      order.name ||
-      "Produkt";
-
-
-    const buyer =
-      order.customer_name ||
-      order.buyer_name ||
-      "-";
-
-
-    const phone =
-      order.customer_phone ||
-      order.buyer_phone ||
-      "-";
-
-
-    const city =
-      order.customer_city ||
-      order.buyer_city ||
-      "-";
-
-
-    const address =
-      order.customer_address ||
-      order.buyer_address ||
-      "-";
-
-
-    const total =
-      order.total_price ||
-      order.price ||
-      0;
-
-
-    const status =
-      order.status ||
-      "pending";
-
-
-    const code =
-      order.order_code ||
-      order.code ||
-      ("ORDER-" + order.id);
-
-
-    return `
-
-      <div
-        class="order-card"
-      >
-
-        <div class="order-top">
-
-          <div>
-
-            <div class="order-code">
-
-              ${escapeHTML(code)}
-
-            </div>
-
-            <div class="order-date">
-
-              ${date(
-                order.created_at
-              )}
-
-            </div>
-
-          </div>
-
-
-          <span
-            class="badge ${statusClass(status)}"
-          >
-
-            ${escapeHTML(
-              statusText(status)
-            )}
-
-          </span>
-
-        </div>
-
-
-        <div class="order-grid">
-
-
-          <div class="order-info">
-
-            <div class="order-info-label">
-              Produkti
-            </div>
-
-            <div class="order-info-value">
-
-              ${escapeHTML(product)}
-
-            </div>
-
-          </div>
-
-
-          <div class="order-info">
-
-            <div class="order-info-label">
-              Blerësi
-            </div>
-
-            <div class="order-info-value">
-
-              ${escapeHTML(buyer)}
-
-            </div>
-
-          </div>
-
-
-          <div class="order-info">
-
-            <div class="order-info-label">
-              Telefoni
-            </div>
-
-            <div class="order-info-value">
-
-              ${escapeHTML(phone)}
-
-            </div>
-
-          </div>
-
-
-          <div class="order-info">
-
-            <div class="order-info-label">
-              Qyteti
-            </div>
-
-            <div class="order-info-value">
-
-              ${escapeHTML(city)}
-
-            </div>
-
-          </div>
-
-
-          <div class="order-info">
-
-            <div class="order-info-label">
-              Adresa
-            </div>
-
-            <div class="order-info-value">
-
-              ${escapeHTML(address)}
-
-            </div>
-
-          </div>
-
-
-          <div class="order-info">
-
-            <div class="order-info-label">
-              Sasia
-            </div>
-
-            <div class="order-info-value">
-
+          <td>
+            <strong style="color:#00ff88;">
               ${escapeHTML(
-                order.quantity ||
-                1
+                order.code ||
+                order.order_code ||
+                ("SABI-"+id)
               )}
+            </strong>
+          </td>
 
-            </div>
+          <td class="product-name">
+            ${escapeHTML(
+              order.product_title ||
+              order.product_name ||
+              order.title ||
+              "Produkt"
+            )}
+          </td>
 
-          </div>
+          <td>
+            ${escapeHTML(
+              order.customer_name ||
+              order.buyer_name ||
+              "—"
+            )}
+          </td>
 
+          <td>
+            ${escapeHTML(
+              order.customer_phone ||
+              order.phone ||
+              "—"
+            )}
+          </td>
 
-        </div>
+          <td class="price">
+            ${money(
+              order.total ??
+              order.order_total ??
+              (
+                Number(order.price || 0) *
+                Number(order.quantity || 1)
+              )
+            )}
+          </td>
 
-
-        <div class="order-bottom">
-
-          <div>
-
-            <div
-              style="
-                color:#666;
-                font-size:9px;
-                margin-bottom:4px;
-              "
-            >
-              TOTAL
-            </div>
-
-            <div class="order-total">
-
-              ${price(total)}
-
-            </div>
-
-          </div>
-
-
-          <div
-            style="
-              display:flex;
-              gap:8px;
-              flex-wrap:wrap;
-            "
-          >
-
-            ${
-              phone !== "-"
-                ? `
-
-                  <button
-                    class="action"
-                    onclick="callNumber('${escapeHTML(phone)}')"
-                  >
-                    ☎ Telefon
-                  </button>
-
-                `
-                : ""
-            }
-
+          <td>
 
             <select
-              onchange="
-                changeOrderStatus(
-                  ${order.id},
-                  this.value
-                )
-              "
+              onchange="changeOrderStatus(${id},this.value)"
             >
 
-              <option
-                value="pending"
-                ${status === "pending" ? "selected" : ""}
-              >
+              <option value="pending"
+                ${status==="pending"?"selected":""}>
                 Në pritje
               </option>
 
-              <option
-                value="confirmed"
-                ${status === "confirmed" ? "selected" : ""}
-              >
+              <option value="confirmed"
+                ${status==="confirmed"?"selected":""}>
                 Konfirmuar
               </option>
 
-              <option
-                value="shipped"
-                ${status === "shipped" ? "selected" : ""}
-              >
+              <option value="shipped"
+                ${status==="shipped"?"selected":""}>
                 Dërguar
               </option>
 
-              <option
-                value="delivered"
-                ${status === "delivered" ? "selected" : ""}
-              >
+              <option value="delivered"
+                ${status==="delivered"?"selected":""}>
                 Dorëzuar
               </option>
 
-              <option
-                value="cancelled"
-                ${status === "cancelled" ? "selected" : ""}
-              >
+              <option value="cancelled"
+                ${status==="cancelled"?"selected":""}>
                 Anuluar
               </option>
 
             </select>
 
-          </div>
+          </td>
+
+          <td>
+
+            <div class="actions">
+
+              ${
+                order.customer_phone
+                ? `
+                  <a
+                    href="tel:${escapeHTML(
+                      order.customer_phone
+                    )}"
+                    style="
+                      color:#fff;
+                      text-decoration:none;
+                      padding:7px 8px;
+                    "
+                  >
+                    📞
+                  </a>
+                `
+                : ""
+              }
 
-        </div>
-
-      </div>
-
-    `;
-
-  }
-
-
-  async function changeOrderStatus(
-    id,
-    status
-  ) {
-
-    try {
-
-      await api(
-        "/orders/" +
-        encodeURIComponent(id),
-        {
-          method: "PUT",
-
-          body:
-            JSON.stringify({
-              status
-            })
-        }
-      );
-
-
-      toast(
-        "Statusi i porosisë u ndryshua."
-      );
-
-
-      await loadOrders();
-
-      await loadStats();
-
-
-    } catch (error) {
-
-      toast(
-        error.message
-      );
-
-    }
-
-  }
-
-
-  function callNumber(
-    phone
-  ) {
-
-    window.location.href =
-      "tel:" + phone;
-
-  }
-
-
-  /* =========================
-     SETTINGS
-  ========================= */
-
-  async function loadSettings() {
-
-    try {
-
-      const data =
-        await api(
-          "/admin/settings"
-        );
-
-
-      const settings =
-        data.settings ||
-        data ||
-        {};
-
-
-      document.getElementById(
-        "settingName"
-      ).value =
-        settings.name ||
-        "SHIT.BLEJ";
-
-
-      document.getElementById(
-        "settingDescription"
-      ).value =
-        settings.description ||
-        "";
-
-
-      document.getElementById(
-        "settingPhone"
-      ).value =
-        settings.phone ||
-        "";
-
-
-      document.getElementById(
-        "settingEmail"
-      ).value =
-        settings.email ||
-        "";
-
-
-    } catch (error) {
-
-      toast(
-        error.message
-      );
-
-    }
-
-  }
-
-
-  async function saveSettings() {
-
-    const body = {
-
-      name:
-        document.getElementById(
-          "settingName"
-        ).value.trim(),
-
-      description:
-        document.getElementById(
-          "settingDescription"
-        ).value.trim(),
-
-      phone:
-        document.getElementById(
-          "settingPhone"
-        ).value.trim(),
-
-      email:
-        document.getElementById(
-          "settingEmail"
-        ).value.trim()
-
-    };
-
-
-    try {
-
-      await api(
-        "/admin/settings",
-        {
-          method: "PUT",
-
-          body:
-            JSON.stringify(body)
-        }
-      );
-
-
-      toast(
-        "Settings u ruajtën."
-      );
-
-
-    } catch (error) {
-
-      toast(
-        error.message
-      );
-
-    }
-
-  }
-
-
-  /* =========================
-     DASHBOARD
-  ========================= */
-
-  async function loadDashboard() {
-
-    const box =
-      document.getElementById(
-        "dashboardContent"
-      );
-
-
-    try {
-
-      await Promise.all([
-        loadStats(),
-        loadOrders()
-      ]);
-
-
-      const recent =
-        allOrders
-          .slice()
-          .sort(
-            (a,b) =>
-              new Date(
-                b.created_at || 0
-              ) -
-              new Date(
-                a.created_at || 0
-              )
-          )
-          .slice(0,5);
-
-
-      if (!recent.length) {
-
-        box.innerHTML = `
-
-          <div class="empty">
-
-            <div class="empty-icon">
-              📊
             </div>
 
-            Nuk ka ende aktivitet.
+          </td>
 
-          </div>
-
-        `;
-
-        return;
-
-      }
-
-
-      box.innerHTML = `
-
-        <div class="section-head">
-
-          <h2>
-            Porositë e fundit
-          </h2>
-
-        </div>
-
-
-        ${recent
-          .map(
-            order =>
-              renderOrder(
-                order
-              )
-          )
-          .join("")}
+        </tr>
 
       `;
 
+    }).join("");
 
-    } catch (error) {
-
-      box.innerHTML =
-        errorBox(
-          error.message
-        );
-
-    }
-
-  }
+}
 
 
-  /* =========================
-     LOAD ALL
-  ========================= */
+async function changeOrderStatus(id,status){
 
-  async function loadAll() {
+  try{
 
-    await loadStats();
-
-    await loadDashboard();
-
-  }
-
-
-  /* =========================
-     LOGOUT
-  ========================= */
-
-  document
-    .getElementById(
-      "logoutBtn"
-    )
-    .addEventListener(
-      "click",
-      async () => {
-
-        try {
-
-          await api(
-            "/auth/logout",
-            {
-              method: "POST"
-            }
-          );
-
-        } catch {}
-
-        localStorage.removeItem(
-          "shitblej_token"
-        );
-
-        localStorage.removeItem(
-          "sabiAuthToken"
-        );
-
-        localStorage.removeItem(
-          "shitblej_user"
-        );
-
-        window.location.href =
-          "/index.html";
-
+    await apiFetch(
+      "/orders/" +
+      encodeURIComponent(id),
+      {
+        method:"PUT",
+        body:JSON.stringify({
+          status:status
+        })
       }
     );
 
 
-  /* =========================
-     START
-  ========================= */
-
-  async function init() {
-
-    const ok =
-      await checkAdmin();
+    showSuccess(
+      "Statusi i porosisë u ndryshua."
+    );
 
 
-    if (!ok) {
-      return;
-    }
+    await loadAll();
 
 
-    await loadStats();
+  }catch(error){
 
-    await loadDashboard();
+    showNotice(
+      error.message ||
+      "Statusi nuk u ndryshua."
+    );
+
+  }
+
+}
+
+
+function renderProducts(){
+
+  const tbody =
+    document.getElementById("productsTable");
+
+
+  const search =
+    document.getElementById("productSearch")
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const filtered =
+    allProducts.filter(product => {
+
+      const text = [
+
+        product.id,
+        product.title,
+        product.name,
+        product.category,
+        product.seller,
+        product.sellerName
+
+      ].join(" ").toLowerCase();
+
+
+      return text.includes(search);
+
+    });
+
+
+  if(filtered.length === 0){
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" class="empty">
+          Nuk u gjetën produkte.
+        </td>
+      </tr>
+    `;
+
+    return;
 
   }
 
 
-  init();
+  tbody.innerHTML =
+    filtered.map(product => {
+
+      const id =
+        Number(product.id);
+
+
+      const blocked =
+        product.blocked === true ||
+        product.is_blocked === true ||
+        product.is_blocked === 1;
+
+
+      return `
+
+        <tr>
+
+          <td>
+            #${id}
+          </td>
+
+          <td class="product-name">
+            ${escapeHTML(
+              product.title ||
+              product.name ||
+              "Produkt"
+            )}
+          </td>
+
+          <td>
+            ${escapeHTML(
+              product.sellerName ||
+              product.seller ||
+              product.seller_name ||
+              "—"
+            )}
+          </td>
+
+          <td>
+            ${escapeHTML(
+              product.category ||
+              "—"
+            )}
+          </td>
+
+          <td class="price">
+            ${money(product.price)}
+          </td>
+
+          <td>
+
+            <span class="status ${
+              blocked
+                ? "blocked"
+                : "active-status"
+            }">
+
+              ${
+                blocked
+                ? "Bllokuar"
+                : "Aktiv"
+              }
+
+            </span>
+
+          </td>
+
+          <td>
+
+            <div class="actions">
+
+              <button
+                onclick="viewProduct(${id})"
+              >
+                👁
+              </button>
+
+              <button
+                onclick="toggleProductBlock(${id},${blocked})"
+                class="danger"
+              >
+                ${
+                  blocked
+                  ? "Zhblloko"
+                  : "Blloko"
+                }
+              </button>
+
+              <button
+                onclick="deleteProduct(${id})"
+                class="danger"
+              >
+                🗑
+              </button>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+      `;
+
+    }).join("");
+
+}
+
+
+function viewProduct(id){
+
+  window.location.href =
+    "/products.html?id=" +
+    encodeURIComponent(id);
+
+}
+
+
+async function toggleProductBlock(id,isBlocked){
+
+  try{
+
+    await apiFetch(
+      "/products/" +
+      encodeURIComponent(id) +
+      "/block",
+      {
+        method:"POST",
+        body:JSON.stringify({
+          blocked:!isBlocked
+        })
+      }
+    );
+
+
+    showSuccess(
+      isBlocked
+      ? "Produkti u zhbllokua."
+      : "Produkti u bllokua."
+    );
+
+
+    await loadAll();
+
+
+  }catch(error){
+
+    showNotice(
+      error.message ||
+      "Nuk u ndryshua statusi i produktit."
+    );
+
+  }
+
+}
+
+
+async function deleteProduct(id){
+
+  if(
+    !confirm(
+      "Je i sigurt që dëshiron ta fshish këtë produkt?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    await apiFetch(
+      "/products/" +
+      encodeURIComponent(id),
+      {
+        method:"DELETE"
+      }
+    );
+
+
+    showSuccess(
+      "Produkti u fshi."
+    );
+
+
+    await loadAll();
+
+
+  }catch(error){
+
+    showNotice(
+      error.message ||
+      "Produkti nuk u fshi."
+    );
+
+  }
+
+}
+
+
+function renderUsers(){
+
+  const tbody =
+    document.getElementById("usersTable");
+
+
+  const search =
+    document.getElementById("userSearch")
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const filtered =
+    allUsers.filter(user => {
+
+      const text = [
+
+        user.id,
+        user.name,
+        user.email,
+        user.phone,
+        user.role
+
+      ].join(" ").toLowerCase();
+
+
+      return text.includes(search);
+
+    });
+
+
+  if(filtered.length === 0){
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" class="empty">
+          Nuk u gjetën përdorues.
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  tbody.innerHTML =
+    filtered.map(user => {
+
+      const id =
+        Number(user.id);
+
+
+      const blocked =
+        user.blocked === true ||
+        user.is_blocked === true ||
+        user.is_blocked === 1;
+
+
+      return `
+
+        <tr>
+
+          <td>#${id}</td>
+
+          <td class="product-name">
+            ${escapeHTML(
+              user.name ||
+              "—"
+            )}
+          </td>
+
+          <td>
+            ${escapeHTML(
+              user.email ||
+              "—"
+            )}
+          </td>
+
+          <td>
+            ${escapeHTML(
+              user.phone ||
+              "—"
+            )}
+          </td>
+
+          <td>
+            ${escapeHTML(
+              user.role ||
+              "customer"
+            )}
+          </td>
+
+          <td>
+
+            <span class="status ${
+              blocked
+              ? "blocked"
+              : "active-status"
+            }">
+
+              ${
+                blocked
+                ? "Bllokuar"
+                : "Aktiv"
+              }
+
+            </span>
+
+          </td>
+
+          <td>
+
+            <div class="actions">
+
+              <button
+                onclick="toggleUserBlock(${id},${blocked})"
+                class="danger"
+              >
+
+                ${
+                  blocked
+                  ? "Zhblloko"
+                  : "Blloko"
+                }
+
+              </button>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+      `;
+
+    }).join("");
+
+}
+
+
+async function toggleUserBlock(id,isBlocked){
+
+  try{
+
+    await apiFetch(
+      "/users/" +
+      encodeURIComponent(id) +
+      "/block",
+      {
+        method:"POST",
+        body:JSON.stringify({
+          blocked:!isBlocked
+        })
+      }
+    );
+
+
+    showSuccess(
+      isBlocked
+      ? "Përdoruesi u zhbllokua."
+      : "Përdoruesi u bllokua."
+    );
+
+
+    await loadAll();
+
+
+  }catch(error){
+
+    showNotice(
+      error.message ||
+      "Nuk u ndryshua statusi i përdoruesit."
+    );
+
+  }
+
+}
+
+
+async function loadSettings(){
+
+  try{
+
+    const data =
+      await apiFetch("/admin/settings");
+
+
+    settings =
+      data.settings ||
+      data.data ||
+      data ||
+      {};
+
+
+    const rate =
+      settings.commission_rate ??
+      settings.commissionRate ??
+      5;
+
+
+    document.getElementById("commissionRate")
+      .value =
+      rate;
+
+
+    document.getElementById("promo1")
+      .value =
+      settings.promo_1_day ??
+      settings.promo1 ??
+      100;
+
+
+    document.getElementById("promo7")
+      .value =
+      settings.promo_7_day ??
+      settings.promo7 ??
+      300;
+
+
+    document.getElementById("promo30")
+      .value =
+      settings.promo_30_day ??
+      settings.promo30 ??
+      700;
+
+
+    document.getElementById("vip7")
+      .value =
+      settings.vip_7_day ??
+      settings.vip7 ??
+      500;
+
+
+    document.getElementById("platformName")
+      .value =
+      settings.platform_name ??
+      settings.platformName ??
+      "SHIT.BLEJ";
+
+
+    document.getElementById("adminEmail")
+      .value =
+      settings.admin_email ??
+      settings.adminEmail ??
+      "";
+
+
+  }catch(error){
+
+    console.warn("Settings:",error);
+
+  }
+
+}
+
+
+async function saveSettings(){
+
+  const body = {
+
+    commission_rate:
+      Number(
+        document.getElementById("commissionRate")
+          .value || 5
+      ),
+
+    promo_1_day:
+      Number(
+        document.getElementById("promo1")
+          .value || 100
+      ),
+
+    promo_7_day:
+      Number(
+        document.getElementById("promo7")
+          .value || 300
+      ),
+
+    promo_30_day:
+      Number(
+        document.getElementById("promo30")
+          .value || 700
+      ),
+
+    vip_7_day:
+      Number(
+        document.getElementById("vip7")
+          .value || 500
+      ),
+
+    platform_name:
+      document.getElementById("platformName")
+        .value.trim(),
+
+    admin_email:
+      document.getElementById("adminEmail")
+        .value.trim()
+
+  };
+
+
+  try{
+
+    await apiFetch(
+      "/admin/settings",
+      {
+        method:"PUT",
+        body:JSON.stringify(body)
+      }
+    );
+
+
+    settings =
+      body;
+
+
+    showSuccess(
+      "Cilësimet u ruajtën."
+    );
+
+
+    updateLocalStats();
+
+
+  }catch(error){
+
+    showNotice(
+      error.message ||
+      "Cilësimet nuk u ruajtën."
+    );
+
+  }
+
+}
+
+
+document.querySelectorAll(".tab")
+  .forEach(tab => {
+
+    tab.addEventListener("click",function(){
+
+      document
+        .querySelectorAll(".tab")
+        .forEach(t =>
+          t.classList.remove("active")
+        );
+
+
+      document
+        .querySelectorAll(".section")
+        .forEach(section =>
+          section.classList.remove("active")
+        );
+
+
+      this.classList.add("active");
+
+
+      const section =
+        document.getElementById(
+          this.dataset.section
+        );
+
+
+      if(section){
+
+        section.classList.add("active");
+
+      }
+
+    });
+
+  });
+
+
+function logout(){
+
+  const token =
+    getToken();
+
+
+  if(token){
+
+    fetch(
+      API + "/auth/logout",
+      {
+        method:"POST",
+        headers:{
+          Authorization:
+            "Bearer " + token
+        }
+      }
+    ).catch(()=>{});
+
+  }
+
+
+  localStorage.removeItem("shitblej_token");
+  localStorage.removeItem("sabiAuthToken");
+  localStorage.removeItem("shitblej_user");
+  localStorage.removeItem("sabiUserId");
+  localStorage.removeItem("sabiUserName");
+  localStorage.removeItem("sabiUserRole");
+  localStorage.removeItem("sabiUserEmail");
+  localStorage.removeItem("sabiUserPhone");
+
+
+  window.location.href =
+    "/";
+
+}
+
+
+(async function(){
+
+  const allowed =
+    await checkAdmin();
+
+
+  if(!allowed){
+    return;
+  }
+
+
+  try{
+
+    await loadAll();
+
+
+    document.getElementById("loading")
+      .style.display =
+      "none";
+
+    document.getElementById("app")
+      .style.display =
+      "block";
+
+
+  }catch(error){
+
+    console.error(error);
+
+    document.getElementById("loading")
+      .textContent =
+      error.message ||
+      "Admin paneli nuk u ngarkua.";
+
+  }
+
+})();
 
 </script>
 
