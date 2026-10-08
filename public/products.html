@@ -3,461 +3,464 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#050505">
 
-  <title>Produkti | SHIT.BLEJ</title>
+  <title>Produkt — SHIT.BLEJ PRO</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+      font-family:Arial,Helvetica,sans-serif;
     }
 
-    :root {
-      --bg: #050505;
-      --card: #101010;
-      --card2: #151515;
-      --border: #292929;
-      --green: #00ff88;
-      --text: #fff;
-      --muted: #909090;
-      --red: #ff5555;
+    body{
+      background:#070b09;
+      color:#fff;
+      min-height:100vh;
     }
 
-    body {
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
+    header{
+      height:64px;
+      background:#0b100d;
+      border-bottom:1px solid #1b2821;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 18px;
+      position:sticky;
+      top:0;
+      z-index:20;
     }
 
-    header {
-      height: 68px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(5,5,5,.95);
-      backdrop-filter: blur(12px);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 22px;
-      position: sticky;
-      top: 0;
-      z-index: 20;
+    .logo{
+      font-size:25px;
+      font-weight:900;
+      text-decoration:none;
+      color:#fff;
     }
 
-    .logo {
-      color: var(--green);
-      font-size: 24px;
-      font-weight: 900;
-      text-decoration: none;
+    .logo span{
+      color:#00ff88;
     }
 
-    .back {
-      color: #aaa;
-      text-decoration: none;
-      font-size: 14px;
+    .nav{
+      display:flex;
+      gap:8px;
+      align-items:center;
     }
 
-    .back:hover {
-      color: var(--green);
+    .nav a{
+      text-decoration:none;
+      color:#d5ddd8;
+      padding:9px 12px;
+      border-radius:10px;
+      font-size:13px;
+      font-weight:700;
     }
 
-    main {
-      max-width: 1150px;
-      margin: auto;
-      padding: 28px 18px 60px;
+    .nav a:hover{
+      background:#142019;
+      color:#00ff88;
     }
 
-    .breadcrumb {
-      color: #777;
-      font-size: 13px;
-      margin-bottom: 20px;
+    .container{
+      width:100%;
+      max-width:1100px;
+      margin:auto;
+      padding:25px 16px 50px;
     }
 
-    .product {
-      display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr);
-      gap: 28px;
+    .back{
+      display:inline-block;
+      color:#8d9b92;
+      text-decoration:none;
+      margin-bottom:18px;
+      font-size:14px;
     }
 
-    .image-box {
-      background: #0d0d0d;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      min-height: 500px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+    .back:hover{
+      color:#00ff88;
     }
 
-    .product-image {
-      width: 100%;
-      height: 100%;
-      max-height: 650px;
-      object-fit: contain;
-      display: block;
+    .product{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:28px;
     }
 
-    .no-image {
-      text-align: center;
-      color: #555;
-      font-size: 70px;
-      font-weight: 900;
+    .image-box{
+      background:#0d1310;
+      border:1px solid #1d2b23;
+      border-radius:18px;
+      overflow:hidden;
+      min-height:400px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
     }
 
-    .info {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+    .image-box img{
+      width:100%;
+      height:100%;
+      min-height:400px;
+      max-height:650px;
+      object-fit:contain;
+      background:#090d0b;
     }
 
-    .category {
-      display: inline-block;
-      width: fit-content;
-      padding: 7px 11px;
-      border-radius: 20px;
-      background: rgba(0,255,136,.08);
-      border: 1px solid rgba(0,255,136,.18);
-      color: var(--green);
-      font-size: 12px;
-      font-weight: 700;
+    .no-image{
+      color:#657169;
+      font-size:18px;
     }
 
-    h1 {
-      font-size: 32px;
-      line-height: 1.15;
+    .promoted{
+      position:absolute;
+      top:15px;
+      left:15px;
+      background:#00ff88;
+      color:#001a0d;
+      padding:7px 11px;
+      border-radius:8px;
+      font-size:11px;
+      font-weight:900;
+      z-index:2;
     }
 
-    .price {
-      font-size: 32px;
-      color: var(--green);
-      font-weight: 900;
+    .info{
+      background:#0d1310;
+      border:1px solid #1d2b23;
+      border-radius:18px;
+      padding:23px;
     }
 
-    .price-note {
-      color: #777;
-      font-size: 12px;
+    .category{
+      display:inline-block;
+      color:#00ff88;
+      background:#0d2419;
+      border:1px solid #173d2a;
+      padding:6px 10px;
+      border-radius:8px;
+      font-size:12px;
+      font-weight:800;
+      margin-bottom:13px;
     }
 
-    .details {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
+    h1{
+      font-size:29px;
+      line-height:1.15;
+      margin-bottom:14px;
     }
 
-    .detail-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 14px;
-      border-bottom: 1px solid #222;
+    .price{
+      font-size:31px;
+      font-weight:900;
+      color:#00ff88;
+      margin-bottom:12px;
     }
 
-    .detail-row:last-child {
-      border-bottom: 0;
+    .meta{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:9px;
+      margin:18px 0;
     }
 
-    .detail-label {
-      color: #777;
-      font-size: 13px;
+    .meta-box{
+      background:#090e0b;
+      border:1px solid #1c2921;
+      border-radius:10px;
+      padding:11px;
     }
 
-    .detail-value {
-      text-align: right;
-      font-size: 14px;
+    .meta-label{
+      color:#6f7d74;
+      font-size:11px;
+      margin-bottom:4px;
     }
 
-    .description {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px;
+    .meta-value{
+      color:#e7eee9;
+      font-size:13px;
+      font-weight:700;
     }
 
-    .description h2 {
-      font-size: 17px;
-      margin-bottom: 12px;
+    .description{
+      border-top:1px solid #1c2921;
+      padding-top:18px;
+      margin-top:18px;
     }
 
-    .description-text {
-      color: #bbb;
-      font-size: 14px;
-      line-height: 1.65;
-      white-space: pre-wrap;
-      word-break: break-word;
+    .description h3{
+      font-size:15px;
+      margin-bottom:9px;
     }
 
-    .seller {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px;
+    .description p{
+      color:#a8b3ac;
+      font-size:14px;
+      line-height:1.6;
+      white-space:pre-wrap;
     }
 
-    .seller-title {
-      color: #777;
-      font-size: 12px;
-      margin-bottom: 8px;
+    .seller{
+      border-top:1px solid #1c2921;
+      padding-top:18px;
+      margin-top:18px;
     }
 
-    .seller-name {
-      font-size: 18px;
-      font-weight: 800;
+    .seller-title{
+      font-size:12px;
+      color:#707d75;
+      margin-bottom:6px;
     }
 
-    .seller-contact {
-      margin-top: 7px;
-      color: #999;
-      font-size: 13px;
+    .seller-name{
+      font-weight:800;
+      font-size:16px;
     }
 
-    .buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+    .buttons{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:20px;
     }
 
-    button {
-      height: 50px;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 800;
-      cursor: pointer;
+    button{
+      border:0;
+      cursor:pointer;
+      border-radius:11px;
+      padding:14px;
+      font-weight:900;
+      font-size:14px;
     }
 
-    .buy-btn {
-      border: 0;
-      background: var(--green);
-      color: #000;
+    .buy{
+      background:#00ff88;
+      color:#001a0d;
     }
 
-    .buy-btn:hover {
-      background: #35ffa4;
+    .save{
+      background:#141d18;
+      border:1px solid #29372f;
+      color:#fff;
     }
 
-    .save-btn {
-      background: #111;
-      border: 1px solid #333;
-      color: white;
+    .save.saved{
+      color:#00ff88;
+      border-color:#00ff88;
     }
 
-    .save-btn:hover {
-      border-color: var(--green);
-      color: var(--green);
+    .contact{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
     }
 
-    .call-btn {
-      width: 100%;
-      background: #111;
-      color: white;
-      border: 1px solid #333;
-      margin-top: 10px;
+    .contact a{
+      text-decoration:none;
+      text-align:center;
+      padding:12px;
+      border-radius:10px;
+      background:#141d18;
+      color:#fff;
+      font-size:13px;
+      font-weight:800;
     }
 
-    .call-btn:hover {
-      border-color: var(--green);
-      color: var(--green);
+    .loading,
+    .error{
+      text-align:center;
+      padding:60px 20px;
+      color:#8d9b92;
     }
 
-    .error {
-      max-width: 550px;
-      margin: 80px auto;
-      text-align: center;
-      padding: 30px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
+    .error{
+      color:#ff8e8e;
     }
 
-    .error h2 {
-      margin-bottom: 10px;
+    .modal-bg{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.78);
+      z-index:100;
+      padding:20px;
+      align-items:center;
+      justify-content:center;
     }
 
-    .error p {
-      color: #888;
-      margin-bottom: 20px;
+    .modal{
+      width:100%;
+      max-width:460px;
+      background:#0d1310;
+      border:1px solid #24342b;
+      border-radius:18px;
+      padding:23px;
+      max-height:90vh;
+      overflow:auto;
     }
 
-    .home-btn {
-      display: inline-block;
-      background: var(--green);
-      color: #000;
-      padding: 13px 20px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 800;
+    .modal h2{
+      margin-bottom:6px;
     }
 
-    .loading {
-      min-height: 400px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--green);
-      font-weight: 700;
+    .modal-sub{
+      color:#819087;
+      font-size:13px;
+      margin-bottom:18px;
     }
 
-    .spinner {
-      width: 25px;
-      height: 25px;
-      border: 3px solid #222;
-      border-top-color: var(--green);
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-      margin-right: 10px;
+    .modal label{
+      display:block;
+      color:#bdc8c1;
+      font-size:12px;
+      font-weight:700;
+      margin:12px 0 6px;
     }
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
+    .modal input,
+    .modal select,
+    .modal textarea{
+      width:100%;
+      padding:13px;
+      border-radius:10px;
+      border:1px solid #29372f;
+      background:#080d0a;
+      color:#fff;
+      outline:none;
+    }
+
+    .modal textarea{
+      min-height:80px;
+      resize:vertical;
+    }
+
+    .modal input:focus,
+    .modal select:focus,
+    .modal textarea:focus{
+      border-color:#00ff88;
+    }
+
+    .quantity{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .quantity input{
+      width:100%;
+    }
+
+    .total{
+      background:#09130e;
+      border:1px solid #173b29;
+      padding:14px;
+      border-radius:10px;
+      margin-top:15px;
+      display:flex;
+      justify-content:space-between;
+      font-weight:900;
+    }
+
+    .total span:last-child{
+      color:#00ff88;
+    }
+
+    .modal-buttons{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:17px;
+    }
+
+    .cancel{
+      background:#171c19;
+      color:#fff;
+      border:1px solid #2a342e;
+    }
+
+    .confirm{
+      background:#00ff88;
+      color:#001a0d;
+    }
+
+    .success{
+      text-align:center;
+      padding:15px 5px;
+    }
+
+    .success-icon{
+      width:65px;
+      height:65px;
+      background:#00ff88;
+      color:#001a0d;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin:0 auto 15px;
+      font-size:30px;
+      font-weight:900;
+    }
+
+    .order-code{
+      background:#09130e;
+      border:1px solid #173b29;
+      color:#00ff88;
+      padding:14px;
+      border-radius:10px;
+      margin:18px 0;
+      font-size:18px;
+      font-weight:900;
+    }
+
+    @media(max-width:800px){
+
+      header{
+        padding:0 12px;
+      }
+
+      .nav a{
+        padding:8px;
+        font-size:12px;
+      }
+
+      .product{
+        grid-template-columns:1fr;
+      }
+
+      .image-box{
+        min-height:300px;
+      }
+
+      .image-box img{
+        min-height:300px;
+        max-height:450px;
+      }
+
+      h1{
+        font-size:25px;
       }
     }
 
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.82);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 15px;
-      z-index: 100;
-    }
+    @media(max-width:450px){
 
-    .modal-card {
-      width: 100%;
-      max-width: 430px;
-      background: #111;
-      border: 1px solid #292929;
-      border-radius: 20px;
-      padding: 22px;
-    }
-
-    .modal-card h2 {
-      margin-bottom: 18px;
-    }
-
-    .close {
-      float: right;
-      border: 0;
-      background: transparent;
-      color: #888;
-      font-size: 25px;
-      cursor: pointer;
-      height: auto;
-    }
-
-    .form-group {
-      margin-bottom: 13px;
-    }
-
-    .form-group label {
-      display: block;
-      color: #aaa;
-      font-size: 12px;
-      margin-bottom: 6px;
-    }
-
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      background: #080808;
-      color: white;
-      border: 1px solid #292929;
-      border-radius: 10px;
-      padding: 12px;
-      outline: none;
-      font-size: 14px;
-    }
-
-    .form-group textarea {
-      min-height: 80px;
-      resize: vertical;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus {
-      border-color: var(--green);
-    }
-
-    .order-btn {
-      width: 100%;
-      border: 0;
-      background: var(--green);
-      color: #000;
-      margin-top: 7px;
-    }
-
-    .modal-message {
-      margin-top: 12px;
-      color: #ff7777;
-      font-size: 13px;
-    }
-
-    .success-box {
-      text-align: center;
-      padding: 20px 5px;
-    }
-
-    .success-icon {
-      width: 65px;
-      height: 65px;
-      margin: 0 auto 15px;
-      border-radius: 50%;
-      background: rgba(0,255,136,.1);
-      color: var(--green);
-      border: 1px solid rgba(0,255,136,.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 30px;
-    }
-
-    .order-code {
-      color: var(--green);
-      font-size: 20px;
-      font-weight: 900;
-      margin-top: 10px;
-    }
-
-    @media (max-width: 800px) {
-      .product {
-        grid-template-columns: 1fr;
+      .buttons,
+      .contact,
+      .modal-buttons{
+        grid-template-columns:1fr;
       }
 
-      .image-box {
-        min-height: 350px;
+      .meta{
+        grid-template-columns:1fr 1fr;
       }
 
-      h1 {
-        font-size: 27px;
-      }
-    }
-
-    @media (max-width: 500px) {
-      header {
-        padding: 0 15px;
-      }
-
-      .logo {
-        font-size: 21px;
-      }
-
-      main {
-        padding: 20px 12px 45px;
-      }
-
-      .image-box {
-        min-height: 300px;
-        border-radius: 16px;
-      }
-
-      .buttons {
-        grid-template-columns: 1fr;
+      .info{
+        padding:18px;
       }
     }
   </style>
@@ -466,15 +469,142 @@
 <body>
 
 <header>
-  <a href="/index.html" class="logo">SHIT.BLEJ</a>
-  <a href="/index.html" class="back">← Kthehu</a>
+
+  <a href="/" class="logo">
+    SHIT<span>.</span>BLEJ
+  </a>
+
+  <nav class="nav">
+    <a href="/">Kryefaqja</a>
+    <a href="/orders.html">Porositë</a>
+    <a href="/login.html">Hyr</a>
+  </nav>
+
 </header>
 
-<main id="main">
 
-  <div class="loading">
-    <span class="spinner"></span>
-    Duke ngarkuar produktin...
+<main class="container">
+
+  <a href="/" class="back">← Kthehu te produktet</a>
+
+  <div id="loading" class="loading">
+    Po ngarkohet produkti...
+  </div>
+
+  <div id="error" class="error" style="display:none;"></div>
+
+  <div id="productArea" style="display:none;">
+
+    <div class="product">
+
+      <div class="image-box">
+
+        <div id="promoted" class="promoted" style="display:none;">
+          ⭐ PROMOVUAR
+        </div>
+
+        <img id="productImage" style="display:none;" alt="Produkt">
+
+        <div id="noImage" class="no-image">
+          Pa foto
+        </div>
+
+      </div>
+
+
+      <div class="info">
+
+        <div id="category" class="category">
+          Kategori
+        </div>
+
+        <h1 id="title">
+          Produkt
+        </h1>
+
+        <div id="price" class="price">
+          0 ALL
+        </div>
+
+
+        <div class="meta">
+
+          <div class="meta-box">
+            <div class="meta-label">Qyteti</div>
+            <div id="city" class="meta-value">—</div>
+          </div>
+
+          <div class="meta-box">
+            <div class="meta-label">Gjendja</div>
+            <div id="condition" class="meta-value">—</div>
+          </div>
+
+          <div class="meta-box">
+            <div class="meta-label">Disponueshmëria</div>
+            <div id="stock" class="meta-value">—</div>
+          </div>
+
+          <div class="meta-box">
+            <div class="meta-label">Çmimi</div>
+            <div id="negotiable" class="meta-value">—</div>
+          </div>
+
+        </div>
+
+
+        <div class="description">
+
+          <h3>Përshkrimi</h3>
+
+          <p id="description">
+            Nuk ka përshkrim.
+          </p>
+
+        </div>
+
+
+        <div class="seller">
+
+          <div class="seller-title">
+            Shitësi
+          </div>
+
+          <div id="seller" class="seller-name">
+            —
+          </div>
+
+        </div>
+
+
+        <div class="buttons">
+
+          <button class="buy" onclick="openOrder()">
+            🛒 BLEJ TANI
+          </button>
+
+          <button id="saveBtn" class="save" onclick="saveProduct()">
+            ♡ RUaj
+          </button>
+
+        </div>
+
+
+        <div id="contactArea" class="contact" style="display:none;">
+
+          <a id="callBtn" href="#">
+            📞 Telefon
+          </a>
+
+          <a id="whatsappBtn" href="#" target="_blank">
+            💬 WhatsApp
+          </a>
+
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
 
 </main>
@@ -482,123 +612,97 @@
 
 <!-- ORDER MODAL -->
 
-<div class="modal" id="orderModal">
+<div id="orderModal" class="modal-bg">
 
-  <div class="modal-card">
+  <div class="modal">
 
-    <button
-      class="close"
-      id="closeModal"
-      type="button"
-    >
-      ×
-    </button>
+    <div id="orderFormArea">
 
-    <h2>Porosit produktin</h2>
+      <h2>Porosit produktin</h2>
 
-    <form id="orderForm">
-
-      <div class="form-group">
-        <label>Emri</label>
-        <input
-          id="customerName"
-          type="text"
-          placeholder="Emri dhe mbiemri"
-          required
-        >
+      <div class="modal-sub">
+        Plotëso të dhënat për dorëzim.
       </div>
 
-      <div class="form-group">
-        <label>Telefoni</label>
-        <input
-          id="customerPhone"
-          type="tel"
-          placeholder="06xxxxxxxx"
-          required
-        >
-      </div>
 
-      <div class="form-group">
-        <label>Qyteti</label>
-        <input
-          id="customerCity"
-          type="text"
-          placeholder="Tiranë"
-          required
-        >
-      </div>
+      <label>Emri dhe mbiemri</label>
+      <input id="customerName" type="text" placeholder="Emri yt">
 
-      <div class="form-group">
-        <label>Adresa</label>
-        <textarea
-          id="customerAddress"
-          placeholder="Adresa ku do të dërgohet porosia"
-          required
-        ></textarea>
-      </div>
 
-      <div class="form-group">
-        <label>Sasia</label>
+      <label>Telefon</label>
+      <input id="customerPhone" type="tel" placeholder="06xxxxxxxx">
+
+
+      <label>Qyteti</label>
+      <input id="customerCity" type="text" placeholder="Tirana">
+
+
+      <label>Adresa</label>
+      <textarea id="customerAddress" placeholder="Adresa ku do të dorëzohet porosia"></textarea>
+
+
+      <label>Sasia</label>
+
+      <div class="quantity">
         <input
           id="quantity"
           type="number"
-          min="1"
           value="1"
-          required
+          min="1"
+          step="1"
+          onchange="updateTotal()"
         >
       </div>
 
-      <button
-        type="submit"
-        class="order-btn"
-        id="orderBtn"
-      >
-        Konfirmo porosinë
-      </button>
 
-      <div
-        class="modal-message"
-        id="orderMessage"
-      ></div>
+      <div class="total">
 
-    </form>
+        <span>Total</span>
 
-  </div>
+        <span id="totalPrice">
+          0 ALL
+        </span>
 
-</div>
+      </div>
 
 
-<!-- SUCCESS MODAL -->
+      <div class="modal-buttons">
 
-<div class="modal" id="successModal">
+        <button class="cancel" onclick="closeOrder()">
+          ANULO
+        </button>
 
-  <div class="modal-card">
+        <button class="confirm" onclick="submitOrder()">
+          KONFIRMO POROSINË
+        </button>
 
-    <div class="success-box">
+      </div>
+
+    </div>
+
+
+    <div id="orderSuccess" class="success" style="display:none;">
 
       <div class="success-icon">
         ✓
       </div>
 
-      <h2>Porosia u krijua!</h2>
+      <h2>Porosia u krye!</h2>
 
-      <p style="color:#888;margin-top:8px;">
-        Ruaje kodin e porosisë.
+      <p style="color:#89968e;margin-top:8px;">
+        Porosia jote u regjistrua me sukses.
       </p>
 
-      <div
-        class="order-code"
-        id="orderCode"
-      >
-        -
+      <div id="orderCode" class="order-code">
+        SABI-000000
       </div>
 
       <button
-        class="order-btn"
-        id="ordersBtn"
-        style="margin-top:20px;"
+        class="confirm"
+        style="width:100%;"
+        onclick="window.location.href='/orders.html'"
       >
-        Shiko porositë
+        SHIKO POROSITË
       </button>
 
     </div>
@@ -610,894 +714,682 @@
 
 <script>
 
-  const API = "/api";
+const API = "/api";
 
-  let product = null;
+const params = new URLSearchParams(location.search);
 
+const productId = params.get("id");
 
-  /*
-    GET PRODUCT ID
-  */
+let product = null;
 
-  const params =
-    new URLSearchParams(
-      window.location.search
-    );
 
-  const productId =
-    params.get("id");
+function getToken(){
 
-
-  /*
-    ELEMENTS
-  */
-
-  const main =
-    document.getElementById("main");
-
-  const orderModal =
-    document.getElementById("orderModal");
-
-  const successModal =
-    document.getElementById("successModal");
-
-  const orderForm =
-    document.getElementById("orderForm");
-
-  const orderMessage =
-    document.getElementById("orderMessage");
-
-
-  /*
-    HTML ESCAPE
-  */
-
-  function escapeHTML(value) {
-
-    if (value === null || value === undefined) {
-      return "";
-    }
-
-    return String(value)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-
-  }
-
-
-  /*
-    PRICE
-  */
-
-  function formatPrice(price) {
-
-    const number =
-      Number(price || 0);
-
-    return number.toLocaleString(
-      "sq-AL"
-    ) + " L";
-
-  }
-
-
-  /*
-    IMAGE
-  */
-
-  function getImage(p) {
-
-    return (
-      p.image_url ||
-      p.image ||
-      ""
-    );
-
-  }
-
-
-  /*
-    AUTH TOKEN
-  */
-
-  function getToken() {
-
-    return (
-      localStorage.getItem("shitblej_token") ||
-      localStorage.getItem("sabiAuthToken") ||
-      ""
-    );
-
-  }
-
-
-  /*
-    ERROR PAGE
-  */
-
-  function showError(title, text) {
-
-    main.innerHTML = `
-      <div class="error">
-        <h2>${escapeHTML(title)}</h2>
-        <p>${escapeHTML(text)}</p>
-        <a href="/index.html" class="home-btn">
-          Kthehu te produktet
-        </a>
-      </div>
-    `;
-
-  }
-
-
-  /*
-    LOAD PRODUCT
-  */
-
-  async function loadProduct() {
-
-    if (!productId) {
-
-      showError(
-        "Produkti nuk u gjet",
-        "Nuk është dhënë ID-ja e produktit."
-      );
-
-      return;
-
-    }
-
-
-    try {
-
-      const response =
-        await fetch(
-          API + "/products/" +
-          encodeURIComponent(productId)
-        );
-
-
-      const data =
-        await response.json();
-
-
-      if (!response.ok) {
-
-        throw new Error(
-          data.error ||
-          "Produkti nuk u gjet."
-        );
-
-      }
-
-
-      product =
-        data.product ||
-        data;
-
-
-      if (!product) {
-
-        throw new Error(
-          "Produkti nuk ekziston."
-        );
-
-      }
-
-
-      renderProduct();
-
-    } catch (error) {
-
-      console.error(
-        "PRODUCT ERROR:",
-        error
-      );
-
-      showError(
-        "Nuk u ngarkua produkti",
-        error.message ||
-        "Ndodhi një gabim."
-      );
-
-    }
-
-  }
-
-
-  /*
-    RENDER PRODUCT
-  */
-
-  function renderProduct() {
-
-    const image =
-      getImage(product);
-
-    const title =
-      product.title ||
-      product.name ||
-      "Produkt pa emër";
-
-    const seller =
-      product.sellerName ||
-      product.seller ||
-      "Shitës";
-
-    const sellerPhone =
-      product.sellerPhone ||
-      product.phone ||
-      "";
-
-    const city =
-      product.city ||
-      "Shqipëri";
-
-    const condition =
-      product.condition ||
-      "E padeklaruar";
-
-    const category =
-      product.category ||
-      "Të tjera";
-
-    const stock =
-      Number(product.stock ?? 0);
-
-
-    document.title =
-      title + " | SHIT.BLEJ";
-
-
-    main.innerHTML = `
-
-      <div class="breadcrumb">
-        SHIT.BLEJ / ${escapeHTML(category)} /
-        ${escapeHTML(title)}
-      </div>
-
-      <section class="product">
-
-        <div class="image-box">
-
-          ${
-            image
-              ? `
-                <img
-                  class="product-image"
-                  src="${escapeHTML(image)}"
-                  alt="${escapeHTML(title)}"
-                  onerror="this.style.display='none';this.nextElementSibling.style.display='block';"
-                >
-                <div
-                  class="no-image"
-                  style="display:none;"
-                >
-                  S
-                </div>
-              `
-              : `
-                <div class="no-image">
-                  S
-                </div>
-              `
-          }
-
-        </div>
-
-
-        <div class="info">
-
-          <span class="category">
-            ${escapeHTML(category)}
-          </span>
-
-          <h1>
-            ${escapeHTML(title)}
-          </h1>
-
-          <div class="price">
-            ${formatPrice(product.price)}
-          </div>
-
-          <div class="price-note">
-            ${
-              product.negotiable
-                ? "Çmimi është i negociueshëm"
-                : "Çmimi i vendosur nga shitësi"
-            }
-          </div>
-
-
-          <div class="details">
-
-            <div class="detail-row">
-              <span class="detail-label">
-                Gjendja
-              </span>
-
-              <span class="detail-value">
-                ${escapeHTML(condition)}
-              </span>
-            </div>
-
-            <div class="detail-row">
-              <span class="detail-label">
-                Qyteti
-              </span>
-
-              <span class="detail-value">
-                ${escapeHTML(city)}
-              </span>
-            </div>
-
-            <div class="detail-row">
-              <span class="detail-label">
-                Stoku
-              </span>
-
-              <span class="detail-value">
-                ${
-                  stock > 0
-                    ? stock + " copë"
-                    : "Në dispozicion"
-                }
-              </span>
-            </div>
-
-          </div>
-
-
-          <div class="buttons">
-
-            <button
-              class="buy-btn"
-              id="buyBtn"
-              type="button"
-            >
-              🛒 Porosit
-            </button>
-
-            <button
-              class="save-btn"
-              id="saveBtn"
-              type="button"
-            >
-              ♡ Ruaj
-            </button>
-
-          </div>
-
-
-          ${
-            sellerPhone
-              ? `
-                <button
-                  class="call-btn"
-                  id="callBtn"
-                  type="button"
-                >
-                  ☎ Kontakto shitësin
-                </button>
-              `
-              : ""
-          }
-
-
-          <div class="seller">
-
-            <div class="seller-title">
-              SHITËSI
-            </div>
-
-            <div class="seller-name">
-              ${escapeHTML(seller)}
-            </div>
-
-            ${
-              sellerPhone
-                ? `
-                  <div class="seller-contact">
-                    📞 ${escapeHTML(sellerPhone)}
-                  </div>
-                `
-                : `
-                  <div class="seller-contact">
-                    Kontakti nuk është publikuar.
-                  </div>
-                `
-            }
-
-          </div>
-
-
-          <div class="description">
-
-            <h2>
-              Përshkrimi
-            </h2>
-
-            <div class="description-text">
-              ${
-                escapeHTML(
-                  product.description ||
-                  "Shitësi nuk ka vendosur përshkrim."
-                )
-              }
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-    `;
-
-
-    document
-      .getElementById("buyBtn")
-      .addEventListener(
-        "click",
-        openOrder
-      );
-
-
-    document
-      .getElementById("saveBtn")
-      .addEventListener(
-        "click",
-        saveProduct
-      );
-
-
-    const callBtn =
-      document.getElementById("callBtn");
-
-    if (callBtn) {
-
-      callBtn.addEventListener(
-        "click",
-        () => {
-
-          if (sellerPhone) {
-
-            window.location.href =
-              "tel:" + sellerPhone;
-
-          }
-
-        }
-      );
-
-    }
-
-  }
-
-
-  /*
-    OPEN ORDER
-  */
-
-  function openOrder() {
-
-    const token =
-      getToken();
-
-
-    if (!token) {
-
-      const next =
-        "/products.html?id=" +
-        encodeURIComponent(productId);
-
-      window.location.href =
-        "/login.html?next=" +
-        encodeURIComponent(next);
-
-      return;
-
-    }
-
-
-    const savedUser =
-      localStorage.getItem(
-        "shitblej_user"
-      );
-
-
-    if (savedUser) {
-
-      try {
-
-        const user =
-          JSON.parse(savedUser);
-
-        if (user.name) {
-
-          document.getElementById(
-            "customerName"
-          ).value = user.name;
-
-        }
-
-        if (user.phone) {
-
-          document.getElementById(
-            "customerPhone"
-          ).value = user.phone;
-
-        }
-
-      } catch {}
-
-    }
-
-
-    orderMessage.textContent = "";
-
-    orderModal.style.display =
-      "flex";
-
-  }
-
-
-  /*
-    CLOSE ORDER
-  */
-
-  document
-    .getElementById("closeModal")
-    .addEventListener(
-      "click",
-      () => {
-
-        orderModal.style.display =
-          "none";
-
-      }
-    );
-
-
-  /*
-    CLICK OUTSIDE
-  */
-
-  orderModal.addEventListener(
-    "click",
-    event => {
-
-      if (
-        event.target === orderModal
-      ) {
-
-        orderModal.style.display =
-          "none";
-
-      }
-
-    }
+  return (
+    localStorage.getItem("shitblej_token") ||
+    localStorage.getItem("sabiAuthToken") ||
+    ""
   );
 
-
-  /*
-    SAVE PRODUCT
-  */
-
-  async function saveProduct() {
-
-    const token =
-      getToken();
+}
 
 
-    if (!token) {
+function getUser(){
 
-      const next =
-        "/products.html?id=" +
-        encodeURIComponent(productId);
+  try{
 
-      window.location.href =
-        "/login.html?next=" +
-        encodeURIComponent(next);
+    return JSON.parse(
+      localStorage.getItem("shitblej_user") || "null"
+    );
 
-      return;
+  }catch(e){
+
+    return null;
+
+  }
+
+}
+
+
+function money(value){
+
+  const number = Number(value || 0);
+
+  return number.toLocaleString("sq-AL") + " ALL";
+
+}
+
+
+function getProductData(data){
+
+  if(data?.product){
+    return data.product;
+  }
+
+  if(data?.data?.product){
+    return data.data.product;
+  }
+
+  if(data?.data && !Array.isArray(data.data)){
+    return data.data;
+  }
+
+  return data;
+
+}
+
+
+async function loadProduct(){
+
+  if(!productId){
+
+    showError("Produkti nuk u gjet.");
+
+    return;
+
+  }
+
+
+  try{
+
+    const response = await fetch(
+      API + "/products/" + encodeURIComponent(productId)
+    );
+
+
+    const data = await response.json();
+
+
+    if(!response.ok){
+
+      throw new Error(
+        data.message ||
+        data.error ||
+        "Produkti nuk u gjet."
+      );
 
     }
 
 
-    const button =
-      document.getElementById(
-        "saveBtn"
+    product = getProductData(data);
+
+
+    if(!product || !product.id){
+
+      throw new Error("Produkti nuk u gjet.");
+
+    }
+
+
+    renderProduct();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showError(
+      error.message ||
+      "Gabim gjatë ngarkimit të produktit."
+    );
+
+  }
+
+}
+
+
+function renderProduct(){
+
+  document.getElementById("loading").style.display = "none";
+
+  document.getElementById("productArea").style.display = "block";
+
+
+  const title =
+    product.title ||
+    product.name ||
+    "Produkt pa emër";
+
+
+  const image =
+    product.image_url ||
+    product.image ||
+    product.photo ||
+    "";
+
+
+  const city =
+    product.city ||
+    product.location ||
+    "—";
+
+
+  const condition =
+    product.condition ||
+    "—";
+
+
+  const seller =
+    product.sellerName ||
+    product.seller_name ||
+    product.seller ||
+    "Shitës";
+
+
+  const category =
+    product.category ||
+    "Të tjera";
+
+
+  const description =
+    product.description ||
+    "Nuk ka përshkrim.";
+
+
+  document.getElementById("title").textContent = title;
+
+  document.getElementById("price").textContent =
+    money(product.price);
+
+  document.getElementById("category").textContent =
+    category;
+
+  document.getElementById("city").textContent =
+    city;
+
+  document.getElementById("condition").textContent =
+    condition;
+
+  document.getElementById("seller").textContent =
+    seller;
+
+  document.getElementById("description").textContent =
+    description;
+
+
+  const stock =
+    Number(product.stock);
+
+
+  document.getElementById("stock").textContent =
+    Number.isFinite(stock) && stock > 0
+      ? stock + " copë"
+      : "Në dispozicion";
+
+
+  const negotiable =
+    product.negotiable === true ||
+    product.negotiable === 1 ||
+    product.negotiable === "1" ||
+    product.negotiable === "true";
+
+
+  document.getElementById("negotiable").textContent =
+    negotiable ? "I diskutueshëm" : "Fiks";
+
+
+  if(image){
+
+    const img =
+      document.getElementById("productImage");
+
+    img.src = image;
+
+    img.style.display = "block";
+
+    img.onerror = function(){
+
+      img.style.display = "none";
+
+      document.getElementById("noImage").style.display =
+        "block";
+
+    };
+
+    document.getElementById("noImage").style.display =
+      "none";
+
+  }
+
+
+  const promoted =
+    product.promoted === true ||
+    product.is_promoted === true ||
+    product.is_promoted === 1 ||
+    product.promotion_active === true;
+
+
+  if(promoted){
+
+    document.getElementById("promoted").style.display =
+      "block";
+
+  }
+
+
+  const phone =
+    product.sellerPhone ||
+    product.seller_phone ||
+    product.phone ||
+    "";
+
+
+  if(phone){
+
+    document.getElementById("contactArea").style.display =
+      "grid";
+
+    document.getElementById("callBtn").href =
+      "tel:" + phone.replace(/\s+/g,"");
+
+    document.getElementById("whatsappBtn").href =
+      "https://wa.me/" +
+      phone.replace(/\D/g,"");
+
+  }
+
+
+  updateTotal();
+
+  document.title =
+    title + " — SHIT.BLEJ";
+
+}
+
+
+function showError(message){
+
+  document.getElementById("loading").style.display =
+    "none";
+
+  const box =
+    document.getElementById("error");
+
+  box.textContent = message;
+
+  box.style.display = "block";
+
+}
+
+
+function openOrder(){
+
+  const token = getToken();
+
+  if(!token){
+
+    const next =
+      "/products.html?id=" +
+      encodeURIComponent(productId);
+
+    window.location.href =
+      "/login.html?next=" +
+      encodeURIComponent(next);
+
+    return;
+
+  }
+
+
+  const user = getUser();
+
+
+  if(user){
+
+    document.getElementById("customerName").value =
+      user.name || "";
+
+    document.getElementById("customerPhone").value =
+      user.phone || "";
+
+  }
+
+
+  document.getElementById("orderModal").style.display =
+    "flex";
+
+
+  updateTotal();
+
+}
+
+
+function closeOrder(){
+
+  document.getElementById("orderModal").style.display =
+    "none";
+
+}
+
+
+function updateTotal(){
+
+  if(!product) return;
+
+  const quantity =
+    Math.max(
+      1,
+      Number(
+        document.getElementById("quantity")?.value || 1
+      )
+    );
+
+
+  const total =
+    Number(product.price || 0) * quantity;
+
+
+  const element =
+    document.getElementById("totalPrice");
+
+
+  if(element){
+
+    element.textContent =
+      money(total);
+
+  }
+
+}
+
+
+async function submitOrder(){
+
+  const token = getToken();
+
+
+  if(!token){
+
+    window.location.href =
+      "/login.html?next=" +
+      encodeURIComponent(
+        "/products.html?id=" + productId
       );
 
+    return;
+
+  }
+
+
+  const customerName =
+    document.getElementById("customerName").value.trim();
+
+  const customerPhone =
+    document.getElementById("customerPhone").value.trim();
+
+  const customerCity =
+    document.getElementById("customerCity").value.trim();
+
+  const customerAddress =
+    document.getElementById("customerAddress").value.trim();
+
+
+  const quantity =
+    Math.max(
+      1,
+      Number(
+        document.getElementById("quantity").value || 1
+      )
+    );
+
+
+  if(!customerName){
+
+    alert("Vendos emrin.");
+
+    return;
+
+  }
+
+
+  if(!customerPhone){
+
+    alert("Vendos numrin e telefonit.");
+
+    return;
+
+  }
+
+
+  if(!customerCity){
+
+    alert("Vendos qytetin.");
+
+    return;
+
+  }
+
+
+  if(!customerAddress){
+
+    alert("Vendos adresën.");
+
+    return;
+
+  }
+
+
+  const button =
+    document.querySelector(".confirm");
+
+
+  if(button){
 
     button.disabled = true;
 
     button.textContent =
-      "Duke ruajtur...";
-
-
-    try {
-
-      const response =
-        await fetch(
-          API +
-          "/products/" +
-          encodeURIComponent(productId) +
-          "/save",
-          {
-            method: "POST",
-
-            headers: {
-              "Authorization":
-                "Bearer " + token
-            }
-          }
-        );
-
-
-      const data =
-        await response.json();
-
-
-      if (!response.ok) {
-
-        throw new Error(
-          data.error ||
-          "Nuk u ruajt produkti."
-        );
-
-      }
-
-
-      button.textContent =
-        data.saved
-          ? "♥ E ruajtur"
-          : "♡ Ruaj";
-
-
-    } catch (error) {
-
-      alert(
-        error.message ||
-        "Ndodhi një gabim."
-      );
-
-      button.textContent =
-        "♡ Ruaj";
-
-    } finally {
-
-      button.disabled = false;
-
-    }
+      "Po regjistrohet...";
 
   }
 
 
-  /*
-    CREATE ORDER
-  */
+  try{
 
-  orderForm.addEventListener(
-    "submit",
-    async event => {
+    const response = await fetch(
+      API + "/orders",
+      {
+        method:"POST",
 
-      event.preventDefault();
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization":"Bearer " + token
+        },
 
+        body:JSON.stringify({
 
-      const token =
-        getToken();
+          product_id:Number(productId),
 
+          quantity:quantity,
 
-      if (!token) {
+          customer_name:customerName,
 
-        window.location.href =
-          "/login.html";
+          customer_phone:customerPhone,
 
-        return;
+          customer_city:customerCity,
 
-      }
+          customer_address:customerAddress,
 
+          payment_method:"cash_on_delivery"
 
-      const customerName =
-        document.getElementById(
-          "customerName"
-        ).value.trim();
-
-      const customerPhone =
-        document.getElementById(
-          "customerPhone"
-        ).value.trim();
-
-      const customerCity =
-        document.getElementById(
-          "customerCity"
-        ).value.trim();
-
-      const customerAddress =
-        document.getElementById(
-          "customerAddress"
-        ).value.trim();
-
-      const quantity =
-        Number(
-          document.getElementById(
-            "quantity"
-          ).value
-        );
-
-
-      if (
-        !customerName ||
-        !customerPhone ||
-        !customerCity ||
-        !customerAddress
-      ) {
-
-        orderMessage.textContent =
-          "Plotëso të gjitha fushat.";
-
-        return;
-
-      }
-
-
-      if (
-        !Number.isInteger(quantity) ||
-        quantity < 1
-      ) {
-
-        orderMessage.textContent =
-          "Sasia nuk është e vlefshme.";
-
-        return;
-
-      }
-
-
-      const orderBtn =
-        document.getElementById(
-          "orderBtn"
-        );
-
-
-      orderBtn.disabled = true;
-
-      orderBtn.textContent =
-        "Duke krijuar porosinë...";
-
-
-      orderMessage.textContent = "";
-
-
-      try {
-
-        const response =
-          await fetch(
-            API + "/orders",
-            {
-              method: "POST",
-
-              headers: {
-                "Content-Type":
-                  "application/json",
-
-                "Authorization":
-                  "Bearer " + token
-              },
-
-              body: JSON.stringify({
-
-                product_id:
-                  Number(productId),
-
-                quantity:
-
-                  quantity,
-
-                customer_name:
-                  customerName,
-
-                customer_phone:
-                  customerPhone,
-
-                customer_city:
-                  customerCity,
-
-                customer_address:
-                  customerAddress,
-
-                payment_method:
-                  "cash_on_delivery"
-
-              })
-            }
-          );
-
-
-        const data =
-          await response.json();
-
-
-        if (!response.ok) {
-
-          throw new Error(
-            data.error ||
-            "Porosia nuk u krijua."
-          );
-
-        }
-
-
-        orderModal.style.display =
-          "none";
-
-
-        const order =
-          data.order || {};
-
-
-        document.getElementById(
-          "orderCode"
-        ).textContent =
-          order.order_code ||
-          order.code ||
-          "SABI-ORDER";
-
-
-        successModal.style.display =
-          "flex";
-
-
-      } catch (error) {
-
-        console.error(
-          "ORDER ERROR:",
-          error
-        );
-
-        orderMessage.textContent =
-          error.message ||
-          "Ndodhi një gabim gjatë porosisë.";
-
-      } finally {
-
-        orderBtn.disabled = false;
-
-        orderBtn.textContent =
-          "Konfirmo porosinë";
-
-      }
-
-    }
-  );
-
-
-  /*
-    ORDERS BUTTON
-  */
-
-  document
-    .getElementById("ordersBtn")
-    .addEventListener(
-      "click",
-      () => {
-
-        window.location.href =
-          "/orders.html";
+        })
 
       }
     );
 
 
-  /*
-    LOAD
-  */
+    const data =
+      await response.json();
 
-  loadProduct();
+
+    if(!response.ok){
+
+      throw new Error(
+        data.message ||
+        data.error ||
+        "Porosia nuk u krijua."
+      );
+
+    }
+
+
+    const order =
+      data.order ||
+      data.data?.order ||
+      data;
+
+
+    const code =
+      order.code ||
+      order.order_code ||
+      data.code ||
+      data.order_code ||
+      (
+        "SABI-" +
+        Date.now().toString().slice(-8)
+      );
+
+
+    document.getElementById("orderFormArea").style.display =
+      "none";
+
+    document.getElementById("orderSuccess").style.display =
+      "block";
+
+    document.getElementById("orderCode").textContent =
+      code;
+
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      error.message ||
+      "Gabim gjatë krijimit të porosisë."
+    );
+
+
+    if(button){
+
+      button.disabled = false;
+
+      button.textContent =
+        "KONFIRMO POROSINË";
+
+    }
+
+  }
+
+}
+
+
+async function saveProduct(){
+
+  const token = getToken();
+
+  if(!token){
+
+    window.location.href =
+      "/login.html?next=" +
+      encodeURIComponent(
+        "/products.html?id=" + productId
+      );
+
+    return;
+
+  }
+
+
+  const button =
+    document.getElementById("saveBtn");
+
+
+  try{
+
+    const response = await fetch(
+      API +
+      "/products/" +
+      encodeURIComponent(productId) +
+      "/save",
+      {
+        method:"POST",
+
+        headers:{
+          "Authorization":"Bearer " + token,
+          "Content-Type":"application/json"
+        }
+      }
+    );
+
+
+    const data =
+      await response.json();
+
+
+    if(!response.ok){
+
+      throw new Error(
+        data.message ||
+        data.error ||
+        "Nuk u ruajt produkti."
+      );
+
+    }
+
+
+    const saved =
+      data.saved !== false &&
+      data.status !== "removed";
+
+
+    if(saved){
+
+      button.classList.add("saved");
+
+      button.textContent =
+        "♥ RUajtur";
+
+    }else{
+
+      button.classList.remove("saved");
+
+      button.textContent =
+        "♡ RUaj";
+
+    }
+
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      error.message ||
+      "Gabim gjatë ruajtjes."
+    );
+
+  }
+
+}
+
+
+document.getElementById("orderModal")
+  .addEventListener("click",function(e){
+
+    if(e.target === this){
+
+      closeOrder();
+
+    }
+
+  });
+
+
+document.getElementById("quantity")
+  .addEventListener("input",updateTotal);
+
+
+loadProduct();
 
 </script>
 
