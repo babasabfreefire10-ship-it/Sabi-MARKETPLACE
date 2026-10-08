@@ -1,1014 +1,862 @@
 <!DOCTYPE html>
 <html lang="sq">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Hyr — SHIT.BLEJ</title>
-
-<style>
-
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-body{
-  font-family:Arial,Helvetica,sans-serif;
-  background:#f5f6f7;
-  color:#17191c;
-  min-height:100vh;
-}
-
-/* =========================
-   TOP BAR
-========================= */
-
-.topbar{
-  height:68px;
-  background:#fff;
-  border-bottom:1px solid #e2e4e7;
-
-  display:flex;
-  align-items:center;
-
-  padding:0 25px;
-}
-
-.logo{
-  font-size:27px;
-  font-weight:950;
-  letter-spacing:-1.6px;
-}
-
-.logo span{
-  color:#18a957;
-}
-
-
-/* =========================
-   PAGE
-========================= */
-
-.page{
-  min-height:calc(100vh - 68px);
-
-  display:flex;
-  justify-content:center;
-  align-items:center;
-
-  padding:25px 15px;
-}
-
-
-/* =========================
-   LOGIN BOX
-========================= */
-
-.login-box{
-  width:100%;
-  max-width:430px;
-
-  background:#fff;
-
-  border:1px solid #e1e3e6;
-  border-radius:10px;
-
-  padding:30px;
-
-  box-shadow:
-    0 8px 30px rgba(0,0,0,.06);
-}
-
-.login-title{
-  font-size:28px;
-  font-weight:900;
-
-  margin-bottom:7px;
-}
-
-.login-subtitle{
-  color:#73777d;
-  font-size:14px;
-
-  margin-bottom:25px;
-}
-
-
-/* =========================
-   MESSAGE
-========================= */
-
-.message{
-  display:none;
-
-  padding:12px;
-
-  border-radius:7px;
-
-  font-size:13px;
-
-  margin-bottom:15px;
-}
-
-.message.show{
-  display:block;
-}
-
-.error{
-  background:#fff1f1;
-  border:1px solid #ffd1d1;
-  color:#c62828;
-}
-
-.success{
-  background:#effaf3;
-  border:1px solid #c9efd6;
-  color:#128044;
-}
-
-
-/* =========================
-   INPUTS
-========================= */
-
-.field{
-  margin-bottom:15px;
-}
-
-.field label{
-  display:block;
-
-  font-size:13px;
-  font-weight:700;
-
-  margin-bottom:7px;
-}
-
-.field input,
-.field select{
-
-  width:100%;
-  height:46px;
-
-  border:1px solid #d8dbdf;
-  border-radius:7px;
-
-  padding:0 13px;
-
-  font-size:14px;
-
-  outline:none;
-
-  background:#fff;
-}
-
-.field input:focus,
-.field select:focus{
-  border-color:#18a957;
-}
-
-
-/* =========================
-   LOGIN BUTTON
-========================= */
-
-.login-btn{
-
-  width:100%;
-  height:47px;
-
-  border:0;
-  border-radius:7px;
-
-  background:#18a957;
-  color:#fff;
-
-  font-weight:800;
-  font-size:15px;
-
-  cursor:pointer;
-
-  margin-top:5px;
-
-  transition:.15s;
-}
-
-.login-btn:hover{
-  background:#128044;
-}
-
-.login-btn:disabled{
-  opacity:.6;
-  cursor:not-allowed;
-}
-
-
-/* =========================
-   REGISTER
-========================= */
-
-.bottom{
-  text-align:center;
-
-  margin-top:20px;
-
-  color:#777;
-
-  font-size:13px;
-}
-
-.register-btn{
-
-  border:0;
-  background:none;
-
-  color:#18a957;
-
-  font-weight:800;
-
-  cursor:pointer;
-
-  margin-left:4px;
-}
-
-.register-btn:hover{
-  text-decoration:underline;
-}
-
-
-/* =========================
-   COUNTDOWN
-========================= */
-
-.countdown-overlay{
-
-  position:fixed;
-  inset:0;
-
-  background:rgba(255,255,255,.98);
-
-  z-index:99999;
-
-  display:none;
-
-  align-items:center;
-  justify-content:center;
-
-  flex-direction:column;
-}
-
-.countdown-overlay.show{
-  display:flex;
-}
-
-.countdown-logo{
-
-  font-size:34px;
-
-  font-weight:950;
-
-  letter-spacing:-2px;
-
-  margin-bottom:28px;
-}
-
-.countdown-logo span{
-  color:#18a957;
-}
-
-.countdown-number{
-
-  font-size:105px;
-
-  font-weight:950;
-
-  color:#18a957;
-
-  line-height:1;
-
-  animation:countdownPop .8s ease;
-}
-
-.countdown-text{
-
-  margin-top:18px;
-
-  color:#777;
-
-  font-size:14px;
-}
-
-.countdown-bar{
-
-  width:240px;
-  height:5px;
-
-  background:#e4e5e7;
-
-  border-radius:20px;
-
-  overflow:hidden;
-
-  margin-top:22px;
-}
-
-.countdown-progress{
-
-  width:100%;
-  height:100%;
-
-  background:#18a957;
-
-  transform-origin:left;
-}
-
-@keyframes countdownPop{
-
-  0%{
-    transform:scale(.3);
-    opacity:0;
-  }
-
-  70%{
-    transform:scale(1.15);
-    opacity:1;
-  }
-
-  100%{
-    transform:scale(1);
-    opacity:1;
-  }
-}
-
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:500px){
-
-  .topbar{
-    height:60px;
-    padding:0 16px;
-  }
-
-  .logo{
-    font-size:24px;
-  }
-
-  .page{
-    align-items:flex-start;
-    padding-top:35px;
-  }
-
-  .login-box{
-    padding:24px 20px;
-  }
-
-  .login-title{
-    font-size:25px;
-  }
-
-  .countdown-number{
-    font-size:90px;
-  }
-
-}
-
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SHIT.BLEJ PRO</title>
+  <meta name="description" content="SHIT.BLEJ PRO - Blej, shit dhe gjej gjithçka në Shqipëri.">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f6f7;
+      color: #111;
+    }
+
+    header {
+      background: #111;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav {
+      max-width: 1200px;
+      margin: auto;
+      min-height: 68px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      color: #00e676;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .search {
+      flex: 1;
+      display: flex;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      max-width: 650px;
+    }
+
+    .search input {
+      flex: 1;
+      border: 0;
+      outline: 0;
+      padding: 14px;
+      font-size: 15px;
+    }
+
+    .search button {
+      border: 0;
+      background: #00e676;
+      padding: 0 20px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      border: 1px solid #444;
+      background: transparent;
+      color: white;
+      padding: 10px 13px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .sell-btn {
+      background: #00e676;
+      color: #111;
+      border: 0;
+    }
+
+    .hero {
+      background: #111;
+      color: white;
+      padding: 55px 18px 70px;
+    }
+
+    .hero-inner {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .hero h1 {
+      font-size: clamp(36px, 7vw, 70px);
+      line-height: 1;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 span {
+      color: #00e676;
+    }
+
+    .hero p {
+      color: #bbb;
+      font-size: 18px;
+      margin-bottom: 28px;
+    }
+
+    .hero-search {
+      max-width: 850px;
+      display: flex;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .hero-search input {
+      flex: 1;
+      border: 0;
+      outline: 0;
+      padding: 17px;
+      font-size: 16px;
+    }
+
+    .hero-search button {
+      border: 0;
+      background: #00e676;
+      padding: 0 25px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: auto;
+      padding: 35px 18px 80px;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .section-title h2 {
+      font-size: 25px;
+    }
+
+    .categories {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 35px;
+    }
+
+    .category {
+      background: white;
+      border: 1px solid #ddd;
+      padding: 12px 16px;
+      border-radius: 30px;
+      white-space: nowrap;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .category:hover,
+    .category.active {
+      background: #00e676;
+      border-color: #00e676;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #e2e2e2;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0,0,0,.08);
+    }
+
+    .image-box {
+      position: relative;
+      height: 210px;
+      background: #eee;
+    }
+
+    .image-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .no-image {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+      font-weight: 700;
+    }
+
+    .badge {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      background: #00e676;
+      color: #111;
+      padding: 6px 9px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .card-body {
+      padding: 14px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .price {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .meta {
+      color: #777;
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .loading,
+    .empty,
+    .error {
+      background: white;
+      padding: 35px;
+      border-radius: 14px;
+      text-align: center;
+      grid-column: 1 / -1;
+    }
+
+    footer {
+      background: #111;
+      color: #aaa;
+      padding: 35px 18px;
+      text-align: center;
+    }
+
+    footer strong {
+      color: #00e676;
+    }
+
+    @media (max-width: 900px) {
+      .products {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .nav {
+        flex-wrap: wrap;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+
+      .search {
+        order: 3;
+        width: 100%;
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .products {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .image-box {
+        height: 170px;
+      }
+
+      .hero {
+        padding: 40px 15px 50px;
+      }
+
+      .hero p {
+        font-size: 15px;
+      }
+
+      .nav-actions .nav-btn:first-child {
+        display: none;
+      }
+
+      .logo {
+        font-size: 20px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .products {
+        grid-template-columns: 1fr;
+      }
+
+      .image-box {
+        height: 220px;
+      }
+    }
+  </style>
 </head>
-
 
 <body>
 
+<header>
+  <div class="nav">
 
-<!-- =========================
-     TOP BAR
-========================= -->
+    <a class="logo" href="/">SHIT.BLEJ</a>
 
-<header class="topbar">
+    <div class="search">
+      <input
+        id="topSearch"
+        type="text"
+        placeholder="Kërko produkte..."
+        autocomplete="off"
+      >
+      <button onclick="searchProducts()">Kërko</button>
+    </div>
 
-  <div class="logo">
-    SHIT<span>.</span>BLEJ
+    <div class="nav-actions">
+      <button class="nav-btn" onclick="login()">Hyr</button>
+      <button class="nav-btn sell-btn" onclick="sell()">+ Shit</button>
+    </div>
+
   </div>
-
 </header>
 
+<section class="hero">
 
-<!-- =========================
-     LOGIN
-========================= -->
+  <div class="hero-inner">
 
-<main class="page">
+    <h1>Blej. <span>Shit.</span> Gjej.</h1>
 
-  <section class="login-box">
-
-    <h1 class="login-title">
-      Hyr në SHIT.BLEJ
-    </h1>
-
-    <p class="login-subtitle">
-      Hyr në llogarinë tënde për të vazhduar.
+    <p>
+      Marketplace-i yt për produkte të reja dhe të përdorura në Shqipëri.
     </p>
 
+    <div class="hero-search">
+      <input
+        id="heroSearch"
+        type="text"
+        placeholder="Çfarë po kërkon?"
+        autocomplete="off"
+        onkeydown="if(event.key==='Enter') searchProducts()"
+      >
 
-    <div
-      id="error"
-      class="message error"
-    ></div>
-
-
-    <div
-      id="success"
-      class="message success"
-    >
-      Hyrja u krye me sukses.
+      <button onclick="searchProducts()">
+        Kërko
+      </button>
     </div>
 
+  </div>
 
-    <form id="loginForm">
+</section>
 
+<main>
 
-      <!-- EMAIL -->
+  <div class="section-title">
+    <h2>Kategoritë</h2>
+  </div>
 
-      <div class="field">
+  <div class="categories" id="categories">
 
-        <label>
-          Email ose username
-        </label>
+    <button class="category active" onclick="filterCategory('')">
+      Të gjitha
+    </button>
 
-        <input
-          id="identifier"
-          type="text"
-          autocomplete="username"
-          placeholder="Shkruaj email-in"
-          required
-        >
+    <button class="category" onclick="filterCategory('Elektronikë')">
+      Elektronikë
+    </button>
 
-      </div>
+    <button class="category" onclick="filterCategory('Telefona')">
+      Telefona
+    </button>
 
+    <button class="category" onclick="filterCategory('Makina')">
+      Makina
+    </button>
 
-      <!-- PASSWORD -->
+    <button class="category" onclick="filterCategory('Moda')">
+      Moda
+    </button>
 
-      <div class="field">
+    <button class="category" onclick="filterCategory('Shtëpi')">
+      Shtëpi
+    </button>
 
-        <label>
-          Fjalëkalimi
-        </label>
+    <button class="category" onclick="filterCategory('Punë')">
+      Punë
+    </button>
 
-        <input
-          id="password"
-          type="password"
-          autocomplete="current-password"
-          placeholder="Fjalëkalimi"
-          required
-        >
+    <button class="category" onclick="filterCategory('Shërbime')">
+      Shërbime
+    </button>
 
-      </div>
+    <button class="category" onclick="filterCategory('Aksesorë')">
+      Aksesorë
+    </button>
 
+  </div>
 
-      <!-- ROLE -->
+  <div class="section-title">
+    <h2>Produktet</h2>
+  </div>
 
-      <div class="field">
+  <div id="products" class="products">
 
-        <label>
-          Lloji i llogarisë
-        </label>
-
-        <select id="role">
-
-          <option value="customer">
-            Blerës
-          </option>
-
-          <option value="seller">
-            Shitës
-          </option>
-
-          <option value="admin">
-            Admin
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <!-- LOGIN -->
-
-      <button
-        id="loginBtn"
-        class="login-btn"
-        type="submit"
-      >
-        HYR
-      </button>
-
-
-    </form>
-
-
-    <!-- REGISTER -->
-
-    <div class="bottom">
-
-      Nuk ke llogari?
-
-      <button
-        type="button"
-        class="register-btn"
-        onclick="goRegister()"
-      >
-        Regjistrohu
-      </button>
-
+    <div class="loading">
+      Duke ngarkuar produktet...
     </div>
 
-  </section>
+  </div>
 
 </main>
 
-
-<!-- =========================
-     COUNTDOWN
-========================= -->
-
-<div
-  id="countdownOverlay"
-  class="countdown-overlay"
->
-
-  <div class="countdown-logo">
-    SHIT<span>.</span>BLEJ
-  </div>
-
-
-  <div
-    id="countdownNumber"
-    class="countdown-number"
-  >
-    3
-  </div>
-
-
-  <div class="countdown-text">
-    Po hyjmë në SHIT.BLEJ...
-  </div>
-
-
-  <div class="countdown-bar">
-
-    <div
-      id="countdownProgress"
-      class="countdown-progress"
-    ></div>
-
-  </div>
-
-</div>
-
+<footer>
+  <strong>SHIT.BLEJ PRO</strong>
+  <br><br>
+  Blej. Shit. Gjej.
+</footer>
 
 <script>
 
-/* =====================================================
+const API = "/api";
+
+let currentCategory = "";
+let currentSearch = "";
+
+
+/* =========================
+   HELPERS
+========================= */
+
+function login() {
+  window.location.href = "/login.html";
+}
+
+function sell() {
+  window.location.href = "/login.html?next=%2Fseller.html";
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function formatPrice(value) {
+
+  const number = Number(value || 0);
+
+  return new Intl.NumberFormat("sq-AL", {
+    maximumFractionDigits: 0
+  }).format(number) + " ALL";
+}
+
+
+/* =========================
    API
-===================================================== */
-
-const API =
-  location.hostname.includes("github.io")
-    ? "https://sabi-marketplace.babasabfreefire2.workers.dev/api"
-    : "/api";
-
-
-/* =====================================================
-   ELEMENTS
-===================================================== */
-
-const form =
-  document.getElementById("loginForm");
-
-const loginBtn =
-  document.getElementById("loginBtn");
-
-const errorBox =
-  document.getElementById("error");
-
-const successBox =
-  document.getElementById("success");
-
-const countdownOverlay =
-  document.getElementById(
-    "countdownOverlay"
-  );
-
-const countdownNumber =
-  document.getElementById(
-    "countdownNumber"
-  );
-
-const countdownProgress =
-  document.getElementById(
-    "countdownProgress"
-  );
-
-
-/* =====================================================
-   MESSAGE
-===================================================== */
-
-function showError(message){
-
-  successBox.classList.remove("show");
-
-  errorBox.textContent =
-    message;
-
-  errorBox.classList.add("show");
-}
-
-
-function showSuccess(){
-
-  errorBox.classList.remove("show");
-
-  successBox.classList.add("show");
-}
-
-
-/* =====================================================
-   COUNTDOWN
-===================================================== */
-
-function startCountdown(destination){
-
-  countdownOverlay.classList.add("show");
-
-  let count = 3;
-
-  countdownNumber.textContent =
-    count;
-
-  countdownNumber.style.animation =
-    "none";
-
-  void countdownNumber.offsetWidth;
-
-  countdownNumber.style.animation =
-    "countdownPop .8s ease";
-
-
-  countdownProgress.style.transition =
-    "none";
-
-  countdownProgress.style.width =
-    "100%";
-
-
-  setTimeout(()=>{
-
-    countdownProgress.style.transition =
-      "width 3s linear";
-
-    countdownProgress.style.width =
-      "0%";
-
-  },50);
-
-
-  const timer =
-    setInterval(()=>{
-
-      count--;
-
-
-      if(count > 0){
-
-        countdownNumber.textContent =
-          count;
-
-        countdownNumber.style.animation =
-          "none";
-
-        void countdownNumber.offsetWidth;
-
-        countdownNumber.style.animation =
-          "countdownPop .8s ease";
-
-      }
-
-      else{
-
-        clearInterval(timer);
-
-        countdownNumber.textContent =
-          "✓";
-
-        countdownNumber.style.animation =
-          "none";
-
-        void countdownNumber.offsetWidth;
-
-        countdownNumber.style.animation =
-          "countdownPop .8s ease";
-
-
-        setTimeout(()=>{
-
-          window.location.href =
-            destination;
-
-        },450);
-
-      }
-
-    },1000);
-
-}
-
-
-/* =====================================================
-   REGISTER
-===================================================== */
-
-function goRegister(){
-
-  /*
-    Hap register.html.
-  */
-
-  window.location.href =
-    "register.html";
-}
-
-
-/* =====================================================
-   LOGIN
-===================================================== */
-
-form.addEventListener(
-  "submit",
-  async function(event){
-
-    event.preventDefault();
-
-
-    const identifier =
-      document
-        .getElementById("identifier")
-        .value
-        .trim();
-
-
-    const password =
-      document
-        .getElementById("password")
-        .value;
-
-
-    const role =
-      document
-        .getElementById("role")
-        .value;
-
-
-    if(!identifier){
-
-      showError(
-        "Shkruaj email-in ose username."
-      );
-
-      return;
-    }
-
-
-    if(!password){
-
-      showError(
-        "Shkruaj fjalëkalimin."
-      );
-
-      return;
-    }
-
-
-    errorBox.classList.remove(
-      "show"
+========================= */
+
+async function api(path, options = {}) {
+
+  const token =
+    localStorage.getItem("shitblej_token") ||
+    localStorage.getItem("sabiAuthToken");
+
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {})
+  };
+
+  if (token) {
+    headers.Authorization = "Bearer " + token;
+  }
+
+  const response = await fetch(API + path, {
+    ...options,
+    headers
+  });
+
+  const text = await response.text();
+
+  let data;
+
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    data = {
+      success: false,
+      message: text
+    };
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      data.message ||
+      data.error ||
+      "Gabim nga serveri"
     );
+  }
+
+  return data;
+}
 
 
-    loginBtn.disabled =
-      true;
+/* =========================
+   PRODUCT NORMALIZER
+========================= */
 
-    loginBtn.textContent =
-      "DUKE HYRË...";
+function normalizeProducts(data) {
 
+  if (Array.isArray(data)) {
+    return data;
+  }
 
-    try{
+  if (Array.isArray(data.products)) {
+    return data.products;
+  }
 
-      const response =
-        await fetch(
-          `${API}/auth/login`,
-          {
-            method:"POST",
+  if (Array.isArray(data.results)) {
+    return data.results;
+  }
 
-            headers:{
-              "Content-Type":
-                "application/json"
-            },
+  if (Array.isArray(data.data)) {
+    return data.data;
+  }
 
-            body:JSON.stringify({
-
-              identifier:
-                identifier,
-
-              password:
-                password,
-
-              role:
-                role
-
-            })
-          }
-        );
+  return [];
+}
 
 
-      let data = {};
+/* =========================
+   LOAD PRODUCTS
+========================= */
 
-      try{
+async function loadProducts() {
 
-        data =
-          await response.json();
+  const container =
+    document.getElementById("products");
 
-      }catch(e){
+  container.innerHTML = `
+    <div class="loading">
+      Duke ngarkuar produktet...
+    </div>
+  `;
 
-        data = {};
+  try {
 
-      }
+    let data;
 
+    if (currentSearch.trim()) {
 
-      if(!response.ok){
-
-        throw new Error(
-          data.error ||
-          data.message ||
-          "Email ose fjalëkalim i gabuar."
-        );
-
-      }
-
-
-      /* ==========================
-         TOKEN
-      ========================== */
-
-      const token =
-        data.token ||
-        data.session?.token ||
-        data.access_token;
-
-
-      if(!token){
-
-        throw new Error(
-          "Serveri nuk ktheu token-in e login-it."
-        );
-
-      }
-
-
-      localStorage.setItem(
-        "sabiAuthToken",
-        token
+      data = await api(
+        "/products/search?q=" +
+        encodeURIComponent(currentSearch.trim())
       );
 
+    } else {
 
-      /*
-        Për versionet e reja
-      */
-
-      localStorage.setItem(
-        "shitblej_token",
-        token
-      );
-
-
-      /* ==========================
-         USER
-      ========================== */
-
-      const user =
-        data.user ||
-        data.account ||
-        {};
-
-
-      const userId =
-        user.id ??
-        data.user_id ??
-        "";
-
-
-      const userName =
-        user.name ||
-        user.username ||
-        identifier;
-
-
-      const userRole =
-        user.role ||
-        role;
-
-
-      const userContact =
-        user.email ||
-        user.identifier ||
-        identifier;
-
-
-      localStorage.setItem(
-        "sabiUserId",
-        String(userId)
-      );
-
-
-      localStorage.setItem(
-        "sabiUserName",
-        userName
-      );
-
-
-      localStorage.setItem(
-        "sabiUserRole",
-        userRole
-      );
-
-
-      localStorage.setItem(
-        "sabiUserContact",
-        userContact
-      );
-
-
-      /* ==========================
-         SUCCESS
-      ========================== */
-
-      showSuccess();
-
-
-      loginBtn.textContent =
-        "✓ U HYRE";
-
-
-      /* ==========================
-         ADMIN
-      ========================== */
-
-      if(userRole === "admin"){
-
-        startCountdown(
-          "admin.html"
-        );
-
-        return;
-      }
-
-
-      /* ==========================
-         USER / SELLER
-      ========================== */
-
-      startCountdown(
-        "index.html"
-      );
-
-
-    }catch(error){
-
-      console.error(
-        "LOGIN ERROR:",
-        error
-      );
-
-
-      showError(
-        error.message ||
-        "Nuk mund të bëhet login."
-      );
-
-
-      loginBtn.disabled =
-        false;
-
-      loginBtn.textContent =
-        "HYR";
+      data = await api("/products");
 
     }
+
+    let products = normalizeProducts(data);
+
+    if (currentCategory) {
+
+      products = products.filter(product => {
+
+        const category =
+          product.category ||
+          product.category_name ||
+          "";
+
+        return category.toLowerCase() ===
+          currentCategory.toLowerCase();
+
+      });
+
+    }
+
+    renderProducts(products);
+
+  } catch (error) {
+
+    console.error(error);
+
+    container.innerHTML = `
+      <div class="error">
+        <h3>Nuk u ngarkuan produktet</h3>
+        <br>
+        <p>${escapeHtml(error.message)}</p>
+        <br>
+        <button onclick="loadProducts()">
+          Provo përsëri
+        </button>
+      </div>
+    `;
 
   }
-);
+
+}
+
+
+/* =========================
+   RENDER
+========================= */
+
+function renderProducts(products) {
+
+  const container =
+    document.getElementById("products");
+
+  if (!products.length) {
+
+    container.innerHTML = `
+      <div class="empty">
+        <h3>Nuk u gjetën produkte</h3>
+        <br>
+        <p>Provo një kërkim tjetër.</p>
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML =
+    products.map(product => {
+
+      const id = product.id;
+
+      const title =
+        product.title ||
+        product.name ||
+        "Produkt";
+
+      const price =
+        product.price || 0;
+
+      const image =
+        product.image_url ||
+        product.image ||
+        "";
+
+      const city =
+        product.city ||
+        product.location ||
+        "Shqipëri";
+
+      const category =
+        product.category ||
+        "";
+
+      const promoted =
+        product.promoted ||
+        product.is_promoted ||
+        product.promotion_active ||
+        false;
+
+      return `
+
+        <article
+          class="card"
+          onclick="openProduct(${Number(id)})"
+        >
+
+          <div class="image-box">
+
+            ${
+              image
+              ?
+              `<img
+                src="${escapeHtml(image)}"
+                alt="${escapeHtml(title)}"
+                loading="lazy"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+              >`
+              :
+              ""
+            }
+
+            <div
+              class="no-image"
+              style="${image ? "display:none" : ""}"
+            >
+              Pa foto
+            </div>
+
+            ${
+              promoted
+              ?
+              `<div class="badge">⭐ PROMOTED</div>`
+              :
+              ""
+            }
+
+          </div>
+
+          <div class="card-body">
+
+            <div class="card-title">
+              ${escapeHtml(title)}
+            </div>
+
+            <div class="price">
+              ${formatPrice(price)}
+            </div>
+
+            <div class="meta">
+
+              <span>
+                📍 ${escapeHtml(city)}
+              </span>
+
+              <span>
+                ${escapeHtml(category)}
+              </span>
+
+            </div>
+
+          </div>
+
+        </article>
+
+      `;
+
+    }).join("");
+
+}
+
+
+/* =========================
+   SEARCH
+========================= */
+
+function searchProducts() {
+
+  const top =
+    document.getElementById("topSearch").value.trim();
+
+  const hero =
+    document.getElementById("heroSearch").value.trim();
+
+  currentSearch = top || hero;
+
+  loadProducts();
+
+  window.scrollTo({
+    top: document.querySelector("main").offsetTop - 20,
+    behavior: "smooth"
+  });
+
+}
+
+
+/* =========================
+   CATEGORY
+========================= */
+
+function filterCategory(category) {
+
+  currentCategory = category;
+
+  document
+    .querySelectorAll(".category")
+    .forEach(button => {
+
+      button.classList.remove("active");
+
+      if (
+        category === "" &&
+        button.textContent.trim() === "Të gjitha"
+      ) {
+        button.classList.add("active");
+      }
+
+      if (
+        category &&
+        button.textContent.trim() === category
+      ) {
+        button.classList.add("active");
+      }
+
+    });
+
+  loadProducts();
+
+}
+
+
+/* =========================
+   PRODUCT PAGE
+========================= */
+
+function openProduct(id) {
+
+  if (!id) return;
+
+  window.location.href =
+    "/products.html?id=" +
+    encodeURIComponent(id);
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+loadProducts();
 
 </script>
 
