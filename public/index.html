@@ -1,864 +1,306 @@
+
 <!DOCTYPE html>
 <html lang="sq">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1877f2">
+<title>SHIT.BLEJ | Marketplace</title>
+<meta name="description" content="Blej, shit dhe gjej produkte në Shqipëri.">
 
-  <title>SHIT.BLEJ PRO</title>
-  <meta name="description" content="SHIT.BLEJ PRO - Blej, shit dhe gjej gjithçka në Shqipëri.">
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f5f6f7;
-      color: #111;
-    }
-
-    header {
-      background: #111;
-      color: white;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .nav {
-      max-width: 1200px;
-      margin: auto;
-      min-height: 68px;
-      padding: 0 18px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .logo {
-      font-size: 24px;
-      font-weight: 900;
-      color: #00e676;
-      text-decoration: none;
-      white-space: nowrap;
-    }
-
-    .search {
-      flex: 1;
-      display: flex;
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
-      max-width: 650px;
-    }
-
-    .search input {
-      flex: 1;
-      border: 0;
-      outline: 0;
-      padding: 14px;
-      font-size: 15px;
-    }
-
-    .search button {
-      border: 0;
-      background: #00e676;
-      padding: 0 20px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .nav-btn {
-      border: 1px solid #444;
-      background: transparent;
-      color: white;
-      padding: 10px 13px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .sell-btn {
-      background: #00e676;
-      color: #111;
-      border: 0;
-    }
-
-    .hero {
-      background: #111;
-      color: white;
-      padding: 55px 18px 70px;
-    }
-
-    .hero-inner {
-      max-width: 1200px;
-      margin: auto;
-    }
-
-    .hero h1 {
-      font-size: clamp(36px, 7vw, 70px);
-      line-height: 1;
-      margin-bottom: 18px;
-    }
-
-    .hero h1 span {
-      color: #00e676;
-    }
-
-    .hero p {
-      color: #bbb;
-      font-size: 18px;
-      margin-bottom: 28px;
-    }
-
-    .hero-search {
-      max-width: 850px;
-      display: flex;
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .hero-search input {
-      flex: 1;
-      border: 0;
-      outline: 0;
-      padding: 17px;
-      font-size: 16px;
-    }
-
-    .hero-search button {
-      border: 0;
-      background: #00e676;
-      padding: 0 25px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    main {
-      max-width: 1200px;
-      margin: auto;
-      padding: 35px 18px 80px;
-    }
-
-    .section-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 18px;
-    }
-
-    .section-title h2 {
-      font-size: 25px;
-    }
-
-    .categories {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 8px;
-      margin-bottom: 35px;
-    }
-
-    .category {
-      background: white;
-      border: 1px solid #ddd;
-      padding: 12px 16px;
-      border-radius: 30px;
-      white-space: nowrap;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .category:hover,
-    .category.active {
-      background: #00e676;
-      border-color: #00e676;
-    }
-
-    .products {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid #e2e2e2;
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(0,0,0,.08);
-    }
-
-    .image-box {
-      position: relative;
-      height: 210px;
-      background: #eee;
-    }
-
-    .image-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .no-image {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #888;
-      font-weight: 700;
-    }
-
-    .badge {
-      position: absolute;
-      left: 10px;
-      top: 10px;
-      background: #00e676;
-      color: #111;
-      padding: 6px 9px;
-      border-radius: 7px;
-      font-size: 12px;
-      font-weight: 900;
-    }
-
-    .card-body {
-      padding: 14px;
-    }
-
-    .card-title {
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 8px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .price {
-      font-size: 20px;
-      font-weight: 900;
-      margin-bottom: 8px;
-    }
-
-    .meta {
-      color: #777;
-      font-size: 13px;
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .loading,
-    .empty,
-    .error {
-      background: white;
-      padding: 35px;
-      border-radius: 14px;
-      text-align: center;
-      grid-column: 1 / -1;
-    }
-
-    footer {
-      background: #111;
-      color: #aaa;
-      padding: 35px 18px;
-      text-align: center;
-    }
-
-    footer strong {
-      color: #00e676;
-    }
-
-    @media (max-width: 900px) {
-      .products {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      .nav {
-        flex-wrap: wrap;
-        padding-top: 10px;
-        padding-bottom: 10px;
-      }
-
-      .search {
-        order: 3;
-        width: 100%;
-        max-width: none;
-      }
-    }
-
-    @media (max-width: 650px) {
-      .products {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-      }
-
-      .image-box {
-        height: 170px;
-      }
-
-      .hero {
-        padding: 40px 15px 50px;
-      }
-
-      .hero p {
-        font-size: 15px;
-      }
-
-      .nav-actions .nav-btn:first-child {
-        display: none;
-      }
-
-      .logo {
-        font-size: 20px;
-      }
-    }
-
-    @media (max-width: 380px) {
-      .products {
-        grid-template-columns: 1fr;
-      }
-
-      .image-box {
-        height: 220px;
-      }
-    }
-  </style>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#1877f2;--bg:#f0f2f5;--text:#1c1e21;--muted:#65676b}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+button,input{font:inherit}
+button{cursor:pointer}
+header{background:#fff;position:sticky;top:0;z-index:20;box-shadow:0 1px 3px #0001}
+.top{max-width:1200px;margin:auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.logo{font-size:23px;font-weight:900;color:var(--blue);text-decoration:none;white-space:nowrap}
+.search{display:flex;align-items:center;gap:8px;background:var(--bg);border-radius:25px;padding:0 14px;flex:1;max-width:650px}
+.search input{width:100%;min-width:0;border:0;outline:0;background:transparent;padding:12px 0}
+.search button{border:0;background:transparent;font-size:18px}
+.actions{margin-left:auto;display:flex;gap:8px}
+.btn{border:0;border-radius:9px;padding:11px 15px;font-weight:700}
+.login{background:var(--bg);color:var(--text)}
+.sell{background:var(--blue);color:#fff}
+main{max-width:1200px;margin:auto;padding:18px 16px 90px}
+.intro{background:#fff;padding:20px;border-radius:14px;margin-bottom:18px}
+.intro h1{font-size:25px;margin-bottom:7px}
+.intro p{color:var(--muted);font-size:14px;line-height:1.5}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin:20px 0 12px}
+.section-head h2{font-size:20px}
+.categories{display:flex;gap:9px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.categories::-webkit-scrollbar{display:none}
+.category{white-space:nowrap;border:0;border-radius:22px;padding:10px 15px;background:#fff;color:var(--text);font-weight:700}
+.category.active{background:var(--blue);color:#fff}
+.products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.card{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e4e6eb;cursor:pointer;min-width:0;transition:box-shadow .15s}
+.card:hover{box-shadow:0 3px 12px #0002}
+.image-box{height:210px;background:#e4e6eb;position:relative}
+.image-box img{width:100%;height:100%;object-fit:cover;display:block}
+.no-image{height:100%;display:flex;align-items:center;justify-content:center;color:#65676b;font-size:14px}
+.badge{position:absolute;top:9px;left:9px;background:#ffdf6e;padding:5px 8px;border-radius:6px;font-size:11px;font-weight:800}
+.card-body{padding:12px}
+.card-title{font-size:15px;font-weight:700;line-height:1.35;margin-bottom:7px;overflow-wrap:anywhere}
+.price{font-size:18px;font-weight:800;margin-bottom:8px}
+.meta{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:5px}
+.loading,.empty,.error{grid-column:1/-1;background:#fff;text-align:center;padding:35px 18px;border-radius:12px;line-height:1.6}
+.retry{background:var(--blue);color:#fff;border:0;padding:10px 16px;border-radius:8px;margin-top:12px}
+footer{text-align:center;background:#fff;padding:22px 12px;color:var(--muted);font-size:13px}
+footer strong{color:var(--blue)}
+.bottom{display:none}
+@media(max-width:900px){.products{grid-template-columns:repeat(3,minmax(0,1fr))}.image-box{height:190px}}
+@media(max-width:600px){
+ .top{padding:10px 12px;gap:8px;flex-wrap:wrap}
+ .logo{font-size:20px}
+ .search{order:3;flex-basis:100%;max-width:none}
+ .actions{gap:6px}
+ .btn{padding:10px 11px;font-size:13px}
+ main{padding:12px 10px 90px}
+ .intro{padding:16px;margin-bottom:12px}
+ .intro h1{font-size:22px}
+ .section-head{margin:16px 0 10px}
+ .section-head h2{font-size:18px}
+ .products{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .image-box{height:auto;aspect-ratio:1/1}
+ .card-body{padding:10px}
+ .card-title{font-size:14px}
+ .price{font-size:16px}
+ .meta{font-size:11px}
+ .bottom{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;justify-content:space-around;padding:9px 4px calc(9px + env(safe-area-inset-bottom));z-index:30}
+ .bottom button{border:0;background:none;color:var(--muted);font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px}
+ .bottom .symbol{font-size:20px}
+ .bottom .active{color:var(--blue)}
+}
+@media(max-width:350px){.logo{font-size:18px}.btn{padding:9px 8px}.products{gap:7px}}
+</style>
 </head>
-
 <body>
 
 <header>
-  <div class="nav">
-
+  <div class="top">
     <a class="logo" href="/">SHIT.BLEJ</a>
 
     <div class="search">
-      <input
-        id="topSearch"
-        type="text"
-        placeholder="Kërko produkte..."
-        autocomplete="off"
-      >
-      <button onclick="searchProducts()">Kërko</button>
+      <input id="topSearch" type="search" placeholder="Kërko produkte..." autocomplete="off">
+      <button onclick="searchProducts()" aria-label="Kërko">🔎</button>
     </div>
 
-    <div class="nav-actions">
-      <button class="nav-btn" onclick="login()">Hyr</button>
-      <button class="nav-btn sell-btn" onclick="sell()">+ Shit</button>
+    <div class="actions">
+      <button class="btn login" onclick="login()">Hyr</button>
+      <button class="btn sell" onclick="sell()">＋ Shit</button>
     </div>
-
   </div>
 </header>
 
-<section class="hero">
-
-  <div class="hero-inner">
-
-    <h1>Blej. <span>Shit.</span> Gjej.</h1>
-
-    <p>
-      Marketplace-i yt për produkte të reja dhe të përdorura në Shqipëri.
-    </p>
-
-    <div class="hero-search">
-      <input
-        id="heroSearch"
-        type="text"
-        placeholder="Çfarë po kërkon?"
-        autocomplete="off"
-        onkeydown="if(event.key==='Enter') searchProducts()"
-      >
-
-      <button onclick="searchProducts()">
-        Kërko
-      </button>
-    </div>
-
-  </div>
-
-</section>
-
 <main>
+  <section class="intro">
+    <h1>Gjej çfarë të duhet.</h1>
+    <p>Bli, shit dhe kontakto shitësit lehtësisht në Shqipëri.</p>
+  </section>
 
-  <div class="section-title">
+  <div class="section-head">
     <h2>Kategoritë</h2>
   </div>
 
   <div class="categories" id="categories">
-
-    <button class="category active" onclick="filterCategory('')">
-      Të gjitha
-    </button>
-
-    <button class="category" onclick="filterCategory('Elektronikë')">
-      Elektronikë
-    </button>
-
-    <button class="category" onclick="filterCategory('Telefona')">
-      Telefona
-    </button>
-
-    <button class="category" onclick="filterCategory('Makina')">
-      Makina
-    </button>
-
-    <button class="category" onclick="filterCategory('Moda')">
-      Moda
-    </button>
-
-    <button class="category" onclick="filterCategory('Shtëpi')">
-      Shtëpi
-    </button>
-
-    <button class="category" onclick="filterCategory('Punë')">
-      Punë
-    </button>
-
-    <button class="category" onclick="filterCategory('Shërbime')">
-      Shërbime
-    </button>
-
-    <button class="category" onclick="filterCategory('Aksesorë')">
-      Aksesorë
-    </button>
-
+    <button class="category active" onclick="filterCategory('')">Të gjitha</button>
+    <button class="category" onclick="filterCategory('Elektronikë')">📱 Elektronikë</button>
+    <button class="category" onclick="filterCategory('Telefona')">📲 Telefona</button>
+    <button class="category" onclick="filterCategory('Makina')">🚗 Makina</button>
+    <button class="category" onclick="filterCategory('Moda')">👕 Moda</button>
+    <button class="category" onclick="filterCategory('Shtëpi')">🏠 Shtëpi</button>
+    <button class="category" onclick="filterCategory('Punë')">💼 Punë</button>
+    <button class="category" onclick="filterCategory('Shërbime')">🛠️ Shërbime</button>
+    <button class="category" onclick="filterCategory('Aksesorë')">🎧 Aksesorë</button>
   </div>
 
-  <div class="section-title">
-    <h2>Produktet</h2>
+  <div class="section-head">
+    <h2 id="productHeading">Produktet e fundit</h2>
   </div>
 
   <div id="products" class="products">
-
-    <div class="loading">
-      Duke ngarkuar produktet...
-    </div>
-
+    <div class="loading">Duke ngarkuar produktet...</div>
   </div>
-
 </main>
 
 <footer>
-  <strong>SHIT.BLEJ PRO</strong>
-  <br><br>
-  Blej. Shit. Gjej.
+  <strong>SHIT.BLEJ</strong>
+  <p style="margin-top:6px">Blej. Shit. Gjej.</p>
 </footer>
 
+<nav class="bottom">
+  <button class="active" onclick="goHome()"><span class="symbol">⌂</span>Kryefaqja</button>
+  <button onclick="focusSearch()"><span class="symbol">⌕</span>Kërko</button>
+  <button onclick="sell()"><span class="symbol">＋</span>Shit</button>
+  <button onclick="login()"><span class="symbol">♙</span>Llogaria</button>
+</nav>
+
 <script>
+const API="/api";
+let currentCategory="";
+let currentSearch="";
+let requestNumber=0;
 
-const API = "/api";
+function login(){window.location.href="/login.html"}
+function sell(){window.location.href="/login.html?next=%2Fseller.html"}
+function goHome(){window.location.href="/"}
 
-let currentCategory = "";
-let currentSearch = "";
-
-
-/* =========================
-   HELPERS
-========================= */
-
-function login() {
-  window.location.href = "/login.html";
+function focusSearch(){
+  document.getElementById("topSearch").focus();
+  window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function sell() {
-  window.location.href = "/login.html?next=%2Fseller.html";
+function escapeHtml(value){
+  return String(value??"")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+function formatPrice(value){
+  const number=Number(value||0);
+  return new Intl.NumberFormat("sq-AL",{maximumFractionDigits:0}).format(number)+" ALL";
 }
 
-function formatPrice(value) {
+async function api(path,options={}){
+  const token=localStorage.getItem("shitblej_token")||localStorage.getItem("sabiAuthToken");
+  const headers={"Content-Type":"application/json",...(options.headers||{})};
+  if(token) headers.Authorization="Bearer "+token;
 
-  const number = Number(value || 0);
-
-  return new Intl.NumberFormat("sq-AL", {
-    maximumFractionDigits: 0
-  }).format(number) + " ALL";
-}
-
-
-/* =========================
-   API
-========================= */
-
-async function api(path, options = {}) {
-
-  const token =
-    localStorage.getItem("shitblej_token") ||
-    localStorage.getItem("sabiAuthToken");
-
-  const headers = {
-    "Content-Type": "application/json",
-    ...(options.headers || {})
-  };
-
-  if (token) {
-    headers.Authorization = "Bearer " + token;
-  }
-
-  const response = await fetch(API + path, {
-    ...options,
-    headers
-  });
-
-  const text = await response.text();
-
+  const response=await fetch(API+path,{...options,headers});
+  const text=await response.text();
   let data;
 
-  try {
-    data = text ? JSON.parse(text) : {};
-  } catch {
-    data = {
-      success: false,
-      message: text
-    };
-  }
+  try{data=text?JSON.parse(text):{}}
+  catch{data={success:false,message:text}}
 
-  if (!response.ok) {
-    throw new Error(
-      data.message ||
-      data.error ||
-      "Gabim nga serveri"
-    );
-  }
-
+  if(!response.ok) throw new Error(data.message||data.error||"Gabim nga serveri");
   return data;
 }
 
-
-/* =========================
-   PRODUCT NORMALIZER
-========================= */
-
-function normalizeProducts(data) {
-
-  if (Array.isArray(data)) {
-    return data;
-  }
-
-  if (Array.isArray(data.products)) {
-    return data.products;
-  }
-
-  if (Array.isArray(data.results)) {
-    return data.results;
-  }
-
-  if (Array.isArray(data.data)) {
-    return data.data;
-  }
-
+function normalizeProducts(data){
+  if(Array.isArray(data))return data;
+  if(Array.isArray(data.products))return data.products;
+  if(Array.isArray(data.results))return data.results;
+  if(Array.isArray(data.data))return data.data;
   return [];
 }
 
+async function loadProducts(){
+  const container=document.getElementById("products");
+  const thisRequest=++requestNumber;
+  container.innerHTML='<div class="loading">Duke ngarkuar produktet...</div>';
 
-/* =========================
-   LOAD PRODUCTS
-========================= */
-
-async function loadProducts() {
-
-  const container =
-    document.getElementById("products");
-
-  container.innerHTML = `
-    <div class="loading">
-      Duke ngarkuar produktet...
-    </div>
-  `;
-
-  try {
-
+  try{
     let data;
-
-    if (currentSearch.trim()) {
-
-      data = await api(
-        "/products/search?q=" +
-        encodeURIComponent(currentSearch.trim())
-      );
-
-    } else {
-
-      data = await api("/products");
-
+    if(currentSearch.trim()){
+      data=await api("/products/search?q="+encodeURIComponent(currentSearch.trim()));
+    }else{
+      data=await api("/products");
     }
 
-    let products = normalizeProducts(data);
+    if(thisRequest!==requestNumber)return;
 
-    if (currentCategory) {
+    let products=normalizeProducts(data);
 
-      products = products.filter(product => {
-
-        const category =
-          product.category ||
-          product.category_name ||
-          "";
-
-        return category.toLowerCase() ===
-          currentCategory.toLowerCase();
-
+    if(currentCategory){
+      products=products.filter(product=>{
+        const category=String(product.category||product.category_name||"").trim().toLowerCase();
+        return category===currentCategory.toLowerCase();
       });
-
     }
 
     renderProducts(products);
-
-  } catch (error) {
-
+  }catch(error){
+    if(thisRequest!==requestNumber)return;
     console.error(error);
-
-    container.innerHTML = `
+    container.innerHTML=`
       <div class="error">
         <h3>Nuk u ngarkuan produktet</h3>
-        <br>
         <p>${escapeHtml(error.message)}</p>
-        <br>
-        <button onclick="loadProducts()">
-          Provo përsëri
-        </button>
-      </div>
-    `;
-
+        <button class="retry" onclick="loadProducts()">Provo përsëri</button>
+      </div>`;
   }
-
 }
 
+function renderProducts(products){
+  const container=document.getElementById("products");
 
-/* =========================
-   RENDER
-========================= */
-
-function renderProducts(products) {
-
-  const container =
-    document.getElementById("products");
-
-  if (!products.length) {
-
-    container.innerHTML = `
+  if(!products.length){
+    container.innerHTML=`
       <div class="empty">
         <h3>Nuk u gjetën produkte</h3>
-        <br>
-        <p>Provo një kërkim tjetër.</p>
-      </div>
-    `;
-
+        <p>Provo një kërkim tjetër ose zgjidh një kategori tjetër.</p>
+      </div>`;
     return;
   }
 
-  container.innerHTML =
-    products.map(product => {
+  container.innerHTML=products.map(product=>{
+    const id=Number(product.id);
+    const title=product.title||product.name||"Produkt";
+    const price=product.price||0;
+    const image=product.image_url||product.image||"";
+    const city=product.city||product.location||"Shqipëri";
+    const category=product.category||"";
+    const promoted=!!(product.promoted||product.is_promoted||product.promotion_active);
 
-      const id = product.id;
-
-      const title =
-        product.title ||
-        product.name ||
-        "Produkt";
-
-      const price =
-        product.price || 0;
-
-      const image =
-        product.image_url ||
-        product.image ||
-        "";
-
-      const city =
-        product.city ||
-        product.location ||
-        "Shqipëri";
-
-      const category =
-        product.category ||
-        "";
-
-      const promoted =
-        product.promoted ||
-        product.is_promoted ||
-        product.promotion_active ||
-        false;
-
-      return `
-
-        <article
-          class="card"
-          onclick="openProduct(${Number(id)})"
-        >
-
-          <div class="image-box">
-
-            ${
-              image
-              ?
-              `<img
-                src="${escapeHtml(image)}"
-                alt="${escapeHtml(title)}"
-                loading="lazy"
-                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
-              >`
-              :
-              ""
-            }
-
-            <div
-              class="no-image"
-              style="${image ? "display:none" : ""}"
-            >
-              Pa foto
-            </div>
-
-            ${
-              promoted
-              ?
-              `<div class="badge">⭐ PROMOTED</div>`
-              :
-              ""
-            }
-
+    return `
+      <article class="card" role="link" tabindex="0"
+        onclick="openProduct(${Number.isFinite(id)?id:0})"
+        onkeydown="if(event.key==='Enter')openProduct(${Number.isFinite(id)?id:0})">
+        <div class="image-box">
+          ${image
+            ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy"
+                onerror="this.remove();this.nextElementSibling.style.display='flex'">`
+            : ""}
+          <div class="no-image" style="${image?"display:none":""}">📷 Pa foto</div>
+          ${promoted?'<span class="badge">⭐ I promovuar</span>':""}
+        </div>
+        <div class="card-body">
+          <div class="card-title">${escapeHtml(title)}</div>
+          <div class="price">${formatPrice(price)}</div>
+          <div class="meta">
+            <span>📍 ${escapeHtml(city)}</span>
+            ${category?`<span>${escapeHtml(category)}</span>`:""}
           </div>
-
-          <div class="card-body">
-
-            <div class="card-title">
-              ${escapeHtml(title)}
-            </div>
-
-            <div class="price">
-              ${formatPrice(price)}
-            </div>
-
-            <div class="meta">
-
-              <span>
-                📍 ${escapeHtml(city)}
-              </span>
-
-              <span>
-                ${escapeHtml(category)}
-              </span>
-
-            </div>
-
-          </div>
-
-        </article>
-
-      `;
-
-    }).join("");
-
+        </div>
+      </article>`;
+  }).join("");
 }
 
-
-/* =========================
-   SEARCH
-========================= */
-
-function searchProducts() {
-
-  const top =
-    document.getElementById("topSearch").value.trim();
-
-  const hero =
-    document.getElementById("heroSearch").value.trim();
-
-  currentSearch = top || hero;
-
+function searchProducts(){
+  const value=document.getElementById("topSearch").value.trim();
+  currentSearch=value;
+  document.getElementById("productHeading").textContent=value
+    ?"Rezultatet e kërkimit"
+    :"Produktet e fundit";
   loadProducts();
+  document.querySelector("main").scrollIntoView({behavior:"smooth",block:"start"});
+}
 
-  window.scrollTo({
-    top: document.querySelector("main").offsetTop - 20,
-    behavior: "smooth"
+document.getElementById("topSearch").addEventListener("keydown",event=>{
+  if(event.key==="Enter")searchProducts();
+});
+
+function filterCategory(category){
+  currentCategory=category;
+  document.querySelectorAll(".category").forEach(button=>{
+    button.classList.toggle("active",button.textContent.trim().replace(/^[^\p{L}\p{N}]+\s*/u,"")===
+      (category||"Të gjitha"));
   });
-
-}
-
-
-/* =========================
-   CATEGORY
-========================= */
-
-function filterCategory(category) {
-
-  currentCategory = category;
-
-  document
-    .querySelectorAll(".category")
-    .forEach(button => {
-
-      button.classList.remove("active");
-
-      if (
-        category === "" &&
-        button.textContent.trim() === "Të gjitha"
-      ) {
-        button.classList.add("active");
-      }
-
-      if (
-        category &&
-        button.textContent.trim() === category
-      ) {
-        button.classList.add("active");
-      }
-
-    });
-
   loadProducts();
-
 }
 
-
-/* =========================
-   PRODUCT PAGE
-========================= */
-
-function openProduct(id) {
-
-  if (!id) return;
-
-  window.location.href =
-    "/products.html?id=" +
-    encodeURIComponent(id);
-
+function openProduct(id){
+  if(!id)return;
+  window.location.href="/products.html?id="+encodeURIComponent(id);
 }
-
-
-/* =========================
-   START
-========================= */
 
 loadProducts();
-
 </script>
-
 </body>
 </html>
