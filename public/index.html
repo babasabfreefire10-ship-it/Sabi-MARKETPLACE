@@ -10,20 +10,28 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--blue:#1877f2;--bg:#f0f2f5;--text:#1c1e21;--muted:#65676b}
+:root{
+  --blue:#1877f2;
+  --bg:#f0f2f5;
+  --text:#1c1e21;
+  --muted:#65676b;
+  --white:#fff;
+}
 body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
 button,input{font:inherit}
 button{cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
 header{background:#fff;position:sticky;top:0;z-index:20;box-shadow:0 1px 3px #0001}
 .top{max-width:1200px;margin:auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
 .logo{font-size:23px;font-weight:900;color:var(--blue);text-decoration:none;white-space:nowrap}
 .search{display:flex;align-items:center;gap:8px;background:var(--bg);border-radius:25px;padding:0 14px;flex:1;max-width:650px}
 .search input{width:100%;min-width:0;border:0;outline:0;background:transparent;padding:12px 0}
 .search button{border:0;background:transparent;font-size:18px}
-.actions{margin-left:auto;display:flex;gap:8px}
+.actions{margin-left:auto;display:flex;align-items:center;gap:8px}
 .btn{border:0;border-radius:9px;padding:11px 15px;font-weight:700}
 .login{background:var(--bg);color:var(--text)}
 .sell{background:var(--blue);color:#fff}
+.profile{display:none;background:#e7f0ff;color:var(--blue);border:0;border-radius:50%;width:43px;height:43px;align-items:center;justify-content:center;font-size:23px}
 main{max-width:1200px;margin:auto;padding:18px 16px 90px}
 .intro{background:#fff;padding:20px;border-radius:14px;margin-bottom:18px}
 .intro h1{font-size:25px;margin-bottom:7px}
@@ -50,50 +58,55 @@ main{max-width:1200px;margin:auto;padding:18px 16px 90px}
 footer{text-align:center;background:#fff;padding:22px 12px;color:var(--muted);font-size:13px}
 footer strong{color:var(--blue)}
 .bottom{display:none}
-@media(max-width:900px){.products{grid-template-columns:repeat(3,minmax(0,1fr))}.image-box{height:190px}}
-@media(max-width:600px){
- .top{padding:10px 12px;gap:8px;flex-wrap:wrap}
- .logo{font-size:20px}
- .search{order:3;flex-basis:100%;max-width:none}
- .actions{gap:6px}
- .btn{padding:10px 11px;font-size:13px}
- main{padding:12px 10px 90px}
- .intro{padding:16px;margin-bottom:12px}
- .intro h1{font-size:22px}
- .section-head{margin:16px 0 10px}
- .section-head h2{font-size:18px}
- .products{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
- .image-box{height:auto;aspect-ratio:1/1}
- .card-body{padding:10px}
- .card-title{font-size:14px}
- .price{font-size:16px}
- .meta{font-size:11px}
- .bottom{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;justify-content:space-around;padding:9px 4px calc(9px + env(safe-area-inset-bottom));z-index:30}
- .bottom button{border:0;background:none;color:var(--muted);font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px}
- .bottom .symbol{font-size:20px}
- .bottom .active{color:var(--blue)}
+@media(max-width:900px){
+  .products{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .image-box{height:190px}
 }
-@media(max-width:350px){.logo{font-size:18px}.btn{padding:9px 8px}.products{gap:7px}}
+@media(max-width:600px){
+  .top{padding:10px 12px;gap:8px;flex-wrap:wrap}
+  .logo{font-size:20px}
+  .search{order:3;flex-basis:100%;max-width:none}
+  .actions{gap:6px}
+  .btn{padding:10px 11px;font-size:13px}
+  main{padding:12px 10px 90px}
+  .intro{padding:16px;margin-bottom:12px}
+  .intro h1{font-size:22px}
+  .section-head{margin:16px 0 10px}
+  .section-head h2{font-size:18px}
+  .products{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .image-box{height:auto;aspect-ratio:1/1}
+  .card-body{padding:10px}
+  .card-title{font-size:14px}
+  .price{font-size:16px}
+  .meta{font-size:11px}
+  .bottom{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;justify-content:space-around;padding:9px 4px calc(9px + env(safe-area-inset-bottom));z-index:30}
+  .bottom button{border:0;background:none;color:var(--muted);font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .bottom .symbol{font-size:20px}
+  .bottom .active{color:var(--blue)}
+}
+@media(max-width:350px){
+  .logo{font-size:18px}
+  .btn{padding:9px 8px}
+  .products{gap:7px}
+}
 </style>
 </head>
-<body>
 
+<body>
 <header>
   <div class="top">
     <a class="logo" href="/">SHIT.BLEJ</a>
 
     <div class="search">
       <input id="topSearch" type="search" placeholder="Kërko produkte..." autocomplete="off">
-      <button onclick="searchProducts()" aria-label="Kërko">🔎</button>
+      <button id="searchBtn" aria-label="Kërko">🔎</button>
     </div>
 
     <div class="actions">
-  <button id="loginBtn" class="btn login" onclick="login()">Hyr</button>
-  <button class="btn sell" onclick="sell()">＋ Shit</button>
-  <button id="profileBtn" class="btn login" onclick="openAccount()"
-    aria-label="Llogaria ime" title="Llogaria ime"
-    style="display:none;font-size:20px;padding:8px 12px">👤</button>
-</div>
+      <button id="loginBtn" class="btn login">Hyr</button>
+      <button id="sellBtn" class="btn sell">＋ Shit</button>
+      <button id="profileBtn" class="profile" aria-label="Llogaria ime" title="Llogaria ime">👤</button>
+    </div>
   </div>
 </header>
 
@@ -108,15 +121,15 @@ footer strong{color:var(--blue)}
   </div>
 
   <div class="categories" id="categories">
-    <button class="category active" onclick="filterCategory('')">Të gjitha</button>
-    <button class="category" onclick="filterCategory('Elektronikë')">📱 Elektronikë</button>
-    <button class="category" onclick="filterCategory('Telefona')">📲 Telefona</button>
-    <button class="category" onclick="filterCategory('Makina')">🚗 Makina</button>
-    <button class="category" onclick="filterCategory('Moda')">👕 Moda</button>
-    <button class="category" onclick="filterCategory('Shtëpi')">🏠 Shtëpi</button>
-    <button class="category" onclick="filterCategory('Punë')">💼 Punë</button>
-    <button class="category" onclick="filterCategory('Shërbime')">🛠️ Shërbime</button>
-    <button class="category" onclick="filterCategory('Aksesorë')">🎧 Aksesorë</button>
+    <button class="category active" data-category="">Të gjitha</button>
+    <button class="category" data-category="Elektronikë">📱 Elektronikë</button>
+    <button class="category" data-category="Telefona">📲 Telefona</button>
+    <button class="category" data-category="Makina">🚗 Makina</button>
+    <button class="category" data-category="Moda">👕 Moda</button>
+    <button class="category" data-category="Shtëpi">🏠 Shtëpi</button>
+    <button class="category" data-category="Punë">💼 Punë</button>
+    <button class="category" data-category="Shërbime">🛠️ Shërbime</button>
+    <button class="category" data-category="Aksesorë">🎧 Aksesorë</button>
   </div>
 
   <div class="section-head">
@@ -134,25 +147,155 @@ footer strong{color:var(--blue)}
 </footer>
 
 <nav class="bottom">
-  <button class="active" onclick="goHome()"><span class="symbol">⌂</span>Kryefaqja</button>
-  <button onclick="focusSearch()"><span class="symbol">⌕</span>Kërko</button>
-  <button onclick="sell()"><span class="symbol">＋</span>Shit</button>
-  <button onclick="login()"><span class="symbol">♙</span>Llogaria</button>
+  <button class="active" id="homeBtn">
+    <span class="symbol">⌂</span>Kryefaqja
+  </button>
+  <button id="bottomSearchBtn">
+    <span class="symbol">⌕</span>Kërko
+  </button>
+  <button id="bottomSellBtn">
+    <span class="symbol">＋</span>Shit
+  </button>
+  <button id="bottomAccountBtn" style="display:none">
+    <span class="symbol">👤</span>Llogaria
+  </button>
+  <button id="bottomLoginBtn">
+    <span class="symbol">♙</span>Hyr
+  </button>
 </nav>
 
 <script>
 const API="/api";
+
 let currentCategory="";
 let currentSearch="";
 let requestNumber=0;
+let isLoggedIn=false;
+let currentUser=null;
 
-function login(){window.location.href="/login.html"}
-function sell(){window.location.href="/login.html?next=%2Fseller.html"}
-function goHome(){window.location.href="/"}
+const $=id=>document.getElementById(id);
 
-function focusSearch(){
-  document.getElementById("topSearch").focus();
-  window.scrollTo({top:0,behavior:"smooth"});
+function getToken(){
+  return localStorage.getItem("shitblej_token")||
+         localStorage.getItem("sabiAuthToken");
+}
+
+function login(){
+  location.href="/login.html";
+}
+
+function openAccount(){
+  if(isLoggedIn){
+    location.href="/account.html";
+  }else{
+    login();
+  }
+}
+
+function sell(){
+  if(!isLoggedIn){
+    location.href="/login.html?next=%2Fseller.html";
+    return;
+  }
+
+  const role=String(currentUser?.role||"").toLowerCase();
+
+  if(["seller","admin","owner"].includes(role)){
+    location.href="/seller.html";
+  }else{
+    location.href="/account.html";
+  }
+}
+
+function showLoggedOut(){
+  isLoggedIn=false;
+  currentUser=null;
+
+  $("loginBtn").style.display="inline-block";
+  $("bottomLoginBtn").style.display="flex";
+  $("profileBtn").style.display="none";
+  $("bottomAccountBtn").style.display="none";
+}
+
+function showLoggedIn(user){
+  isLoggedIn=true;
+  currentUser=user;
+
+  $("loginBtn").style.display="none";
+  $("bottomLoginBtn").style.display="none";
+  $("profileBtn").style.display="inline-flex";
+  $("bottomAccountBtn").style.display="flex";
+}
+
+async function checkSession(){
+  if(!getToken()){
+    showLoggedOut();
+    return;
+  }
+
+  try{
+    const data=await api("/auth/me");
+    const user=data.user||data.account||data.data?.user;
+
+    if(!user||user.id==null){
+      throw new Error("Sesioni nuk është i vlefshëm");
+    }
+
+    showLoggedIn(user);
+  }catch(error){
+    showLoggedOut();
+
+    [
+      "shitblej_token",
+      "sabiAuthToken",
+      "shitblej_user",
+      "sabiUserId",
+      "sabiUserName",
+      "sabiUserRole",
+      "sabiUserEmail",
+      "sabiUserPhone"
+    ].forEach(key=>localStorage.removeItem(key));
+  }
+}
+
+async function api(path,options={}){
+  const token=getToken();
+  const headers={
+    ...(options.body?{"Content-Type":"application/json"}:{}),
+    ...(options.headers||{})
+  };
+
+  if(token){
+    headers.Authorization="Bearer "+token;
+  }
+
+  const response=await fetch(API+path,{
+    ...options,
+    headers
+  });
+
+  const text=await response.text();
+  let data={};
+
+  try{
+    data=text?JSON.parse(text):{};
+  }catch{
+    data={success:false,message:text};
+  }
+
+  if(!response.ok){
+    throw new Error(data.message||data.error||"Gabim nga serveri");
+  }
+
+  return data;
+}
+
+function normalizeProducts(data){
+  if(Array.isArray(data))return data;
+  if(Array.isArray(data.products))return data.products;
+  if(Array.isArray(data.results))return data.results;
+  if(Array.isArray(data.data))return data.data;
+  return [];
 }
 
 function escapeHtml(value){
@@ -166,40 +309,20 @@ function escapeHtml(value){
 
 function formatPrice(value){
   const number=Number(value||0);
-  return new Intl.NumberFormat("sq-AL",{maximumFractionDigits:0}).format(number)+" ALL";
-}
-
-async function api(path,options={}){
-  const token=localStorage.getItem("shitblej_token")||localStorage.getItem("sabiAuthToken");
-  const headers={"Content-Type":"application/json",...(options.headers||{})};
-  if(token) headers.Authorization="Bearer "+token;
-
-  const response=await fetch(API+path,{...options,headers});
-  const text=await response.text();
-  let data;
-
-  try{data=text?JSON.parse(text):{}}
-  catch{data={success:false,message:text}}
-
-  if(!response.ok) throw new Error(data.message||data.error||"Gabim nga serveri");
-  return data;
-}
-
-function normalizeProducts(data){
-  if(Array.isArray(data))return data;
-  if(Array.isArray(data.products))return data.products;
-  if(Array.isArray(data.results))return data.results;
-  if(Array.isArray(data.data))return data.data;
-  return [];
+  return new Intl.NumberFormat("sq-AL",{
+    maximumFractionDigits:0
+  }).format(number)+" ALL";
 }
 
 async function loadProducts(){
-  const container=document.getElementById("products");
+  const container=$("products");
   const thisRequest=++requestNumber;
+
   container.innerHTML='<div class="loading">Duke ngarkuar produktet...</div>';
 
   try{
     let data;
+
     if(currentSearch.trim()){
       data=await api("/products/search?q="+encodeURIComponent(currentSearch.trim()));
     }else{
@@ -212,26 +335,33 @@ async function loadProducts(){
 
     if(currentCategory){
       products=products.filter(product=>{
-        const category=String(product.category||product.category_name||"").trim().toLowerCase();
-        return category===currentCategory.toLowerCase();
+        const category=String(
+          product.category||product.category_name||""
+        ).trim().toLocaleLowerCase("sq");
+
+        return category===currentCategory.toLocaleLowerCase("sq");
       });
     }
 
     renderProducts(products);
   }catch(error){
     if(thisRequest!==requestNumber)return;
-    console.error(error);
+
+    console.error("Gabim në ngarkimin e produkteve:",error);
+
     container.innerHTML=`
       <div class="error">
         <h3>Nuk u ngarkuan produktet</h3>
         <p>${escapeHtml(error.message)}</p>
-        <button class="retry" onclick="loadProducts()">Provo përsëri</button>
+        <button class="retry" id="retryBtn">Provo përsëri</button>
       </div>`;
+
+    $("retryBtn").addEventListener("click",loadProducts);
   }
 }
 
 function renderProducts(products){
-  const container=document.getElementById("products");
+  const container=$("products");
 
   if(!products.length){
     container.innerHTML=`
@@ -249,18 +379,20 @@ function renderProducts(products){
     const image=product.image_url||product.image||"";
     const city=product.city||product.location||"Shqipëri";
     const category=product.category||"";
-    const promoted=!!(product.promoted||product.is_promoted||product.promotion_active);
+    const promoted=!!(
+      product.promoted||
+      product.is_promoted||
+      product.promotion_active
+    );
 
     return `
       <article class="card" role="link" tabindex="0"
-        onclick="openProduct(${Number.isFinite(id)?id:0})"
-        onkeydown="if(event.key==='Enter')openProduct(${Number.isFinite(id)?id:0})">
+        data-id="${Number.isFinite(id)?id:0}">
         <div class="image-box">
           ${image
-            ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy"
-                onerror="this.remove();this.nextElementSibling.style.display='flex'">`
-            : ""}
-          <div class="no-image" style="${image?"display:none":""}">📷 Pa foto</div>
+            ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy">
+               <div class="no-image" style="display:none">📷 Pa foto</div>`
+            : '<div class="no-image">📷 Pa foto</div>'}
           ${promoted?'<span class="badge">⭐ I promovuar</span>':""}
         </div>
         <div class="card-body">
@@ -273,37 +405,88 @@ function renderProducts(products){
         </div>
       </article>`;
   }).join("");
+
+  container.querySelectorAll(".card").forEach(card=>{
+    const open=()=>openProduct(Number(card.dataset.id));
+
+    card.addEventListener("click",open);
+    card.addEventListener("keydown",event=>{
+      if(event.key==="Enter"||event.key===" "){
+        event.preventDefault();
+        open();
+      }
+    });
+
+    const img=card.querySelector("img");
+    if(img){
+      img.addEventListener("error",()=>{
+        img.remove();
+        const placeholder=card.querySelector(".no-image");
+        if(placeholder)placeholder.style.display="flex";
+      });
+    }
+  });
 }
 
 function searchProducts(){
-  const value=document.getElementById("topSearch").value.trim();
-  currentSearch=value;
-  document.getElementById("productHeading").textContent=value
+  currentSearch=$("topSearch").value.trim();
+
+  $("productHeading").textContent=currentSearch
     ?"Rezultatet e kërkimit"
     :"Produktet e fundit";
-  loadProducts();
-  document.querySelector("main").scrollIntoView({behavior:"smooth",block:"start"});
-}
 
-document.getElementById("topSearch").addEventListener("keydown",event=>{
-  if(event.key==="Enter")searchProducts();
-});
+  loadProducts();
+  document.querySelector("main").scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+}
 
 function filterCategory(category){
   currentCategory=category;
+
   document.querySelectorAll(".category").forEach(button=>{
-    button.classList.toggle("active",button.textContent.trim().replace(/^[^\p{L}\p{N}]+\s*/u,"")===
-      (category||"Të gjitha"));
+    button.classList.toggle(
+      "active",
+      button.dataset.category===category
+    );
   });
+
   loadProducts();
 }
 
 function openProduct(id){
   if(!id)return;
-  window.location.href="/products.html?id="+encodeURIComponent(id);
+  location.href="/products.html?id="+encodeURIComponent(id);
 }
 
+function focusSearch(){
+  $("topSearch").focus();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+$("loginBtn").addEventListener("click",login);
+$("bottomLoginBtn").addEventListener("click",login);
+$("profileBtn").addEventListener("click",openAccount);
+$("bottomAccountBtn").addEventListener("click",openAccount);
+$("sellBtn").addEventListener("click",sell);
+$("bottomSellBtn").addEventListener("click",sell);
+$("homeBtn").addEventListener("click",()=>location.href="/");
+$("searchBtn").addEventListener("click",searchProducts);
+$("bottomSearchBtn").addEventListener("click",focusSearch);
+
+$("topSearch").addEventListener("keydown",event=>{
+  if(event.key==="Enter")searchProducts();
+});
+
+document.querySelectorAll(".category").forEach(button=>{
+  button.addEventListener("click",()=>{
+    filterCategory(button.dataset.category||"");
+  });
+});
+
 loadProducts();
+checkSession();
 </script>
 </body>
 </html>
