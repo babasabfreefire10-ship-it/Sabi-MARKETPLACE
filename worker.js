@@ -8,42 +8,54 @@ const CORS = {
 let DB_READY = false;
 let DB_SETUP_PROMISE = null;
 
-const json = (data, status = 200) =>
-  new Response(JSON.stringify(data), {
+function json(data, status = 200) {
+  return new Response(JSON.stringify(data), {
     status,
     headers: {
       ...CORS,
       "Content-Type": "application/json; charset=utf-8"
     }
   });
+}
 
-const fail = (error, status = 400) =>
-  json({ success: false, error: String(error) }, status);
+function ok(data = {}, status = 200) {
+  return json({ success: true, ...data }, status);
+}
 
-const ok = (data = {}, status = 200) =>
-  json({ success: true, ...data }, status);
+function fail(error, status = 400) {
+  return json({ success: false, error: String(error) }, status);
+}
 
-const num = (v, fallback = 0) => {
-  const n = Number(v);
+function num(value, fallback = 0) {
+  const n = Number(value);
   return Number.isFinite(n) ? n : fallback;
-};
+}
 
-const clean = (v, max = 5000) =>
-  String(v ?? "").trim().slice(0, max);
+function clean(value, max = 5000) {
+  return String(value ?? "").trim().slice(0, max);
+}
 
-const boolInt = v =>
-  v === true || v === 1 || v === "1" || v === "true" ? 1 : 0;
+function boolInt(value) {
+  return value === true || value === 1 ||
+    value === "1" || value === "true" ? 1 : 0;
+}
 
-const isAdmin = user =>
-  !!user && ["admin", "owner"].includes(String(user.role).toLowerCase());
+function isAdmin(user) {
+  return !!user &&
+    ["admin", "owner"].includes(String(user.role || "").toLowerCase());
+}
 
-const sqlNow = () => new Date().toISOString().slice(0, 19).replace("T", " ");
+function addDays(days) {
+  const date = new Date();
+  date.setTime(date.getTime() + days * 86400000);
+  return date.toISOString().slice(0, 19).replace("T", " ");
+}
 
-const addDays = days => {
-  const d = new Date();
-  d.setTime(d.getTime() + days * 86400000);
-  return d.toISOString().slice(0, 19).replace("T", " ");
-};
+function randomToken(bytes = 32) {
+  const array = new Uint8Array(bytes);
+  crypto.getRandomValues(array);
+  return Array.from(array, b => b.toString(16).padStart(2, "0")).join("");
+}
 
 async function readJson(request) {
   try {
@@ -51,12 +63,6 @@ async function readJson(request) {
   } catch {
     return {};
   }
-}
-
-function randomToken(bytes = 32) {
-  const a = new Uint8Array(bytes);
-  crypto.getRandomValues(a);
-  return Array.from(a, b => b.toString(16).padStart(2, "0")).join("");
 }
 
 async function passwordHash(password) {
@@ -67,6 +73,11 @@ async function passwordHash(password) {
   ).join("");
 }
 
+/* -------------------------------------------------------
+   DATABASE SETUP
+   Nuk fshin tabela dhe nuk fshin produkte.
+------------------------------------------------------- */
+
 async function addColumn(env, table, name, definition) {
   const allowedTables = new Set([
     "auth_accounts",
@@ -74,27 +85,32 @@ async function addColumn(env, table, name, definition) {
     "orders",
     "platform_settings",
     "promotions",
-    "transactions"
+    "transactions",
+    "blocked_listings",
+    "blocked_users"
   ]);
 
-  if (!allowedTables.has(table)) throw new Error("Tabela e palejuar");
+  if (!allowedTables.has(table)) {
+    throw new Error("Tabela e palejuar: " + table);
+  }
+
   if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name)) {
-    throw new Error("Emër kolone i pavlefshëm");
+    throw new Error("Emër kolone i pavlefshëm.");
   }
 
   try {
     await env.DB.prepare(
       `ALTER TABLE "${table}" ADD COLUMN "${name}" ${definition}`
     ).run();
-  } catch (e) {
-    if (!/duplicate column|already exists/i.test(e.message || "")) {
-      throw e;
+  } catch (error) {
+    if (!/duplicate column|already exists/i.test(error.message || "")) {
+      throw error;
     }
   }
 }
 
 async function setupDatabase(env) {
-  const statements = [
+  const schemas = [
     `CREATE TABLE IF NOT EXISTS auth_accounts (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT DEFAULT '',
@@ -200,7 +216,7 @@ async function setupDatabase(env) {
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
     )`,
 
-    // Kjo strukturë ruan kolonat e platform_settings që ekzistojnë.
+    // Përdor strukturën reale ekzistuese të platform_settings.
     `CREATE TABLE IF NOT EXISTS platform_settings (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       commission_rate REAL DEFAULT 5,
@@ -212,11 +228,11 @@ async function setupDatabase(env) {
     )`
   ];
 
-  for (const sql of statements) {
-    await env.DB.prepare(sql).run();
+  for (const schema of schemas) {
+    await env.DB.prepare(schema).run();
   }
 
-  const columns = {
+  const definitions = {
     auth_accounts: {
       name: "TEXT DEFAULT ''",
       email: "TEXT DEFAULT ''",
@@ -226,6 +242,7 @@ async function setupDatabase(env) {
       blocked: "INTEGER DEFAULT 0",
       created_at: "TEXT"
     },
+
     products: {
       title: "TEXT DEFAULT ''",
       name: "TEXT DEFAULT ''",
@@ -243,6 +260,7 @@ async function setupDatabase(env) {
       blocked: "INTEGER DEFAULT 0",
       created_at: "TEXT"
     },
+
     orders: {
       order_code: "TEXT",
       product_id: "INTEGER",
@@ -263,6 +281,7 @@ async function setupDatabase(env) {
       created_at: "TEXT",
       updated_at: "TEXT"
     },
+
     platform_settings: {
       commission_rate: "REAL DEFAULT 5",
       currency: "TEXT DEFAULT 'ALL'",
@@ -270,11 +289,41 @@ async function setupDatabase(env) {
       promotion_price_7d: "REAL DEFAULT 300",
       promotion_price_30d: "REAL DEFAULT 700",
       vip_price_7d: "REAL DEFAULT 500"
+    },
+
+    promotions: {
+      product_id: "INTEGER",
+      seller_id: "INTEGER",
+      type: "TEXT DEFAULT 'promoted'",
+      price: "REAL DEFAULT 0",
+      starts_at: "TEXT",
+      ends_at: "TEXT",
+      status: "TEXT DEFAULT 'pending'",
+      created_at: "TEXT"
+    },
+
+    transactions: {
+      user_id: "INTEGER",
+      type: "TEXT DEFAULT ''",
+      amount: "REAL DEFAULT 0",
+      currency: "TEXT DEFAULT 'ALL'",
+      status: "TEXT DEFAULT 'pending'",
+      reference_id: "TEXT",
+      metadata: "TEXT DEFAULT '{}'",
+      created_at: "TEXT"
+    },
+
+    blocked_listings: {
+      blocked: "INTEGER DEFAULT 1"
+    },
+
+    blocked_users: {
+      blocked: "INTEGER DEFAULT 1"
     }
   };
 
-  for (const [table, defs] of Object.entries(columns)) {
-    for (const [name, definition] of Object.entries(defs)) {
+  for (const [table, cols] of Object.entries(definitions)) {
+    for (const [name, definition] of Object.entries(cols)) {
       await addColumn(env, table, name, definition);
     }
   }
@@ -288,29 +337,36 @@ async function setupDatabase(env) {
   `).run();
 
   await env.DB.prepare(`
-    INSERT OR IGNORE INTO marketplace_settings (setting_key, setting_value)
+    INSERT OR IGNORE INTO marketplace_settings
+      (setting_key, setting_value)
     VALUES ('platform_name', 'SHIT.BLEJ')
   `).run();
 
   await env.DB.prepare(`
-    INSERT OR IGNORE INTO marketplace_settings (setting_key, setting_value)
+    INSERT OR IGNORE INTO marketplace_settings
+      (setting_key, setting_value)
     VALUES ('admin_email', 'admin@shitblej.al')
   `).run();
 
+  // Indekset ndihmojnë kërkimet; nuk ndryshojnë të dhënat.
   await env.DB.prepare(`
-    CREATE INDEX IF NOT EXISTS idx_products_seller ON products(seller_id)
+    CREATE INDEX IF NOT EXISTS idx_products_seller
+    ON products(seller_id)
   `).run();
 
   await env.DB.prepare(`
-    CREATE INDEX IF NOT EXISTS idx_orders_buyer ON orders(buyer_id)
+    CREATE INDEX IF NOT EXISTS idx_orders_buyer
+    ON orders(buyer_id)
   `).run();
 
   await env.DB.prepare(`
-    CREATE INDEX IF NOT EXISTS idx_orders_seller ON orders(seller_id)
+    CREATE INDEX IF NOT EXISTS idx_orders_seller
+    ON orders(seller_id)
   `).run();
 
   await env.DB.prepare(`
-    CREATE INDEX IF NOT EXISTS idx_promotions_product ON promotions(product_id)
+    CREATE INDEX IF NOT EXISTS idx_promotions_product
+    ON promotions(product_id)
   `).run();
 }
 
@@ -331,9 +387,15 @@ async function ensureDatabase(env) {
   await DB_SETUP_PROMISE;
 }
 
+/* -------------------------------------------------------
+   SETTINGS
+------------------------------------------------------- */
+
 async function getPlatformSettings(env) {
   const row = await env.DB.prepare(`
-    SELECT * FROM platform_settings ORDER BY id ASC LIMIT 1
+    SELECT * FROM platform_settings
+    ORDER BY id ASC
+    LIMIT 1
   `).first();
 
   return {
@@ -366,6 +428,10 @@ async function setMarketplaceSetting(env, key, value) {
   `).bind(key, String(value)).run();
 }
 
+/* -------------------------------------------------------
+   AUTHENTICATION
+------------------------------------------------------- */
+
 function tokenFromRequest(request) {
   const auth = request.headers.get("Authorization") || "";
 
@@ -374,6 +440,16 @@ function tokenFromRequest(request) {
   }
 
   return request.headers.get("X-Auth-Token") || "";
+}
+
+function publicUser(user) {
+  return {
+    id: user.id,
+    name: user.name || "",
+    email: user.email || "",
+    phone: user.phone || "",
+    role: user.role || "customer"
+  };
 }
 
 async function currentUser(env, request) {
@@ -397,8 +473,10 @@ async function currentUser(env, request) {
     );
 
     if (!Number.isNaN(expires.getTime()) && expires < new Date()) {
-      await env.DB.prepare("DELETE FROM sessions WHERE token = ?")
-        .bind(token).run();
+      await env.DB.prepare(
+        "DELETE FROM sessions WHERE token = ?"
+      ).bind(token).run();
+
       return null;
     }
   }
@@ -412,18 +490,9 @@ async function currentUser(env, request) {
   };
 }
 
-function publicUser(user) {
-  return {
-    id: user.id,
-    name: user.name || "",
-    email: user.email || "",
-    phone: user.phone || "",
-    role: user.role || "customer"
-  };
-}
-
 async function createSession(env, userId) {
   const token = randomToken();
+
   await env.DB.prepare(`
     INSERT INTO sessions (token, user_id, expires_at)
     VALUES (?, ?, ?)
@@ -440,34 +509,40 @@ async function register(env, body) {
   let role = clean(body.role || "customer", 20).toLowerCase();
 
   if (!name || !email || !password) {
-    return fail("Plotëso emrin, email-in dhe fjalëkalimin.", 400);
+    return fail("Plotëso emrin, email-in dhe fjalëkalimin.");
   }
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return fail("Email-i nuk është i vlefshëm.", 400);
+    return fail("Email-i nuk është i vlefshëm.");
   }
 
   if (password.length < 6) {
-    return fail("Fjalëkalimi duhet të ketë të paktën 6 karaktere.", 400);
+    return fail("Fjalëkalimi duhet të ketë të paktën 6 karaktere.");
   }
 
-  if (!["customer", "seller"].includes(role)) role = "customer";
+  if (!["customer", "seller"].includes(role)) {
+    role = "customer";
+  }
 
   const existing = await env.DB.prepare(`
-    SELECT id FROM auth_accounts WHERE lower(email) = ? LIMIT 1
+    SELECT id FROM auth_accounts
+    WHERE lower(email) = ?
+    LIMIT 1
   `).bind(email).first();
 
-  if (existing) return fail("Ky email është regjistruar më parë.", 409);
+  if (existing) {
+    return fail("Ky email është regjistruar më parë.", 409);
+  }
 
   const hash = await passwordHash(password);
 
   const result = await env.DB.prepare(`
-    INSERT INTO auth_accounts (name, email, phone, password_hash, role, blocked)
+    INSERT INTO auth_accounts
+      (name, email, phone, password_hash, role, blocked)
     VALUES (?, ?, ?, ?, ?, 0)
   `).bind(name, email, phone, hash, role).run();
 
   const id = result.meta?.last_row_id;
-
   if (!id) return fail("Regjistrimi nuk u krye.", 500);
 
   const user = { id, name, email, phone, role };
@@ -485,7 +560,7 @@ async function login(env, body) {
   const password = String(body.password || "");
 
   if (!identifier || !password) {
-    return fail("Vendos email-in dhe fjalëkalimin.", 400);
+    return fail("Vendos email-in dhe fjalëkalimin.");
   }
 
   const user = await env.DB.prepare(`
@@ -511,6 +586,10 @@ async function login(env, body) {
   });
 }
 
+/* -------------------------------------------------------
+   PRODUCTS
+------------------------------------------------------- */
+
 const PRODUCT_SELECT = `
   SELECT
     p.*,
@@ -522,6 +601,7 @@ const PRODUCT_SELECT = `
       WHERE pr.product_id = p.id
         AND pr.type != 'vip'
         AND pr.status = 'active'
+        AND pr.ends_at IS NOT NULL
         AND datetime(pr.ends_at) > datetime('now')
     ) THEN 1 ELSE 0 END AS promotion_active,
     CASE WHEN EXISTS (
@@ -529,12 +609,15 @@ const PRODUCT_SELECT = `
       WHERE pr.product_id = p.id
         AND pr.type = 'vip'
         AND pr.status = 'active'
+        AND pr.ends_at IS NOT NULL
         AND datetime(pr.ends_at) > datetime('now')
     ) THEN 1 ELSE 0 END AS vip_active,
     (
-      SELECT MAX(pr.ends_at) FROM promotions pr
+      SELECT MAX(pr.ends_at)
+      FROM promotions pr
       WHERE pr.product_id = p.id
         AND pr.status = 'active'
+        AND pr.ends_at IS NOT NULL
         AND datetime(pr.ends_at) > datetime('now')
     ) AS promotion_expires_at
   FROM products p
@@ -546,8 +629,10 @@ function formatProduct(p) {
 
   const title = p.title || p.name || "";
   const image = p.image_url || p.image || "";
-  const sellerName = p.seller || p.sellerName || p.account_name || "Shitës";
-  const sellerPhone = p.sellerPhone || p.account_phone || p.phone || "";
+  const sellerName = p.seller || p.sellerName ||
+    p.account_name || "Shitës";
+  const sellerPhone = p.sellerPhone ||
+    p.account_phone || p.phone || "";
 
   return {
     ...p,
@@ -587,7 +672,14 @@ async function getProduct(env, id) {
 
 async function listProducts(env, request, user) {
   const url = new URL(request.url);
-  const q = clean(url.searchParams.get("q") || url.searchParams.get("search"), 200);
+
+  const q = clean(
+    url.searchParams.get("q") ||
+    url.searchParams.get("search") ||
+    "",
+    200
+  );
+
   const category = clean(url.searchParams.get("category"), 100);
   const sellerId = num(url.searchParams.get("seller_id"), 0);
   const limit = Math.max(1, Math.min(100, num(url.searchParams.get("limit"), 60)));
@@ -600,13 +692,9 @@ async function listProducts(env, request, user) {
       sql += " AND p.seller_id = ? ";
       values.push(sellerId);
     } else {
-      sql += `
-        AND COALESCE(p.blocked, 0) = 0
-        AND NOT EXISTS (
-          SELECT 1 FROM blocked_listings bl
-          WHERE bl.product_id = p.id AND bl.blocked = 1
-        )
-      `;
+      // Për publikun kontrollojmë vetëm kolonën e produktit.
+      // Nuk bëjmë JOIN me blocked_listings, sepse tabela mund të jetë legacy.
+      sql += " AND COALESCE(p.blocked, 0) = 0 ";
 
       if (sellerId) {
         sql += " AND p.seller_id = ? ";
@@ -619,10 +707,16 @@ async function listProducts(env, request, user) {
   }
 
   if (q) {
-    sql += ` AND (
-      p.title LIKE ? OR p.name LIKE ? OR
-      p.description LIKE ? OR p.category LIKE ? OR p.city LIKE ?
-    ) `;
+    sql += `
+      AND (
+        p.title LIKE ?
+        OR p.name LIKE ?
+        OR p.description LIKE ?
+        OR p.category LIKE ?
+        OR p.city LIKE ?
+      )
+    `;
+
     const term = `%${q}%`;
     values.push(term, term, term, term, term);
   }
@@ -633,12 +727,17 @@ async function listProducts(env, request, user) {
   }
 
   sql += `
-    ORDER BY vip_active DESC, promotion_active DESC, p.id DESC
+    ORDER BY vip_active DESC,
+             promotion_active DESC,
+             p.id DESC
     LIMIT ?
   `;
+
   values.push(limit);
 
   const result = await env.DB.prepare(sql).bind(...values).all();
+
+  // API kthen direkt array, siç e pret index.html.
   return json((result.results || []).map(formatProduct));
 }
 
@@ -659,6 +758,7 @@ async function createProduct(env, user, body) {
   const condition = clean(body.condition || "used", 40);
   const phone = clean(body.phone || user.phone, 50);
   const negotiable = boolInt(body.negotiable);
+
   const sellerId = isAdmin(user) && body.seller_id
     ? num(body.seller_id, user.id)
     : user.id;
@@ -669,7 +769,7 @@ async function createProduct(env, user, body) {
   const result = await env.DB.prepare(`
     INSERT INTO products
       (title, name, description, price, image_url, image, seller_id,
-       category, stock, city, "condition", phone, negotiable, blocked)
+       category, stock, city, condition, phone, negotiable, blocked)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
   `).bind(
     title, title, description, price, image, image,
@@ -694,7 +794,10 @@ async function updateProduct(env, user, id, body) {
   const title = clean(body.title ?? body.name ?? old.title, 200);
   const description = clean(body.description ?? old.description, 10000);
   const price = num(body.price ?? old.price, 0);
-  const image = clean(body.image_url ?? body.image ?? old.image_url ?? old.image, 2000);
+  const image = clean(
+    body.image_url ?? body.image ?? old.image_url ?? old.image,
+    2000
+  );
   const category = clean(body.category ?? old.category, 100);
   const stock = Math.max(0, Math.floor(num(body.stock ?? old.stock, 0)));
   const city = clean(body.city ?? old.city, 100);
@@ -702,19 +805,23 @@ async function updateProduct(env, user, id, body) {
   const phone = clean(body.phone ?? old.phone, 50);
   const negotiable = boolInt(body.negotiable ?? old.negotiable);
 
-  if (!title || price < 0) return fail("Titulli ose çmimi nuk është i vlefshëm.");
+  if (!title || price < 0) {
+    return fail("Titulli ose çmimi nuk është i vlefshëm.");
+  }
 
   await env.DB.prepare(`
     UPDATE products
     SET title=?, name=?, description=?, price=?, image_url=?, image=?,
-        category=?, stock=?, city=?, "condition"=?, phone=?, negotiable=?
+        category=?, stock=?, city=?, condition=?, phone=?, negotiable=?
     WHERE id=?
   `).bind(
     title, title, description, price, image, image,
     category, stock, city, condition, phone, negotiable, id
   ).run();
 
-  return ok({ product: formatProduct(await getProduct(env, id)) });
+  return ok({
+    product: formatProduct(await getProduct(env, id))
+  });
 }
 
 async function deleteProduct(env, user, id) {
@@ -727,36 +834,52 @@ async function deleteProduct(env, user, id) {
     return fail("Nuk ke leje ta fshish këtë produkt.", 403);
   }
 
-  await env.DB.prepare("DELETE FROM saved_listings WHERE product_id=?").bind(id).run();
-  await env.DB.prepare("DELETE FROM promotions WHERE product_id=?").bind(id).run();
-  await env.DB.prepare("DELETE FROM blocked_listings WHERE product_id=?").bind(id).run();
+  await env.DB.prepare(
+    "DELETE FROM saved_listings WHERE product_id=?"
+  ).bind(id).run();
 
-  // Porositë historike nuk fshihen.
-  await env.DB.prepare("DELETE FROM products WHERE id=?").bind(id).run();
+  await env.DB.prepare(
+    "DELETE FROM promotions WHERE product_id=?"
+  ).bind(id).run();
+
+  await env.DB.prepare(
+    "DELETE FROM blocked_listings WHERE product_id=?"
+  ).bind(id).run();
+
+  // Porositë e vjetra ruhen.
+  await env.DB.prepare(
+    "DELETE FROM products WHERE id=?"
+  ).bind(id).run();
 
   return ok({ message: "Produkti u fshi." });
 }
 
 async function blockProduct(env, user, id, body) {
-  if (!isAdmin(user)) return fail("Vetëm administratori mund ta bllokojë.", 403);
+  if (!isAdmin(user)) {
+    return fail("Vetëm administratori mund ta bllokojë.", 403);
+  }
 
   const product = await getProduct(env, id);
   if (!product) return fail("Produkti nuk u gjet.", 404);
 
   const blocked = body.blocked === undefined ? 1 : boolInt(body.blocked);
 
-  await env.DB.prepare("UPDATE products SET blocked=? WHERE id=?")
-    .bind(blocked, id).run();
+  await env.DB.prepare(
+    "UPDATE products SET blocked=? WHERE id=?"
+  ).bind(blocked, id).run();
 
+  // Mbajmë tabelën e bllokimeve në sinkron.
   if (blocked) {
     await env.DB.prepare(`
       INSERT INTO blocked_listings (product_id, blocked)
       VALUES (?, 1)
-      ON CONFLICT(product_id) DO UPDATE SET blocked=1
+      ON CONFLICT(product_id)
+      DO UPDATE SET blocked=1
     `).bind(id).run();
   } else {
-    await env.DB.prepare("DELETE FROM blocked_listings WHERE product_id=?")
-      .bind(id).run();
+    await env.DB.prepare(
+      "DELETE FROM blocked_listings WHERE product_id=?"
+    ).bind(id).run();
   }
 
   return ok({ blocked: !!blocked });
@@ -769,9 +892,10 @@ async function toggleSaved(env, user, id, method) {
   if (!product) return fail("Produkti nuk u gjet.", 404);
 
   if (method === "DELETE") {
-    await env.DB.prepare(
-      "DELETE FROM saved_listings WHERE user_id=? AND product_id=?"
-    ).bind(user.id, id).run();
+    await env.DB.prepare(`
+      DELETE FROM saved_listings
+      WHERE user_id=? AND product_id=?
+    `).bind(user.id, id).run();
 
     return ok({ saved: false });
   }
@@ -782,9 +906,10 @@ async function toggleSaved(env, user, id, method) {
   `).bind(user.id, id).first();
 
   if (exists) {
-    await env.DB.prepare(
-      "DELETE FROM saved_listings WHERE user_id=? AND product_id=?"
-    ).bind(user.id, id).run();
+    await env.DB.prepare(`
+      DELETE FROM saved_listings
+      WHERE user_id=? AND product_id=?
+    `).bind(user.id, id).run();
 
     return ok({ saved: false });
   }
@@ -797,6 +922,10 @@ async function toggleSaved(env, user, id, method) {
   return ok({ saved: true });
 }
 
+/* -------------------------------------------------------
+   ORDERS
+------------------------------------------------------- */
+
 async function createOrder(env, user, body) {
   if (!user) return fail("Duhet të hysh në llogari.", 401);
 
@@ -808,8 +937,12 @@ async function createOrder(env, user, body) {
   }
 
   const product = await getProduct(env, productId);
+
   if (!product) return fail("Produkti nuk u gjet.", 404);
-  if (num(product.blocked) === 1) return fail("Ky produkt nuk është i disponueshëm.", 403);
+  if (num(product.blocked) === 1) {
+    return fail("Ky produkt nuk është i disponueshëm.", 403);
+  }
+
   if (Number(product.seller_id) === Number(user.id)) {
     return fail("Nuk mund të blesh produktin tënd.");
   }
@@ -817,13 +950,15 @@ async function createOrder(env, user, body) {
   const stock = num(product.stock);
   let stockReserved = false;
 
+  // Stoku 0 trajtohet si stok i pakufizuar për pajtueshmëri
+  // me produktet e vjetra të databazës.
   if (stock > 0) {
-    const updated = await env.DB.prepare(`
+    const update = await env.DB.prepare(`
       UPDATE products SET stock = stock - ?
       WHERE id = ? AND stock >= ?
     `).bind(quantity, productId, quantity).run();
 
-    if (updated.meta?.changes !== 1) {
+    if (update.meta?.changes !== 1) {
       return fail("Nuk ka stok të mjaftueshëm.", 409);
     }
 
@@ -832,6 +967,7 @@ async function createOrder(env, user, body) {
 
   const settings = await getPlatformSettings(env);
   const total = num(product.price) * quantity;
+
   const code = "SHIT-" +
     new Date().toISOString().slice(0, 10).replaceAll("-", "") +
     "-" + randomToken(3).toUpperCase();
@@ -865,21 +1001,21 @@ async function createOrder(env, user, body) {
     ).bind(result.meta.last_row_id).first();
 
     return ok({ order }, 201);
-  } catch (e) {
+  } catch (error) {
     if (stockReserved) {
       await env.DB.prepare(
-        "UPDATE products SET stock = stock + ? WHERE id=?"
+        "UPDATE products SET stock=stock+? WHERE id=?"
       ).bind(quantity, productId).run();
     }
 
-    throw e;
+    throw error;
   }
 }
 
 async function listOrders(env, user) {
   if (!user) return fail("Duhet të hysh në llogari.", 401);
 
-  let sql = `
+  const sql = `
     SELECT
       o.*,
       p.title AS product_title,
@@ -897,17 +1033,24 @@ async function listOrders(env, user) {
     FROM orders o
     LEFT JOIN products p ON p.id=o.product_id
     LEFT JOIN auth_accounts buyer ON buyer.id=o.buyer_id
-    LEFT JOIN auth_accounts seller ON seller.id=COALESCE(o.seller_id,p.seller_id)
+    LEFT JOIN auth_accounts seller
+      ON seller.id=COALESCE(o.seller_id,p.seller_id)
   `;
 
   let result;
 
   if (isAdmin(user)) {
-    result = await env.DB.prepare(sql + " ORDER BY o.id DESC LIMIT 500").all();
+    result = await env.DB.prepare(
+      sql + " ORDER BY o.id DESC LIMIT 500"
+    ).all();
   } else {
     result = await env.DB.prepare(
-      sql + ` WHERE o.buyer_id=? OR COALESCE(o.seller_id,p.seller_id)=?
-              ORDER BY o.id DESC LIMIT 300`
+      sql + `
+        WHERE o.buyer_id=?
+           OR COALESCE(o.seller_id,p.seller_id)=?
+        ORDER BY o.id DESC
+        LIMIT 300
+      `
     ).bind(user.id, user.id).all();
   }
 
@@ -955,7 +1098,6 @@ async function updateOrder(env, user, id, body) {
   const sellerId = order.seller_id ?? product?.seller_id;
   const isBuyer = Number(order.buyer_id) === Number(user.id);
   const isSeller = Number(sellerId) === Number(user.id);
-
   const status = clean(body.status, 30).toLowerCase();
 
   const allowed = [
@@ -976,10 +1118,16 @@ async function updateOrder(env, user, id, body) {
         return fail("Nuk mund ta ndryshosh këtë porosi.", 403);
       }
     } else if (isSeller) {
-      if (!["confirmed", "shipped", "delivered", "completed", "cancelled"].includes(status)) {
+      if (![
+        "confirmed", "shipped", "delivered", "completed", "cancelled"
+      ].includes(status)) {
         return fail("Nuk lejohet ky ndryshim statusi.", 403);
       }
-      if (status === "cancelled" && !["pending", "confirmed"].includes(order.status)) {
+
+      if (
+        status === "cancelled" &&
+        !["pending", "confirmed"].includes(String(order.status))
+      ) {
         return fail("Porosia nuk mund të anulohet në këtë fazë.", 400);
       }
     } else {
@@ -991,7 +1139,7 @@ async function updateOrder(env, user, id, body) {
     ["delivered", "completed"].includes(String(order.status)) &&
     status === "cancelled"
   ) {
-    return fail("Një porosi e përfunduar nuk mund të anulohet.", 400);
+    return fail("Porosia e përfunduar nuk mund të anulohet.", 400);
   }
 
   if (
@@ -1011,27 +1159,40 @@ async function updateOrder(env, user, id, body) {
 
   const settings = await getPlatformSettings(env);
   const total = num(order.total_price);
-  const commissionRate = num(order.commission_rate, settings.commission_rate);
-  const fee = ["delivered", "completed"].includes(status)
+  const commissionRate = num(
+    order.commission_rate,
+    settings.commission_rate
+  );
+
+  const finalStatus = ["delivered", "completed"].includes(status);
+  const fee = finalStatus
     ? Math.round(total * commissionRate) / 100
     : 0;
-  const earnings = total - fee;
 
   await env.DB.prepare(`
     UPDATE orders
-    SET status=?, commission_rate=?, platform_fee=?, seller_earnings=?,
+    SET status=?,
+        commission_rate=?,
+        platform_fee=?,
+        seller_earnings=?,
         updated_at=CURRENT_TIMESTAMP
     WHERE id=?
-  `).bind(status, commissionRate, fee, earnings, id).run();
+  `).bind(
+    status,
+    commissionRate,
+    fee,
+    total - fee,
+    id
+  ).run();
 
-  if (["delivered", "completed"].includes(status)) {
+  if (finalStatus && fee > 0) {
     const exists = await env.DB.prepare(`
       SELECT id FROM transactions
       WHERE type='commission' AND reference_id=?
       LIMIT 1
     `).bind(String(id)).first();
 
-    if (!exists && fee > 0) {
+    if (!exists) {
       await env.DB.prepare(`
         INSERT INTO transactions
           (user_id, type, amount, currency, status, reference_id, metadata)
@@ -1041,7 +1202,10 @@ async function updateOrder(env, user, id, body) {
         fee,
         settings.currency,
         String(id),
-        JSON.stringify({ order_id: id, order_code: order.order_code || "" })
+        JSON.stringify({
+          order_id: id,
+          order_code: order.order_code || ""
+        })
       ).run();
     }
   }
@@ -1053,13 +1217,17 @@ async function updateOrder(env, user, id, body) {
   return ok({ order: updated });
 }
 
+/* -------------------------------------------------------
+   PROMOTIONS
+------------------------------------------------------- */
+
 async function createPromotion(env, user, body) {
   if (!user) return fail("Duhet të hysh në llogari.", 401);
 
   const productId = num(body.product_id || body.productId, 0);
   const plan = clean(body.plan || body.type, 20).toLowerCase();
-
   const product = await getProduct(env, productId);
+
   if (!product) return fail("Produkti nuk u gjet.", 404);
 
   if (!isAdmin(user) && Number(product.seller_id) !== Number(user.id)) {
@@ -1067,6 +1235,7 @@ async function createPromotion(env, user, body) {
   }
 
   const settings = await getPlatformSettings(env);
+
   const plans = {
     "1d": { type: "promoted", days: 1, price: settings.promo_1_day },
     "7d": { type: "promoted", days: 7, price: settings.promo_7_day },
@@ -1103,7 +1272,7 @@ async function createPromotion(env, user, body) {
   ).run();
 
   return ok({
-    message: "Kërkesa u krijua. Promovimi aktivizohet pasi të konfirmohet pagesa.",
+    message: "Kërkesa u krijua; pagesa duhet konfirmuar.",
     promotion_id: result.meta.last_row_id,
     status: "pending",
     amount: selected.price,
@@ -1112,7 +1281,9 @@ async function createPromotion(env, user, body) {
 }
 
 async function activatePromotion(env, user, id) {
-  if (!isAdmin(user)) return fail("Vetëm administratori mund ta aktivizojë.", 403);
+  if (!isAdmin(user)) {
+    return fail("Vetëm administratori mund ta aktivizojë.", 403);
+  }
 
   const promotion = await env.DB.prepare(
     "SELECT * FROM promotions WHERE id=?"
@@ -1120,25 +1291,35 @@ async function activatePromotion(env, user, id) {
 
   if (!promotion) return fail("Promovimi nuk u gjet.", 404);
 
+  const days = promotion.type === "vip"
+    ? 7
+    : num(promotion.price) === 100
+      ? 1
+      : num(promotion.price) === 300
+        ? 7
+        : 30;
+
   await env.DB.prepare(`
     UPDATE promotions
-    SET status='active', starts_at=CURRENT_TIMESTAMP, ends_at=?
+    SET status='active',
+        starts_at=CURRENT_TIMESTAMP,
+        ends_at=?
     WHERE id=?
-  `).bind(
-    addDays(promotion.type === "vip" ? 7 :
-      promotion.price === 100 ? 1 :
-      promotion.price === 300 ? 7 : 30),
-    id
-  ).run();
+  `).bind(addDays(days), id).run();
 
   await env.DB.prepare(`
     UPDATE transactions
     SET status='paid'
-    WHERE reference_id=? AND type IN ('promotion','vip')
+    WHERE reference_id=?
+      AND type IN ('promotion','vip')
   `).bind(String(id)).run();
 
   return ok({ message: "Promovimi u aktivizua." });
 }
+
+/* -------------------------------------------------------
+   ADMIN
+------------------------------------------------------- */
 
 async function adminSettings(env, method, body) {
   if (method === "GET") {
@@ -1147,8 +1328,12 @@ async function adminSettings(env, method, body) {
     return ok({
       settings: {
         ...settings,
-        platform_name: await getMarketplaceSetting(env, "platform_name", "SHIT.BLEJ"),
-        admin_email: await getMarketplaceSetting(env, "admin_email", "admin@shitblej.al")
+        platform_name: await getMarketplaceSetting(
+          env, "platform_name", "SHIT.BLEJ"
+        ),
+        admin_email: await getMarketplaceSetting(
+          env, "admin_email", "admin@shitblej.al"
+        )
       }
     });
   }
@@ -1156,15 +1341,25 @@ async function adminSettings(env, method, body) {
   const current = await getPlatformSettings(env);
 
   const commission = body.commission_rate === undefined
-    ? current.commission_rate : num(body.commission_rate, -1);
+    ? current.commission_rate
+    : num(body.commission_rate, -1);
+
   const promo1 = body.promo_1_day === undefined
-    ? current.promo_1_day : num(body.promo_1_day, -1);
+    ? current.promo_1_day
+    : num(body.promo_1_day, -1);
+
   const promo7 = body.promo_7_day === undefined
-    ? current.promo_7_day : num(body.promo_7_day, -1);
+    ? current.promo_7_day
+    : num(body.promo_7_day, -1);
+
   const promo30 = body.promo_30_day === undefined
-    ? current.promo_30_day : num(body.promo_30_day, -1);
+    ? current.promo_30_day
+    : num(body.promo_30_day, -1);
+
   const vip7 = body.vip_7_day === undefined
-    ? current.vip_7_day : num(body.vip_7_day, -1);
+    ? current.vip_7_day
+    : num(body.vip_7_day, -1);
+
   const currency = clean(body.currency ?? current.currency, 10).toUpperCase();
 
   if (commission < 0 || commission > 100) {
@@ -1177,10 +1372,16 @@ async function adminSettings(env, method, body) {
 
   await env.DB.prepare(`
     UPDATE platform_settings
-    SET commission_rate=?, currency=?, promotion_price_1d=?,
-        promotion_price_7d=?, promotion_price_30d=?, vip_price_7d=?
+    SET commission_rate=?,
+        currency=?,
+        promotion_price_1d=?,
+        promotion_price_7d=?,
+        promotion_price_30d=?,
+        vip_price_7d=?
     WHERE id=(SELECT id FROM platform_settings ORDER BY id LIMIT 1)
-  `).bind(commission, currency || "ALL", promo1, promo7, promo30, vip7).run();
+  `).bind(
+    commission, currency || "ALL", promo1, promo7, promo30, vip7
+  ).run();
 
   if (body.platform_name !== undefined) {
     await setMarketplaceSetting(
@@ -1202,35 +1403,36 @@ async function adminStats(env) {
     "SELECT COUNT(*) AS n FROM auth_accounts"
   ).first();
 
-  const products = await env.DB.prepare(
-    "SELECT COUNT(*) AS n FROM products WHERE COALESCE(blocked,0)=0"
-  ).first();
+  const products = await env.DB.prepare(`
+    SELECT COUNT(*) AS n
+    FROM products
+    WHERE COALESCE(blocked,0)=0
+  `).first();
 
-  const blockedProducts = await env.DB.prepare(
-    "SELECT COUNT(*) AS n FROM products WHERE COALESCE(blocked,0)=1"
-  ).first();
+  const blockedProducts = await env.DB.prepare(`
+    SELECT COUNT(*) AS n
+    FROM products
+    WHERE COALESCE(blocked,0)=1
+  `).first();
 
   const orders = await env.DB.prepare(
     "SELECT COUNT(*) AS n FROM orders"
   ).first();
 
-  const pending = await env.DB.prepare(
-    "SELECT COUNT(*) AS n FROM orders WHERE status='pending'"
-  ).first();
+  const pending = await env.DB.prepare(`
+    SELECT COUNT(*) AS n FROM orders WHERE status='pending'
+  `).first();
 
   const revenue = await env.DB.prepare(`
     SELECT COALESCE(SUM(total_price),0) AS n
-    FROM orders WHERE status IN ('delivered','completed')
+    FROM orders
+    WHERE status IN ('delivered','completed')
   `).first();
 
   const fees = await env.DB.prepare(`
     SELECT COALESCE(SUM(platform_fee),0) AS n
-    FROM orders WHERE status IN ('delivered','completed')
-  `).first();
-
-  const transactionFees = await env.DB.prepare(`
-    SELECT COALESCE(SUM(amount),0) AS n
-    FROM transactions WHERE type='commission' AND status='paid'
+    FROM orders
+    WHERE status IN ('delivered','completed')
   `).first();
 
   return ok({
@@ -1241,7 +1443,7 @@ async function adminStats(env) {
       orders: num(orders?.n),
       pending_orders: num(pending?.n),
       revenue: num(revenue?.n),
-      platform_fees: Math.max(num(fees?.n), num(transactionFees?.n))
+      platform_fees: num(fees?.n)
     }
   });
 }
@@ -1258,13 +1460,16 @@ async function adminUsers(env) {
 }
 
 async function blockUser(env, user, id, body) {
-  if (!isAdmin(user)) return fail("Vetëm administratori mund të bllokojë përdorues.", 403);
+  if (!isAdmin(user)) {
+    return fail("Vetëm administratori mund të bllokojë përdorues.", 403);
+  }
 
-  const target = await env.DB.prepare(
-    "SELECT id, role FROM auth_accounts WHERE id=?"
-  ).bind(id).first();
+  const target = await env.DB.prepare(`
+    SELECT id FROM auth_accounts WHERE id=?
+  `).bind(id).first();
 
   if (!target) return fail("Përdoruesi nuk u gjet.", 404);
+
   if (Number(target.id) === Number(user.id)) {
     return fail("Nuk mund të bllokosh llogarinë tënde.", 400);
   }
@@ -1278,12 +1483,14 @@ async function blockUser(env, user, id, body) {
   await env.DB.prepare(`
     INSERT INTO blocked_users (user_id, blocked)
     VALUES (?, ?)
-    ON CONFLICT(user_id) DO UPDATE SET blocked=excluded.blocked
+    ON CONFLICT(user_id)
+    DO UPDATE SET blocked=excluded.blocked
   `).bind(id, blocked).run();
 
   if (blocked) {
-    await env.DB.prepare("DELETE FROM sessions WHERE user_id=?")
-      .bind(id).run();
+    await env.DB.prepare(
+      "DELETE FROM sessions WHERE user_id=?"
+    ).bind(id).run();
   }
 
   return ok({ blocked: !!blocked });
@@ -1291,13 +1498,19 @@ async function blockUser(env, user, id, body) {
 
 async function adminFinance(env) {
   const transactions = await env.DB.prepare(`
-    SELECT * FROM transactions ORDER BY id DESC LIMIT 300
+    SELECT * FROM transactions
+    ORDER BY id DESC
+    LIMIT 300
   `).all();
 
   const totals = await env.DB.prepare(`
     SELECT
-      COALESCE(SUM(CASE WHEN status='paid' THEN amount ELSE 0 END),0) AS paid,
-      COALESCE(SUM(CASE WHEN status='pending' THEN amount ELSE 0 END),0) AS pending
+      COALESCE(SUM(
+        CASE WHEN status='paid' THEN amount ELSE 0 END
+      ),0) AS paid,
+      COALESCE(SUM(
+        CASE WHEN status='pending' THEN amount ELSE 0 END
+      ),0) AS pending
     FROM transactions
   `).first();
 
@@ -1309,6 +1522,10 @@ async function adminFinance(env) {
     }
   });
 }
+
+/* -------------------------------------------------------
+   ROUTES
+------------------------------------------------------- */
 
 async function routeApi(request, env) {
   const url = new URL(request.url);
@@ -1342,18 +1559,20 @@ async function routeApi(request, env) {
 
   if (path === "/api/auth/logout" && method === "POST") {
     const token = tokenFromRequest(request);
+
     if (token) {
-      await env.DB.prepare("DELETE FROM sessions WHERE token=?")
-        .bind(token).run();
+      await env.DB.prepare(
+        "DELETE FROM sessions WHERE token=?"
+      ).bind(token).run();
     }
+
     return ok({ message: "U çregjistrove." });
   }
 
-  if (path === "/api/products" && method === "GET") {
-    return listProducts(env, request, user);
-  }
-
-  if (path === "/api/products/search" && method === "GET") {
+  if (
+    ["/api/products", "/api/products/search"].includes(path) &&
+    method === "GET"
+  ) {
     return listProducts(env, request, user);
   }
 
@@ -1362,36 +1581,44 @@ async function routeApi(request, env) {
   }
 
   let match = path.match(/^\/api\/products\/(\d+)\/save$/);
+
   if (match && ["POST", "DELETE"].includes(method)) {
     return toggleSaved(env, user, Number(match[1]), method);
   }
 
   match = path.match(/^\/api\/products\/(\d+)\/block$/);
+
   if (match && ["POST", "PUT", "PATCH"].includes(method)) {
-    return blockProduct(env, user, Number(match[1]), await readJson(request));
+    return blockProduct(
+      env, user, Number(match[1]), await readJson(request)
+    );
   }
 
   match = path.match(/^\/api\/products\/(\d+)$/);
+
   if (match) {
     const id = Number(match[1]);
 
     if (method === "GET") {
-      const p = await getProduct(env, id);
-      if (!p) return fail("Produkti nuk u gjet.", 404);
+      const product = await getProduct(env, id);
+
+      if (!product) return fail("Produkti nuk u gjet.", 404);
 
       if (
         !isAdmin(user) &&
-        num(p.blocked) === 1 &&
-        Number(p.seller_id) !== Number(user?.id)
+        num(product.blocked) === 1 &&
+        Number(product.seller_id) !== Number(user?.id)
       ) {
         return fail("Produkti nuk është i disponueshëm.", 404);
       }
 
-      return ok({ product: formatProduct(p) });
+      return ok({ product: formatProduct(product) });
     }
 
-    if (method === "PUT" || method === "PATCH") {
-      return updateProduct(env, user, id, await readJson(request));
+    if (["PUT", "PATCH"].includes(method)) {
+      return updateProduct(
+        env, user, id, await readJson(request)
+      );
     }
 
     if (method === "DELETE") {
@@ -1408,8 +1635,11 @@ async function routeApi(request, env) {
   }
 
   match = path.match(/^\/api\/orders\/(\d+)$/);
+
   if (match && ["PUT", "PATCH", "POST"].includes(method)) {
-    return updateOrder(env, user, Number(match[1]), await readJson(request));
+    return updateOrder(
+      env, user, Number(match[1]), await readJson(request)
+    );
   }
 
   if (path === "/api/promotions" && method === "POST") {
@@ -1417,6 +1647,7 @@ async function routeApi(request, env) {
   }
 
   match = path.match(/^\/api\/promotions\/(\d+)\/activate$/);
+
   if (match && method === "POST") {
     return activatePromotion(env, user, Number(match[1]));
   }
@@ -1450,14 +1681,10 @@ async function routeApi(request, env) {
   }
 
   match = path.match(/^\/api\/users\/(\d+)\/block$/);
-  if (match && ["POST", "PUT", "PATCH"].includes(method)) {
-    if (!isAdmin(user)) return fail("Vetëm administratori ka akses.", 403);
 
+  if (match && ["POST", "PUT", "PATCH"].includes(method)) {
     return blockUser(
-      env,
-      user,
-      Number(match[1]),
-      await readJson(request)
+      env, user, Number(match[1]), await readJson(request)
     );
   }
 
@@ -1467,6 +1694,10 @@ async function routeApi(request, env) {
 
   return null;
 }
+
+/* -------------------------------------------------------
+   WORKER ENTRY POINT
+------------------------------------------------------- */
 
 export default {
   async fetch(request, env) {
@@ -1484,16 +1715,17 @@ export default {
       }
 
       if (!env.ASSETS) {
-        return new Response("Asset binding ASSETS nuk është konfiguruar.", {
-          status: 500,
-          headers: CORS
-        });
+        return new Response(
+          "Asset binding ASSETS nuk është konfiguruar.",
+          { status: 500, headers: CORS }
+        );
       }
 
-      // Hap index.html kur vizitori shkon te faqja kryesore.
       if (url.pathname === "/") {
         url.pathname = "/index.html";
-        return env.ASSETS.fetch(new Request(url.toString(), request));
+        return env.ASSETS.fetch(
+          new Request(url.toString(), request)
+        );
       }
 
       return env.ASSETS.fetch(request);
