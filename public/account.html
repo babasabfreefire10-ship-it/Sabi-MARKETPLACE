@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1877f2">
+<title>Llogaria ime | SHIT.BLEJ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:#f0f2f5;color:#1c1e21}
+button{font:inherit;cursor:pointer;border:0;border-radius:9px;padding:11px 14px;font-weight:700}
+header{background:#fff;padding:14px 16px;box-shadow:0 1px 3px #0001}
+.top{max-width:1000px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.logo{color:#1877f2;font-size:22px;font-weight:900;text-decoration:none}
+main{max-width:1000px;margin:auto;padding:18px 12px 50px}
+.panel,.message{background:#fff;border-radius:14px;padding:20px;margin-bottom:16px}
+h1{font-size:24px;margin-bottom:7px}
+h2{font-size:19px;margin-bottom:14px}
+.muted{color:#65676b;font-size:14px;line-height:1.6}
+.info{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}
+.field{background:#f0f2f5;border-radius:10px;padding:13px;overflow-wrap:anywhere}
+.field small{display:block;color:#65676b;margin-bottom:5px}
+.field strong{font-size:15px}
+.buttons{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+.primary{background:#1877f2;color:white}
+.light{background:#e4e6eb;color:#1c1e21}
+.products{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:15px}
+.card{background:white;border:1px solid #e4e6eb;border-radius:12px;overflow:hidden;min-width:0}
+.card img,.no-image{width:100%;aspect-ratio:1;object-fit:cover;background:#e4e6eb}
+.no-image{display:flex;align-items:center;justify-content:center;color:#65676b}
+.card-body{padding:11px}
+.title{font-weight:700;font-size:14px;overflow-wrap:anywhere;margin-bottom:7px}
+.price{font-size:17px;font-weight:800;margin-bottom:8px}
+.card a{color:#1877f2;text-decoration:none;font-weight:700;font-size:13px}
+.message{text-align:center;line-height:1.6}
+@media(max-width:600px){
+ main{padding:12px 9px 35px}
+ .panel{padding:16px}
+ .info{grid-template-columns:1fr}
+ .products{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .logo{font-size:19px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="top">
+    <a class="logo" href="/">SHIT.BLEJ</a>
+    <button class="light" onclick="location.href='/'">← Kryefaqja</button>
+  </div>
+</header>
+
+<main id="main">
+  <div class="message">Po kontrollohet llogaria...</div>
+</main>
+
+<script>
+const API="/api";
+
+function $(id){
+  return document.getElementById(id);
+}
+
+function getToken(){
+  return localStorage.getItem("shitblej_token") ||
+         localStorage.getItem("sabiAuthToken");
+}
+
+function escapeHtml(value){
+  return String(value??"")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function formatPrice(value){
+  return new Intl.NumberFormat("sq-AL",{
+    maximumFractionDigits:0
+  }).format(Number(value)||0)+" ALL";
+}
+
+async function api(path){
+  const token=getToken();
+  const headers={};
+
+  if(token){
+    headers.Authorization="Bearer "+token;
+  }
+
+  const response=await fetch(API+path,{headers});
+  const text=await response.text();
+  let data={};
+
+  try{
+    data=text?JSON.parse(text):{};
+  }catch{
+    data={};
+  }
+
+  if(!response.ok){
+    throw new Error(data.message||data.error||"Gabim nga serveri");
+  }
+
+  return data;
+}
+
+function normalizeProducts(data){
+  if(Array.isArray(data))return data;
+  if(Array.isArray(data.products))return data.products;
+  if(Array.isArray(data.results))return data.results;
+  if(Array.isArray(data.data))return data.data;
+  return [];
+}
+
+function logout(){
+  [
+    "shitblej_token",
+    "sabiAuthToken",
+    "shitblej_user",
+    "sabiUserId",
+    "sabiUserName",
+    "sabiUserRole",
+    "sabiUserEmail",
+    "sabiUserPhone"
+  ].forEach(key=>localStorage.removeItem(key));
+
+  location.href="/";
+}
+
+function roleLabel(role){
+  const labels={
+    customer:"Klient",
+    seller:"Shitës",
+    admin:"Administrator",
+    owner:"Administrator"
+  };
+
+  return labels[String(role||"").toLowerCase()]||"Përdorues";
+}
+
+function showAccount(user,products){
+  const role=String(user.role||"").toLowerCase();
+  const canSell=["seller","admin","owner"].includes(role);
+
+  $("main").innerHTML=`
+    <section class="panel">
+      <h1>👤 Llogaria ime</h1>
+      <p class="muted">Të dhënat e llogarisë tënde në SHIT.BLEJ.</p>
+
+      <div class="info">
+        <div class="field">
+          <small>Emri</small>
+          <strong>${escapeHtml(user.name||"Pa emër")}</strong>
+        </div>
+        <div class="field">
+          <small>Email</small>
+          <strong>${escapeHtml(user.email||"Nuk është vendosur")}</strong>
+        </div>
+        <div class="field">
+          <small>Telefoni</small>
+          <strong>${escapeHtml(user.phone||"Nuk është vendosur")}</strong>
+        </div>
+        <div class="field">
+          <small>Lloji i llogarisë</small>
+          <strong>${escapeHtml(roleLabel(role))}</strong>
+        </div>
+      </div>
+
+      <div class="buttons">
+        ${canSell
+          ? '<button class="primary" onclick="location.href=\'/seller.html\'">Menaxho produktet</button>'
+          : ''}
+        <button class="light" onclick="location.href='/'">Vazhdo blerjet</button>
+        <button class="light" onclick="logout()">Dil nga llogaria</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>📦 Produktet e mia</h2>
+      <p class="muted">Produktet e publikuara nga kjo llogari.</p>
+      <div id="myProducts" class="products"></div>
+    </section>
+  `;
+
+  const box=$("myProducts");
+
+  if(!products.length){
+    box.innerHTML=`
+      <div class="message" style="grid-column:1/-1">
+        <p>Nuk u gjetën produkte për këtë llogari.</p>
+        ${canSell
+          ? '<button class="primary" style="margin-top:12px" onclick="location.href=\'/seller.html\'">Publiko produkt</button>'
+          : ''}
+      </div>`;
+    return;
+  }
+
+  box.innerHTML=products.map(product=>{
+    const id=Number(product.id);
+    const title=product.title||product.name||"Produkt";
+    const image=product.image_url||product.image||"";
+
+    return `
+      <article class="card">
+        ${image
+          ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}">`
+          : '<div class="no-image">📷 Pa foto</div>'}
+        <div class="card-body">
+          <div class="title">${escapeHtml(title)}</div>
+          <div class="price">${formatPrice(product.price)}</div>
+          ${Number.isFinite(id)&&id>0
+            ? `<a href="/products.html?id=${encodeURIComponent(id)}">Shiko produktin →</a>`
+            : ''}
+        </div>
+      </article>`;
+  }).join("");
+}
+
+async function init(){
+  if(!getToken()){
+    location.replace("/login.html?next=%2Faccount.html");
+    return;
+  }
+
+  try{
+    const data=await api("/auth/me");
+    const user=data.user||data.account||data.data?.user;
+
+    if(!user||user.id==null){
+      throw new Error("Llogaria nuk u verifikua.");
+    }
+
+    let products=[];
+
+    try{
+      const result=await api(
+        "/products?seller_id="+encodeURIComponent(user.id)
+      );
+
+      products=normalizeProducts(result).filter(product=>
+        String(product.seller_id??product.sellerId??"")===
+        String(user.id)
+      );
+    }catch(error){
+      console.error("Produktet nuk u ngarkuan:",error);
+    }
+
+    showAccount(user,products);
+
+  }catch(error){
+    console.error(error);
+
+    [
+      "shitblej_token",
+      "sabiAuthToken",
+      "shitblej_user",
+      "sabiUserId",
+      "sabiUserName",
+      "sabiUserRole",
+      "sabiUserEmail",
+      "sabiUserPhone"
+    ].forEach(key=>localStorage.removeItem(key));
+
+    $("main").innerHTML=`
+      <div class="message">
+        <h2>Nuk mund të hapet llogaria</h2>
+        <p class="muted">${escapeHtml(error.message)}</p>
+        <button class="primary" style="margin-top:14px"
+          onclick="location.href='/login.html?next=%2Faccount.html'">
+          Hyr përsëri
+        </button>
+      </div>`;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
