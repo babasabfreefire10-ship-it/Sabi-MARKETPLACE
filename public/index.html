@@ -88,9 +88,12 @@ footer strong{color:var(--blue)}
     </div>
 
     <div class="actions">
-      <button class="btn login" onclick="login()">Hyr</button>
-      <button class="btn sell" onclick="sell()">＋ Shit</button>
-    </div>
+  <button id="loginBtn" class="btn login" onclick="login()">Hyr</button>
+  <button class="btn sell" onclick="sell()">＋ Shit</button>
+  <button id="profileBtn" class="btn login" onclick="openAccount()"
+    aria-label="Llogaria ime" title="Llogaria ime"
+    style="display:none;font-size:20px;padding:8px 12px">👤</button>
+</div>
   </div>
 </header>
 
